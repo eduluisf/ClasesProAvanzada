@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ejercicios - Programacion Avanzada</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f9f9f9;
+      color: #111;
+      min-height: 100vh;
+      padding: 3rem 1.5rem;
+    }
+    .contenedor { max-width: 700px; margin: 0 auto; }
+    header {
+      border-bottom: 2px solid #111;
+      padding-bottom: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em; }
+    header p { color: #555; font-size: 0.95rem; margin-top: 0.3rem; }
+    .seccion h2 {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #888; margin-bottom: 0.75rem;
+    }
+    .lista { display: flex; flex-direction: column; gap: 0.4rem; }
+    .item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.85rem 1rem; background: #fff; border: 1px solid #e0e0e0;
+      border-radius: 6px; text-decoration: none; color: #111;
+      font-size: 0.95rem; font-weight: 500; transition: border-color 0.15s, background 0.15s;
+    }
+    .item:hover { border-color: #111; background: #f0f0f0; }
+    .item .flecha { color: #aaa; }
+    .home {
+      display: inline-block; margin-bottom: 2rem; text-decoration: none;
+      font-size: 0.88rem; font-weight: 600; color: #555; border: 1px solid #ddd;
+      border-radius: 999px; padding: 4px 14px; background: #fff;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .home:hover { color: #111; border-color: #111; }
+  </style>
+</head>
+<body>
+<div class="contenedor">
+  <a class="home" href="../">&#8592; Inicio</a>
+  <header>
+    <h1>Ejercicios</h1>
+    <p>Practica lo visto en clase</p>
+  </header>
+  <div class="seccion">
+    <h2>Disponibles</h2>
+    <div class="lista" id="lista"></div>
+  </div>
+</div>
+
+<script>
+  const GITHUB_USER = "eduluisf";
+  const GITHUB_REPO = "ClasesProAvanzada";
+
+  async function cargar() {
+    const lista = document.getElementById("lista");
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/ejercicios`,
+        { headers: { Accept: "application/vnd.github.v3+json" } }
+      );
+      if (!res.ok) throw new Error();
+      const items = await res.json();
+      const archivos = items.filter(i => i.name.endsWith(".html") && i.name !== "index.html");
+      if (archivos.length === 0) {
+        lista.innerHTML = '<p style="color:#aaa;font-size:.9rem;padding:.5rem 0">No hay ejercicios todavia.</p>';
+        return;
+      }
+      archivos
+        .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+        .forEach(f => {
+          const a = document.createElement("a");
+          a.href = f.name;
+          a.className = "item";
+          a.innerHTML = `<span>${f.name.replace(".html","").replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase())}</span><span class="flecha">&#8594;</span>`;
+          lista.appendChild(a);
+        });
+    } catch {
+      lista.innerHTML = '<p style="color:#aaa;font-size:.9rem;padding:.5rem 0">No se pudo cargar la lista.</p>';
+    }
+  }
+  cargar();
+</script>
+</body>
+</html>

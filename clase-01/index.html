@@ -844,25 +844,159 @@ p = <span class="fn">promedio</span>(notas)
   </div>
 </div>
 
-<!-- ─── 27. RESUMEN ──────────────────────────────────────────── -->
-<div class="slide s-c" id="s27">
+<!-- ─── 27. SEC DICCIONARIOS ──────────────────────────────────── -->
+<div class="slide s-sec" id="s27">
+  <div class="tag">Módulo 05</div>
+  <h2>Diccionarios</h2>
+  <p class="sub">Colecciones de pares clave → valor</p>
+</div>
+
+<!-- ─── 28. QUÉ ES UN DICCIONARIO ────────────────────────────── -->
+<div class="slide s-c" id="s28">
+  <div class="tag">Diccionarios</div>
+  <h2>¿Qué es un diccionario?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Definición</h3>
+        <ul class="s">
+          <li>Colección de pares <strong>clave: valor</strong></li>
+          <li>Las claves son <strong>únicas</strong></li>
+          <li>Acceso por <strong>clave</strong>, no por índice</li>
+          <li><strong>Mutable</strong> — se puede modificar</li>
+          <li>Desde Python 3.7 mantiene el <strong>orden de inserción</strong></li>
+        </ul>
+      </div>
+      <div class="card or">
+        <h3>Lista vs Diccionario</h3>
+        <ul class="s">
+          <li><code>lista[0]</code> → acceso por <strong>posición</strong></li>
+          <li><code>dicc["nombre"]</code> → acceso por <strong>nombre</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="cm"># Crear un diccionario</span>
+<span class="fn">alumno</span> = {
+    <span class="str">"nombre"</span>: <span class="str">"Ana"</span>,
+    <span class="str">"edad"</span>:   <span class="num">20</span>,
+    <span class="str">"nota"</span>:   <span class="num">9.5</span>,
+}
+
+<span class="cm"># Acceder a un valor</span>
+<span class="fn">print</span>(alumno[<span class="str">"nombre"</span>])   <span class="cm"># Ana</span>
+<span class="fn">print</span>(alumno[<span class="str">"nota"</span>])     <span class="cm"># 9.5</span>
+
+<span class="cm"># Modificar un valor</span>
+alumno[<span class="str">"nota"</span>] = <span class="num">10</span>
+
+<span class="cm"># Agregar una clave nueva</span>
+alumno[<span class="str">"ciudad"</span>] = <span class="str">"Lima"</span>
+
+<span class="cm"># Eliminar una clave</span>
+<span class="kw">del</span> alumno[<span class="str">"edad"</span>]</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 29. MÉTODOS DE DICCIONARIO ───────────────────────────── -->
+<div class="slide s-c" id="s29">
+  <div class="tag">Diccionarios</div>
+  <h2>Métodos esenciales</h2>
+  <div class="g2">
+    <table>
+      <tr><th>Método</th><th>¿Qué hace?</th></tr>
+      <tr><td><code>d.get(k)</code></td><td>Retorna el valor o <code>None</code> si no existe</td></tr>
+      <tr><td><code>d.get(k, def)</code></td><td>Retorna el valor o <code>def</code> por defecto</td></tr>
+      <tr><td><code>d.keys()</code></td><td>Todas las claves</td></tr>
+      <tr><td><code>d.values()</code></td><td>Todos los valores</td></tr>
+      <tr><td><code>d.items()</code></td><td>Pares (clave, valor)</td></tr>
+      <tr><td><code>k in d</code></td><td>¿Existe la clave?</td></tr>
+      <tr><td><code>d.pop(k)</code></td><td>Elimina y retorna el valor</td></tr>
+      <tr><td><code>d.update(d2)</code></td><td>Fusiona con otro diccionario</td></tr>
+      <tr><td><code>len(d)</code></td><td>Número de claves</td></tr>
+    </table>
+    <div class="col">
+<pre><span class="fn">alumno</span> = {<span class="str">"nombre"</span>: <span class="str">"Ana"</span>, <span class="str">"nota"</span>: <span class="num">9</span>}
+
+<span class="cm"># get — seguro, no lanza error</span>
+<span class="fn">print</span>(alumno.<span class="fn">get</span>(<span class="str">"edad"</span>, <span class="str">"N/A"</span>))  <span class="cm"># N/A</span>
+
+<span class="cm"># Verificar si existe la clave</span>
+<span class="kw">if</span> <span class="str">"nota"</span> <span class="kw">in</span> alumno:
+    <span class="fn">print</span>(<span class="str">"Tiene nota"</span>)
+
+<span class="cm"># update — agrega o sobreescribe</span>
+alumno.<span class="fn">update</span>({<span class="str">"edad"</span>: <span class="num">20</span>, <span class="str">"nota"</span>: <span class="num">10</span>})
+<span class="fn">print</span>(alumno)
+<span class="cm"># {'nombre': 'Ana', 'nota': 10, 'edad': 20}</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 30. ITERAR DICCIONARIO ───────────────────────────────── -->
+<div class="slide s-c" id="s30">
+  <div class="tag">Diccionarios</div>
+  <h2>Iterar un diccionario</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>Tres formas</h3>
+        <ul class="s">
+          <li><code>for k in d</code> → recorre las <strong>claves</strong></li>
+          <li><code>for v in d.values()</code> → recorre los <strong>valores</strong></li>
+          <li><code>for k, v in d.items()</code> → clave <strong>y</strong> valor a la vez</li>
+        </ul>
+      </div>
+<pre><span class="fn">notas</span> = {<span class="str">"Ana"</span>: <span class="num">9</span>, <span class="str">"Luis"</span>: <span class="num">7</span>, <span class="str">"Mia"</span>: <span class="num">10</span>}
+
+<span class="cm"># Solo claves</span>
+<span class="kw">for</span> nombre <span class="kw">in</span> notas:
+    <span class="fn">print</span>(nombre)   <span class="cm"># Ana / Luis / Mia</span>
+
+<span class="cm"># Clave y valor — lo más común</span>
+<span class="kw">for</span> nombre, nota <span class="kw">in</span> notas.<span class="fn">items</span>():
+    <span class="fn">print</span>(<span class="str">f"{nombre}: {nota}"</span>)</pre>
+    </div>
+    <div class="col">
+      <div class="card pu">
+        <h3>Diccionarios anidados</h3>
+        <ul class="s">
+          <li>El valor puede ser <strong>otro diccionario</strong></li>
+          <li>Se encadenan los corchetes: <code>d["a"]["b"]</code></li>
+        </ul>
+      </div>
+<pre><span class="fn">alumnos</span> = {
+    <span class="str">"Ana"</span>:  {<span class="str">"nota"</span>: <span class="num">9</span>, <span class="str">"ciudad"</span>: <span class="str">"Lima"</span>},
+    <span class="str">"Luis"</span>: {<span class="str">"nota"</span>: <span class="num">7</span>, <span class="str">"ciudad"</span>: <span class="str">"Cusco"</span>},
+}
+
+<span class="kw">for</span> nombre, datos <span class="kw">in</span> alumnos.<span class="fn">items</span>():
+    <span class="fn">print</span>(<span class="str">f"{nombre} — nota: {datos['nota']}"</span>)
+
+<span class="cm"># Acceso directo</span>
+<span class="fn">print</span>(alumnos[<span class="str">"Ana"</span>][<span class="str">"ciudad"</span>])  <span class="cm"># Lima</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 31. RESUMEN ──────────────────────────────────────────── -->
+<div class="slide s-c" id="s31">
   <div class="tag">Resumen</div>
   <h2>Lo que aprendimos</h2>
-  <div class="g3">
+  <div class="g2" style="margin-bottom:14px">
     <div class="card">
       <h3>Listas</h3>
       <ul class="s" style="margin-top:8px">
         <li>Crear y acceder por índice</li>
         <li><code>append</code>, <code>pop</code>, <code>sort</code></li>
-        <li>Slicing <code>[a:b]</code></li>
-        <li>Índices negativos</li>
+        <li>Slicing <code>[a:b]</code>, índices negativos</li>
       </ul>
     </div>
     <div class="card pu">
       <h3>Ciclos</h3>
       <ul class="s" style="margin-top:8px">
         <li><code>for</code> + <code>range</code>, <code>enumerate</code>, <code>zip</code></li>
-        <li>Recorrer por posición (≡ Java)</li>
         <li><code>while</code> con condición dinámica</li>
         <li><code>break</code>, <code>continue</code></li>
       </ul>
@@ -871,13 +1005,20 @@ p = <span class="fn">promedio</span>(notas)
       <h3>Funciones</h3>
       <ul class="s" style="margin-top:8px">
         <li><code>def nombre(params)</code></li>
-        <li>Sin <code>return</code> → efectos / imprime</li>
-        <li>Con <code>return</code> → valor reutilizable</li>
+        <li>Sin / con <code>return</code></li>
         <li>Parámetros por defecto</li>
       </ul>
     </div>
+    <div class="card or">
+      <h3>Diccionarios</h3>
+      <ul class="s" style="margin-top:8px">
+        <li>Pares <code>clave: valor</code></li>
+        <li><code>get</code>, <code>keys</code>, <code>values</code>, <code>items</code></li>
+        <li>Iterar con <code>for k, v in d.items()</code></li>
+      </ul>
+    </div>
   </div>
-  <div class="card or mt w100" style="text-align:center;padding:18px">
+  <div class="card sl w100" style="text-align:center;padding:16px">
     <h3 style="color:var(--orange)">La práctica hace al programador</h3>
     <p class="t" style="color:var(--muted);margin-top:6px">Escribe código todos los días. Los errores son parte del aprendizaje.</p>
   </div>
