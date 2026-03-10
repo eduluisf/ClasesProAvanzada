@@ -730,20 +730,230 @@ menor, mayor = <span class="fn">min_max</span>([<span class="num">3</span>, <spa
 
 <!-- ─── 19. EJ1 — ENUNCIADO ─────────────────────────────────── -->
 <div class="slide s-e" id="s19">
-  <div class="tag">Ejercicio 1 — Recursión</div>
+  <div class="tag">Ejercicio 1 — Return con decisión</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Clasificar una nota</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Crea la función <code>clasificar_nota(nota: float) -> str</code> que reciba una nota del 0 al 10 y <strong>retorne</strong> la categoría correspondiente.</p>
+      </div>
+      <div class="card mt">
+        <h3>Categorías</h3>
+        <ul class="s">
+          <li><strong>9 – 10</strong> → <code>"Excelente"</code></li>
+          <li><strong>7 – 8.9</strong> → <code>"Aprobado"</code></li>
+          <li><strong>5 – 6.9</strong> → <code>"Recuperación"</code></li>
+          <li><strong>0 – 4.9</strong> → <code>"Reprobado"</code></li>
+        </ul>
+      </div>
+      <div class="card gr mt">
+        <h3>Extra: usa el return</h3>
+        <p class="t" style="margin-top:6px">Guarda el resultado en una variable y úsalo para imprimir el mensaje completo: <br><em>"Ana: Aprobado"</em></p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:240px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 20. EJ1 — SOLUCIÓN ──────────────────────────────────── -->
+<div class="slide s-sol" id="s20">
+  <div class="tag">Ejercicio 1 — Return con decisión</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Clasificar una nota</h2>
+  <div class="g2">
+    <div class="col">
+<pre><span class="kw">def</span> <span class="fn">clasificar_nota</span>(nota: <span class="num">float</span>) -> <span class="num">str</span>:
+    <span class="kw">if</span> nota >= <span class="num">9</span>:
+        <span class="kw">return</span> <span class="str">"Excelente"</span>
+    <span class="kw">if</span> nota >= <span class="num">7</span>:
+        <span class="kw">return</span> <span class="str">"Aprobado"</span>
+    <span class="kw">if</span> nota >= <span class="num">5</span>:
+        <span class="kw">return</span> <span class="str">"Recuperación"</span>
+    <span class="kw">return</span> <span class="str">"Reprobado"</span>
+
+<span class="cm"># Guardar el return y usarlo</span>
+alumnos = [(<span class="str">"Ana"</span>, <span class="num">9.5</span>), (<span class="str">"Luis"</span>, <span class="num">6.0</span>), (<span class="str">"Mia"</span>, <span class="num">3.8</span>)]
+
+<span class="kw">for</span> nombre, nota <span class="kw">in</span> alumnos:
+    categoria = <span class="fn">clasificar_nota</span>(nota)   <span class="cm"># ← guardamos el return</span>
+    <span class="fn">print</span>(<span class="str">f"{nombre}: {categoria}"</span>)
+
+<span class="cm"># Ana: Excelente
+# Luis: Recuperación
+# Mia: Reprobado</span></pre>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>Puntos clave</h3>
+        <ul class="s">
+          <li>Cada <code>return</code> anticipado <strong>sale inmediatamente</strong> de la función</li>
+          <li>No se necesita <code>elif</code> — si llegó al segundo <code>if</code> es porque <code>nota &lt; 9</code></li>
+          <li>El valor retornado se <strong>guarda</strong> en <code>categoria</code> y se usa en el print</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 21. EJ2 — ENUNCIADO ─────────────────────────────────── -->
+<div class="slide s-e" id="s21">
+  <div class="tag">Ejercicio 2 — Encadenar returns</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Calcular e interpretar el IMC</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Crea <strong>dos funciones</strong> y úsalas encadenadas: el <code>return</code> de la primera es el argumento de la segunda.</p>
+      </div>
+      <div class="card pu mt">
+        <h3>Función 1</h3>
+        <p class="t" style="margin-top:6px"><code>calcular_imc(peso: float, altura: float) -> float</code><br>Fórmula: <code>peso / altura²</code></p>
+      </div>
+      <div class="card gr mt">
+        <h3>Función 2</h3>
+        <p class="t" style="margin-top:6px"><code>clasificar_imc(imc: float) -> str</code><br>&lt; 18.5 → "Bajo peso"<br>18.5 – 24.9 → "Normal"<br>25 – 29.9 → "Sobrepeso"<br>≥ 30 → "Obesidad"</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:240px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 22. EJ2 — SOLUCIÓN ──────────────────────────────────── -->
+<div class="slide s-sol" id="s22">
+  <div class="tag">Ejercicio 2 — Encadenar returns</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Calcular e interpretar el IMC</h2>
+  <div class="g2">
+    <div class="col">
+<pre><span class="kw">def</span> <span class="fn">calcular_imc</span>(peso: <span class="num">float</span>, altura: <span class="num">float</span>) -> <span class="num">float</span>:
+    <span class="kw">return</span> peso / altura ** <span class="num">2</span>
+
+<span class="kw">def</span> <span class="fn">clasificar_imc</span>(imc: <span class="num">float</span>) -> <span class="num">str</span>:
+    <span class="kw">if</span> imc &lt; <span class="num">18.5</span>: <span class="kw">return</span> <span class="str">"Bajo peso"</span>
+    <span class="kw">if</span> imc &lt; <span class="num">25</span>:   <span class="kw">return</span> <span class="str">"Normal"</span>
+    <span class="kw">if</span> imc &lt; <span class="num">30</span>:   <span class="kw">return</span> <span class="str">"Sobrepeso"</span>
+    <span class="kw">return</span> <span class="str">"Obesidad"</span>
+
+<span class="cm"># Encadenar: return de 1 → argumento de 2</span>
+imc = <span class="fn">calcular_imc</span>(<span class="num">70</span>, <span class="num">1.75</span>)
+categoria = <span class="fn">clasificar_imc</span>(imc)
+<span class="fn">print</span>(<span class="str">f"IMC: {imc:.1f} → {categoria}"</span>)
+<span class="cm"># IMC: 22.9 → Normal</span>
+
+<span class="cm"># O en una sola línea</span>
+<span class="fn">print</span>(<span class="fn">clasificar_imc</span>(<span class="fn">calcular_imc</span>(<span class="num">90</span>, <span class="num">1.70</span>)))
+<span class="cm"># Sobrepeso</span></pre>
+    </div>
+    <div class="col">
+      <div class="card pu">
+        <h3>Puntos clave</h3>
+        <ul class="s">
+          <li>El <code>float</code> que retorna <code>calcular_imc</code> se guarda en <code>imc</code></li>
+          <li>Ese valor se pasa como argumento a <code>clasificar_imc</code></li>
+          <li>También se puede pasar <strong>directo</strong> sin guardar</li>
+          <li>Los type hints documentan exactamente qué entra y qué sale</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 23. EJ3 — ENUNCIADO ─────────────────────────────────── -->
+<div class="slide s-e" id="s23">
+  <div class="tag">Ejercicio 3 — Return en expresiones</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Conversor de temperaturas</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Crea dos funciones de conversión de temperatura y luego usa sus valores retornados <strong>directamente en expresiones</strong>.</p>
+      </div>
+      <div class="card mt">
+        <h3>Funciones</h3>
+        <ul class="s">
+          <li><code>celsius_a_fahrenheit(c: float) -> float</code><br>Fórmula: <code>c × 9/5 + 32</code></li>
+          <li><code>fahrenheit_a_celsius(f: float) -> float</code><br>Fórmula: <code>(f - 32) × 5/9</code></li>
+        </ul>
+      </div>
+      <div class="card or mt">
+        <h3>Extra</h3>
+        <p class="t" style="margin-top:6px">Úsalas en un <code>for</code> para convertir una lista de temperaturas y guardar los resultados.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:240px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 24. EJ3 — SOLUCIÓN ──────────────────────────────────── -->
+<div class="slide s-sol" id="s24">
+  <div class="tag">Ejercicio 3 — Return en expresiones</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Conversor de temperaturas</h2>
+  <div class="g2">
+    <div class="col">
+<pre><span class="kw">def</span> <span class="fn">celsius_a_fahrenheit</span>(c: <span class="num">float</span>) -> <span class="num">float</span>:
+    <span class="kw">return</span> c * <span class="num">9</span> / <span class="num">5</span> + <span class="num">32</span>
+
+<span class="kw">def</span> <span class="fn">fahrenheit_a_celsius</span>(f: <span class="num">float</span>) -> <span class="num">float</span>:
+    <span class="kw">return</span> (f - <span class="num">32</span>) * <span class="num">5</span> / <span class="num">9</span>
+
+<span class="cm"># Usar el return directamente</span>
+<span class="fn">print</span>(<span class="fn">celsius_a_fahrenheit</span>(<span class="num">0</span>))    <span class="cm"># 32.0  (punto de congelación)</span>
+<span class="fn">print</span>(<span class="fn">celsius_a_fahrenheit</span>(<span class="num">100</span>))  <span class="cm"># 212.0 (punto de ebullición)</span>
+<span class="fn">print</span>(<span class="fn">fahrenheit_a_celsius</span>(<span class="num">98.6</span>)) <span class="cm"># 37.0  (temperatura corporal)</span>
+
+<span class="cm"># Guardar results en una lista</span>
+temps_c = [<span class="num">0</span>, <span class="num">20</span>, <span class="num">37</span>, <span class="num">100</span>]
+temps_f = [<span class="fn">celsius_a_fahrenheit</span>(t) <span class="kw">for</span> t <span class="kw">in</span> temps_c]
+<span class="fn">print</span>(temps_f)
+<span class="cm"># [32.0, 68.0, 98.6, 212.0]</span></pre>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>Puntos clave</h3>
+        <ul class="s">
+          <li>El <code>return</code> se puede usar <strong>dentro de print</strong> directamente</li>
+          <li>O guardarse en una variable para reusarlo</li>
+          <li>O usarse en una <strong>list comprehension</strong></li>
+          <li>Type hints <code>float -> float</code> dejan claro que entra y sale un decimal</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 25. EJ4 — ENUNCIADO ─────────────────────────────────── -->
+<div class="slide s-e" id="s25">
+  <div class="tag">Ejercicio 4 — Recursión</div>
   <div class="bdg or">Enunciado</div>
   <h2>Potencia recursiva</h2>
   <div class="g2">
     <div class="col">
       <div class="card pu">
         <h3>Objetivo</h3>
-        <p class="t" style="margin-top:8px">Crea una función recursiva <code>potencia(base, exp)</code> que calcule <code>base<sup>exp</sup></code> <strong>sin usar el operador **</strong>.</p>
+        <p class="t" style="margin-top:8px">Crea una función recursiva <code>potencia(base: int, exp: int) -> int</code> que calcule <code>base<sup>exp</sup></code> <strong>sin usar el operador <code>**</code></strong>.</p>
       </div>
       <div class="card mt">
         <h3>Pistas</h3>
         <ul class="s">
-          <li>Caso base: <code>exp == 0</code> → retorna <code>1</code></li>
-          <li>Caso recursivo: <code>base * potencia(base, exp - 1)</code></li>
+          <li>Caso base: <code>exp == 0</code> → retorna <code>1</code> (cualquier número a la 0 = 1)</li>
+          <li>Caso recursivo: <code>base × potencia(base, exp - 1)</code></li>
           <li><code>potencia(2, 3)</code> = <code>2 × 2 × 2</code> = <code>8</code></li>
         </ul>
       </div>
@@ -756,25 +966,22 @@ menor, mayor = <span class="fn">min_max</span>([<span class="num">3</span>, <spa
   </div>
 </div>
 
-<!-- ─── 20. EJ1 — SOLUCIÓN ──────────────────────────────────── -->
-<div class="slide s-sol" id="s20">
-  <div class="tag">Ejercicio 1 — Recursión</div>
+<!-- ─── 26. EJ4 — SOLUCIÓN ──────────────────────────────────── -->
+<div class="slide s-sol" id="s26">
+  <div class="tag">Ejercicio 4 — Recursión</div>
   <div class="bdg gr">Solución</div>
   <h2>Potencia recursiva</h2>
   <div class="g2">
     <div class="col">
-<pre><span class="kw">def</span> <span class="fn">potencia</span>(base, exp):
-    <span class="kw">if</span> exp == <span class="num">0</span>:            <span class="cm"># caso base</span>
+<pre><span class="kw">def</span> <span class="fn">potencia</span>(base: <span class="num">int</span>, exp: <span class="num">int</span>) -> <span class="num">int</span>:
+    <span class="kw">if</span> exp == <span class="num">0</span>:
         <span class="kw">return</span> <span class="num">1</span>
     <span class="kw">return</span> base * <span class="fn">potencia</span>(base, exp - <span class="num">1</span>)
 
 <span class="fn">print</span>(<span class="fn">potencia</span>(<span class="num">2</span>, <span class="num">3</span>))   <span class="cm"># 8</span>
 <span class="fn">print</span>(<span class="fn">potencia</span>(<span class="num">5</span>, <span class="num">0</span>))   <span class="cm"># 1</span>
 <span class="fn">print</span>(<span class="fn">potencia</span>(<span class="num">3</span>, <span class="num">4</span>))   <span class="cm"># 81</span></pre>
-      <div class="card sl" style="margin-top:11px">
-        <h3>Traza: potencia(2, 3)</h3>
-      </div>
-      <div class="stack" style="margin-top:8px">
+      <div class="stack" style="margin-top:14px">
         <div class="frame ret">potencia(2, 0) → 1</div>
         <div class="frame ret">potencia(2, 1) → 2 × 1 = 2</div>
         <div class="frame ret">potencia(2, 2) → 2 × 2 = 4</div>
@@ -785,130 +992,15 @@ menor, mayor = <span class="fn">min_max</span>([<span class="num">3</span>, <spa
       <div class="card gr">
         <h3>Puntos clave</h3>
         <ul class="s">
-          <li><code>exp == 0</code> → cualquier número a la 0 es <strong>1</strong></li>
-          <li>Cada llamada reduce <code>exp</code> en 1</li>
-          <li>Llegará inevitablemente al caso base</li>
+          <li><code>exp</code> se reduce en 1 cada llamada → llega al caso base</li>
+          <li>El <code>return</code> de cada nivel se multiplica por <code>base</code></li>
+          <li>Nótese que el return también puede usarse en cálculos más grandes</li>
         </ul>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── 21. EJ2 — ENUNCIADO ─────────────────────────────────── -->
-<div class="slide s-e" id="s21">
-  <div class="tag">Ejercicio 2 — Recursión</div>
-  <div class="bdg or">Enunciado</div>
-  <h2>Contar dígitos</h2>
-  <div class="g2">
-    <div class="col">
-      <div class="card gr">
-        <h3>Objetivo</h3>
-        <p class="t" style="margin-top:8px">Crea una función recursiva <code>contar_digitos(n)</code> que retorne cuántos dígitos tiene el número <code>n</code>.</p>
-      </div>
-      <div class="card mt">
-        <h3>Pistas</h3>
-        <ul class="s">
-          <li>Caso base: <code>n &lt; 10</code> → tiene <code>1</code> dígito</li>
-          <li>Caso recursivo: <code>1 + contar_digitos(n // 10)</code></li>
-          <li><code>n // 10</code> elimina el último dígito</li>
-          <li><code>contar_digitos(1234)</code> → <code>4</code></li>
-        </ul>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:200px">
-        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── 22. EJ2 — SOLUCIÓN ──────────────────────────────────── -->
-<div class="slide s-sol" id="s22">
-  <div class="tag">Ejercicio 2 — Recursión</div>
-  <div class="bdg gr">Solución</div>
-  <h2>Contar dígitos</h2>
-  <div class="g2">
-    <div class="col">
-<pre><span class="kw">def</span> <span class="fn">contar_digitos</span>(n):
-    <span class="kw">if</span> n &lt; <span class="num">10</span>:             <span class="cm"># caso base: 1 dígito</span>
-        <span class="kw">return</span> <span class="num">1</span>
-    <span class="kw">return</span> <span class="num">1</span> + <span class="fn">contar_digitos</span>(n // <span class="num">10</span>)
-
-<span class="fn">print</span>(<span class="fn">contar_digitos</span>(<span class="num">5</span>))      <span class="cm"># 1</span>
-<span class="fn">print</span>(<span class="fn">contar_digitos</span>(<span class="num">42</span>))     <span class="cm"># 2</span>
-<span class="fn">print</span>(<span class="fn">contar_digitos</span>(<span class="num">1234</span>))   <span class="cm"># 4</span>
-
-<span class="cm"># Traza: contar_digitos(1234)
-# → 1 + contar_digitos(123)
-# → 1 + 1 + contar_digitos(12)
-# → 1 + 1 + 1 + contar_digitos(1)
-# → 1 + 1 + 1 + 1 = 4</span></pre>
-    </div>
-    <div class="col">
-      <div class="card pu">
-        <h3>Puntos clave</h3>
-        <ul class="s">
-          <li><code>n // 10</code> es la <strong>división entera</strong>: 1234 → 123 → 12 → 1</li>
-          <li>El número de dígitos se reduce en 1 cada llamada</li>
-          <li>Cuando queda 1 dígito (<code>n &lt; 10</code>) es el caso base</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── 23. EJ3 — ENUNCIADO ─────────────────────────────────── -->
-<div class="slide s-e" id="s23">
-  <div class="tag">Ejercicio 3 — Función con return</div>
-  <div class="bdg or">Enunciado</div>
-  <h2>Calculadora de descuento</h2>
-  <div class="g2">
-    <div class="col">
-      <div class="card">
-        <h3>Objetivo</h3>
-        <p class="t" style="margin-top:8px">Crea una función <code>precio_final(precio, descuento)</code> que retorne el precio después de aplicar el descuento (en %). Si el descuento es mayor a 100, retorna <code>0</code>. Si es negativo, retorna el precio original.</p>
-      </div>
-      <div class="card mt">
-        <h3>Ejemplo</h3>
-        <p class="t" style="margin-top:8px;font-family:'Fira Code',monospace">precio_final(200, 25) → 150.0<br>precio_final(200, 110) → 0<br>precio_final(200, -5) → 200</p>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:200px">
-        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── 24. EJ3 — SOLUCIÓN ──────────────────────────────────── -->
-<div class="slide s-sol" id="s24">
-  <div class="tag">Ejercicio 3 — Función con return</div>
-  <div class="bdg gr">Solución</div>
-  <h2>Calculadora de descuento</h2>
-  <div class="g2">
-    <div class="col">
-<pre><span class="kw">def</span> <span class="fn">precio_final</span>(precio, descuento):
-    <span class="kw">if</span> descuento &lt; <span class="num">0</span>:
-        <span class="kw">return</span> precio
-    <span class="kw">if</span> descuento &gt; <span class="num">100</span>:
-        <span class="kw">return</span> <span class="num">0</span>
-    <span class="kw">return</span> precio * (<span class="num">1</span> - descuento / <span class="num">100</span>)
-
-<span class="fn">print</span>(<span class="fn">precio_final</span>(<span class="num">200</span>, <span class="num">25</span>))   <span class="cm"># 150.0</span>
-<span class="fn">print</span>(<span class="fn">precio_final</span>(<span class="num">200</span>, <span class="num">110</span>))  <span class="cm"># 0</span>
-<span class="fn">print</span>(<span class="fn">precio_final</span>(<span class="num">200</span>, -<span class="num">5</span>))   <span class="cm"># 200</span></pre>
-    </div>
-    <div class="col">
-      <div class="card gr">
-        <h3>Puntos clave</h3>
-        <ul class="s">
-          <li>Los <code>return</code> anticipados manejan los <strong>casos borde</strong></li>
-          <li>El último <code>return</code> es el caso <strong>normal</strong></li>
-          <li>Código plano, sin <code>if/elif/else</code> anidados</li>
-        </ul>
-      </div>
+<pre class="mt"><span class="cm"># Usar el return en una expresión</span>
+area = <span class="fn">potencia</span>(<span class="num">5</span>, <span class="num">2</span>)         <span class="cm"># 25</span>
+volumen = <span class="fn">potencia</span>(<span class="num">3</span>, <span class="num">3</span>)      <span class="cm"># 27</span>
+<span class="fn">print</span>(area + volumen)          <span class="cm"># 52</span></pre>
     </div>
   </div>
 </div>
