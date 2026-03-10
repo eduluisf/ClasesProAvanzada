@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python — POO</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ac:#D97706;--ac2:#B45309;--blue:#2563EB;--purple:#7C3AED;--green:#059669;--orange:#D97706;--text:#0F172A;--muted:#64748B}
+body{font-family:'Inter',sans-serif;background:#fff;color:var(--text);overflow:hidden;height:100vh;width:100vw}
+#deck{position:relative;width:100vw;height:100vh}
+
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:42px 70px;opacity:0;transform:translateX(56px);transition:opacity .3s ease,transform .3s ease;pointer-events:none;overflow:hidden}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-56px)}
+
+.s-hero{background:#fff;align-items:center;text-align:center}
+.s-sec{background:var(--ac);color:#fff}
+.s-sec.bl{background:var(--blue)}
+.s-sec.gr{background:var(--green)}
+.s-sec.pu{background:var(--purple)}
+.s-sec.dk{background:#0F172A}
+.s-c{background:#fff}
+.s-e{background:#F8FAFC}
+.s-sol{background:#fff}
+
+.tag{font-size:13px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--ac);margin-bottom:10px}
+.s-sec .tag,.s-sec.dk .tag{color:rgba(255,255,255,.75)}
+
+h1{font-size:clamp(58px,8vw,96px);font-weight:900;letter-spacing:-.03em;line-height:1;color:var(--text)}
+h2{font-size:clamp(38px,5vw,62px);font-weight:900;letter-spacing:-.02em;line-height:1.06;margin-bottom:18px}
+.s-sec h2{color:#fff}
+h3{font-size:clamp(18px,2.1vw,24px);font-weight:700;margin-bottom:8px}
+.sub{font-size:clamp(20px,2.4vw,28px);color:var(--muted);line-height:1.45;margin-top:12px}
+.s-sec .sub{color:rgba(255,255,255,.8)}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%}
+.col{display:flex;flex-direction:column;gap:11px}
+.mt{margin-top:14px}
+.w100{width:100%}
+
+.card{background:#FFF7ED;border-radius:14px;padding:16px 20px}
+.card.bl{background:#EFF6FF}
+.card.pu{background:#F5F3FF}
+.card.gr{background:#ECFDF5}
+.card.sl{background:#F1F5F9}
+.card.dk{background:#0F172A;color:#E2E8F0}
+
+li,p.t{font-size:clamp(16px,1.8vw,21px);line-height:1.55}
+li strong{font-weight:700}
+ul.s,ol.s{list-style:none;display:flex;flex-direction:column;gap:5px}
+ul.s li::before{content:'▸';color:var(--ac);font-weight:700;margin-right:8px}
+ol.s{counter-reset:ci}
+ol.s li{counter-increment:ci}
+ol.s li::before{content:counter(ci)'.';color:var(--ac);font-weight:700;margin-right:8px}
+
+pre{background:#1E293B;color:#E2E8F0;font-family:'Fira Code',monospace;font-size:clamp(13px,1.3vw,16px);line-height:1.65;border-radius:14px;padding:16px 20px;overflow:hidden;width:100%}
+.lbl{font-size:11px;font-weight:700;letter-spacing:.08em;display:inline-block;padding:2px 10px;border-radius:999px;margin-bottom:5px}
+.lbl.py{background:var(--ac);color:#fff}
+
+.kw{color:#93C5FD;font-weight:600}
+.fn{color:#6EE7B7}
+.str{color:#FDE68A}
+.num{color:#FCA5A5}
+.cm{color:#64748B;font-style:italic}
+.cl{color:#FDBA74;font-weight:700}
+
+.bdg{display:inline-block;padding:3px 13px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:8px}
+.bdg.gr{background:var(--green);color:#fff}
+.bdg.or{background:#FEF3C7;color:#92400E;border:1px solid #FCD34D}
+.bdg.bl{background:var(--blue);color:#fff}
+.bdg.pu{background:var(--purple);color:#fff}
+
+table{width:100%;border-collapse:collapse}
+th{background:var(--ac);color:#fff;padding:10px 14px;text-align:left;font-size:15px;font-weight:700}
+td{padding:9px 14px;font-size:15px;border-bottom:1px solid #E2E8F0}
+tr:nth-child(even) td{background:#FFF7ED}
+code{font-family:'Fira Code',monospace;background:#FEF3C7;padding:2px 6px;border-radius:4px;font-size:.9em;color:#92400E}
+
+.hero-deco{position:absolute;top:16px;right:44px;font-size:120px;font-weight:900;opacity:.05;color:var(--ac);line-height:1;user-select:none}
+.hero-pill{display:inline-block;background:var(--ac);color:#fff;padding:7px 22px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px}
+
+#prog{position:fixed;bottom:0;left:0;height:4px;background:var(--ac);transition:width .3s;z-index:100}
+#nav{position:fixed;bottom:20px;right:32px;display:flex;align-items:center;gap:9px;z-index:100}
+.nb{width:40px;height:40px;border-radius:50%;border:2px solid var(--ac);background:#fff;color:var(--ac);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;transition:background .2s,color .2s;box-shadow:0 2px 10px rgba(217,119,6,.15)}
+.nb:hover{background:var(--ac);color:#fff}
+#cnt{font-size:12px;font-weight:700;color:var(--muted);min-width:44px;text-align:center}
+#home{position:fixed;top:18px;left:24px;z-index:100;text-decoration:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#64748B;background:#fff;border:1px solid #e2e8f0;border-radius:999px;padding:5px 14px;box-shadow:0 1px 4px rgba(0,0,0,.08);transition:border-color .2s,color .2s}
+#home:hover{color:#0F172A;border-color:#0F172A}
+
+/* ── QUIZ OVERLAY ─────────────────────────────────────────── */
+#quiz{position:fixed;inset:0;z-index:300;background:#f9fafb;overflow-y:auto;display:none;padding:2.5rem 1.5rem 4rem}
+#quiz.open{display:block}
+.qwrap{max-width:720px;margin:0 auto}
+.qheader{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;padding-bottom:1rem;border-bottom:2px solid #111}
+.qheader h1{font-size:1.6rem;font-weight:900;letter-spacing:-.02em}
+.qclose{background:none;border:1px solid #ddd;border-radius:999px;padding:5px 16px;font-size:13px;font-weight:700;cursor:pointer;color:#555;transition:border-color .15s,color .15s}
+.qclose:hover{border-color:#111;color:#111}
+.pregunta{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1rem}
+.pregunta p{font-size:1rem;font-weight:700;margin-bottom:.75rem;line-height:1.45}
+.pregunta pre{font-size:.8rem;padding:10px 14px;border-radius:8px;margin-bottom:.75rem}
+.opcion{display:flex;align-items:flex-start;gap:.6rem;padding:.45rem .5rem;border-radius:6px;cursor:pointer;transition:background .12s}
+.opcion:hover{background:#f3f4f6}
+.opcion input{margin-top:3px;accent-color:var(--ac);flex-shrink:0}
+.opcion label{font-size:.95rem;cursor:pointer;line-height:1.4}
+.pregunta.correcta{border-color:#059669;background:#f0fdf4}
+.pregunta.incorrecta{border-color:#DC2626;background:#fef2f2}
+.resultado-tag{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:.6rem}
+.pregunta.correcta .resultado-tag{color:#059669}
+.pregunta.incorrecta .resultado-tag{color:#DC2626}
+.explicacion{font-size:.88rem;color:#555;margin-top:.4rem;line-height:1.45}
+.qbtn{display:block;width:100%;padding:.9rem;background:var(--ac);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:800;cursor:pointer;margin-top:1.5rem;transition:background .2s}
+.qbtn:hover{background:var(--ac2)}
+.qbtn:disabled{background:#d1d5db;cursor:not-allowed}
+#score-box{display:none;background:#fff;border:2px solid var(--ac);border-radius:12px;padding:1.5rem;text-align:center;margin-top:1.5rem}
+#score-box h2{font-size:2rem;font-weight:900;color:var(--ac)}
+#score-box p{color:#555;margin-top:.4rem}
+
+/* quiz button en slide */
+.quiz-btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:14px 30px;font-size:1rem;font-weight:800;cursor:pointer;margin-top:1.5rem;transition:background .2s;font-family:'Inter',sans-serif}
+.quiz-btn:hover{background:var(--ac2)}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- ─── 1. HERO ─────────────────────────────────────────────── -->
+<div class="slide s-hero active" id="s1">
+  <div class="hero-deco">{ }</div>
+  <div class="hero-pill">Clase 03</div>
+  <h1><span style="color:var(--ac)">POO</span><br>en Python</h1>
+  <p class="sub">Clases · Objetos · Métodos<br>Encapsulamiento · Herencia</p>
+</div>
+
+<!-- ─── 2. SEC QUÉ ES POO ─────────────────────────────────── -->
+<div class="slide s-sec" id="s2">
+  <div class="tag">Módulo 01</div>
+  <h2>¿Qué es POO?</h2>
+  <p class="sub">Programación Orientada a Objetos — modelar el mundo en código</p>
+</div>
+
+<!-- ─── 3. PARADIGMA ─────────────────────────────────────── -->
+<div class="slide s-c" id="s3">
+  <div class="tag">POO</div>
+  <h2>Paradigma orientado a objetos</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card sl">
+        <h3>Programación procedural (lo que conocemos)</h3>
+        <ul class="s">
+          <li>El programa es una <strong>lista de instrucciones</strong></li>
+          <li>Los datos y las funciones están <strong>separados</strong></li>
+          <li>Funciona bien para problemas pequeños</li>
+        </ul>
+      </div>
+<pre><span class="cm"># Procedural — datos sueltos</span>
+nombre = <span class="str">"Ana"</span>
+saldo  = <span class="num">1000</span>
+
+<span class="kw">def</span> <span class="fn">depositar</span>(saldo, monto):
+    <span class="kw">return</span> saldo + monto
+
+saldo = <span class="fn">depositar</span>(saldo, <span class="num">500</span>)</pre>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>POO — datos + comportamiento juntos</h3>
+        <ul class="s">
+          <li>El programa se modela con <strong>objetos</strong></li>
+          <li>Cada objeto tiene sus <strong>datos</strong> y sus <strong>acciones</strong></li>
+          <li>Más organizado, reutilizable y escalable</li>
+        </ul>
+      </div>
+<pre><span class="cm"># POO — todo junto en un objeto</span>
+cuenta = <span class="cl">CuentaBancaria</span>(<span class="str">"Ana"</span>, <span class="num">1000</span>)
+cuenta.<span class="fn">depositar</span>(<span class="num">500</span>)
+<span class="fn">print</span>(cuenta.<span class="fn">saldo</span>())  <span class="cm"># 1500</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 4. CLASES Y OBJETOS ──────────────────────────────── -->
+<div class="slide s-c" id="s4">
+  <div class="tag">POO</div>
+  <h2>Clase vs Objeto</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Clase = molde / plantilla</h3>
+        <ul class="s">
+          <li>Define <strong>qué atributos</strong> tiene (datos)</li>
+          <li>Define <strong>qué métodos</strong> tiene (acciones)</li>
+          <li>No ocupa memoria de datos — es solo la <strong>descripción</strong></li>
+        </ul>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Objeto = instancia concreta</h3>
+        <ul class="s">
+          <li>Se crea <strong>a partir</strong> de una clase</li>
+          <li>Tiene sus propios <strong>valores reales</strong> de atributos</li>
+          <li>De una clase se pueden crear <strong>muchos objetos</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Analogía</h3>
+        <p class="t" style="margin-top:8px">La <strong>clase</strong> <code>Persona</code> es como el <em>plano</em> de una casa — describe cómo será.<br><br>Los <strong>objetos</strong> <code>ana</code> y <code>luis</code> son casas reales construidas con ese plano — cada una con sus propios valores.</p>
+      </div>
+<pre><span class="cl">Persona</span>  <span class="cm">← clase (el molde)</span>
+  - nombre: str
+  - edad: int
+  - saludar()
+
+ana  = <span class="cl">Persona</span>(<span class="str">"Ana"</span>,  <span class="num">20</span>)  <span class="cm">← objeto</span>
+luis = <span class="cl">Persona</span>(<span class="str">"Luis"</span>, <span class="num">25</span>)  <span class="cm">← objeto</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 5. SEC CLASES EN PYTHON ──────────────────────────── -->
+<div class="slide s-sec bl" id="s5">
+  <div class="tag">Módulo 02</div>
+  <h2>Clases en Python</h2>
+  <p class="sub">__init__, self, atributos y métodos</p>
+</div>
+
+<!-- ─── 6. DEFINIR UNA CLASE ────────────────────────────── -->
+<div class="slide s-c" id="s6">
+  <div class="tag">Clases</div>
+  <h2><code style="font-size:.75em">__init__</code> y <code style="font-size:.75em">self</code></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3>__init__ — el constructor</h3>
+        <ul class="s">
+          <li>Se ejecuta <strong>automáticamente</strong> al crear el objeto</li>
+          <li>Su trabajo: <strong>inicializar los atributos</strong></li>
+          <li>Siempre recibe <code>self</code> como primer parámetro</li>
+        </ul>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>self — el objeto mismo</h3>
+        <ul class="s">
+          <li>Representa la <strong>instancia actual</strong></li>
+          <li>Con <code>self.atributo</code> guardamos datos <strong>en el objeto</strong></li>
+          <li>Sin <code>self</code>, la variable solo existe durante <code>__init__</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">Persona</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nombre: <span class="num">str</span>, edad: <span class="num">int</span>):
+        self.nombre = nombre  <span class="cm"># atributo de instancia</span>
+        self.edad   = edad
+
+<span class="cm"># Crear objetos</span>
+ana  = <span class="cl">Persona</span>(<span class="str">"Ana"</span>, <span class="num">20</span>)
+luis = <span class="cl">Persona</span>(<span class="str">"Luis"</span>, <span class="num">25</span>)
+
+<span class="cm"># Acceder a atributos</span>
+<span class="fn">print</span>(ana.nombre)   <span class="cm"># Ana</span>
+<span class="fn">print</span>(luis.edad)    <span class="cm"># 25</span>
+
+<span class="cm"># Cada objeto tiene sus propios valores</span>
+<span class="fn">print</span>(ana.nombre == luis.nombre)  <span class="cm"># False</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 7. MÉTODOS DE INSTANCIA ─────────────────────────── -->
+<div class="slide s-c" id="s7">
+  <div class="tag">Clases</div>
+  <h2>Métodos de instancia</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3>¿Qué son?</h3>
+        <ul class="s">
+          <li>Funciones <strong>dentro de una clase</strong></li>
+          <li>Siempre reciben <code>self</code> como primer parámetro</li>
+          <li>Acceden a los atributos del objeto via <code>self.x</code></li>
+          <li>Pueden retornar valores o solo hacer acciones</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>Llamar un método</h3>
+        <p class="t" style="margin-top:6px;font-family:'Fira Code',monospace">objeto.metodo(args)</p>
+        <p class="t" style="margin-top:6px;color:var(--muted)">El <code>self</code> se pasa automáticamente — no lo escribes al llamar.</p>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">Persona</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nombre: <span class="num">str</span>, edad: <span class="num">int</span>):
+        self.nombre = nombre
+        self.edad   = edad
+
+    <span class="kw">def</span> <span class="fn">saludar</span>(self) -> <span class="kw">None</span>:
+        <span class="fn">print</span>(<span class="str">f"Hola, soy {self.nombre}"</span>)
+
+    <span class="kw">def</span> <span class="fn">es_mayor_de_edad</span>(self) -> <span class="num">bool</span>:
+        <span class="kw">return</span> self.edad >= <span class="num">18</span>
+
+    <span class="kw">def</span> <span class="fn">cumpleanos</span>(self) -> <span class="kw">None</span>:
+        self.edad += <span class="num">1</span>   <span class="cm"># modifica el atributo</span>
+
+ana = <span class="cl">Persona</span>(<span class="str">"Ana"</span>, <span class="num">17</span>)
+ana.<span class="fn">saludar</span>()                     <span class="cm"># Hola, soy Ana</span>
+<span class="fn">print</span>(ana.<span class="fn">es_mayor_de_edad</span>())    <span class="cm"># False</span>
+ana.<span class="fn">cumpleanos</span>()
+<span class="fn">print</span>(ana.<span class="fn">es_mayor_de_edad</span>())    <span class="cm"># True</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 8. __STR__ ──────────────────────────────────────── -->
+<div class="slide s-c" id="s8">
+  <div class="tag">Clases</div>
+  <h2><code style="font-size:.75em">__str__</code> — representación legible</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3>¿Qué es __str__?</h3>
+        <ul class="s">
+          <li>Método especial que define <strong>cómo se muestra</strong> el objeto</li>
+          <li>Se llama automáticamente cuando usas <code>print(objeto)</code></li>
+          <li>Debe retornar un <strong>string</strong></li>
+          <li>Sin él, <code>print</code> muestra algo como <code>&lt;Persona object at 0x...&gt;</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">Persona</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nombre: <span class="num">str</span>, edad: <span class="num">int</span>):
+        self.nombre = nombre
+        self.edad   = edad
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"Persona({self.nombre}, {self.edad})"</span>
+
+ana = <span class="cl">Persona</span>(<span class="str">"Ana"</span>, <span class="num">20</span>)
+
+<span class="cm"># Sin __str__:  &lt;__main__.Persona object at 0x10f...&gt;</span>
+<span class="cm"># Con __str__:</span>
+<span class="fn">print</span>(ana)              <span class="cm"># Persona(Ana, 20)</span>
+<span class="fn">print</span>(<span class="num">str</span>(ana))         <span class="cm"># Persona(Ana, 20)</span>
+<span class="fn">print</span>(<span class="str">f"Alumna: {ana}"</span>) <span class="cm"># Alumna: Persona(Ana, 20)</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 9. SEC ENCAPSULAMIENTO ───────────────────────────── -->
+<div class="slide s-sec" id="s9">
+  <div class="tag">Módulo 03</div>
+  <h2>Encapsulamiento</h2>
+  <p class="sub">Proteger el estado interno de un objeto</p>
+</div>
+
+<!-- ─── 10. ATRIBUTOS PRIVADOS ──────────────────────────── -->
+<div class="slide s-c" id="s10">
+  <div class="tag">Encapsulamiento</div>
+  <h2>Atributos <span style="color:var(--ac)">privados</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Convención en Python</h3>
+        <ul class="s">
+          <li><code>_atributo</code> → por convención <strong>privado</strong> — no acceder desde fuera</li>
+          <li><code>__atributo</code> → privado fuerte — Python lo renombra internamente</li>
+          <li>Python <strong>no impide</strong> el acceso, pero es un contrato de uso</li>
+        </ul>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>¿Para qué sirve?</h3>
+        <ul class="s">
+          <li>Evitar que el saldo de una cuenta se cambie <strong>directamente</strong></li>
+          <li>Forzar que los cambios pasen por <strong>métodos controlados</strong></li>
+          <li>Validar los valores antes de asignarlos</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">CuentaBancaria</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, titular: <span class="num">str</span>, saldo: <span class="num">float</span>):
+        self.titular = titular
+        self._saldo  = saldo   <span class="cm"># _ = privado por convención</span>
+
+    <span class="kw">def</span> <span class="fn">depositar</span>(self, monto: <span class="num">float</span>) -> <span class="kw">None</span>:
+        <span class="kw">if</span> monto > <span class="num">0</span>:
+            self._saldo += monto
+
+    <span class="kw">def</span> <span class="fn">get_saldo</span>(self) -> <span class="num">float</span>:
+        <span class="kw">return</span> self._saldo
+
+c = <span class="cl">CuentaBancaria</span>(<span class="str">"Ana"</span>, <span class="num">1000</span>)
+c.<span class="fn">depositar</span>(<span class="num">500</span>)
+<span class="fn">print</span>(c.<span class="fn">get_saldo</span>())    <span class="cm"># 1500</span>
+
+<span class="cm"># No hacer esto:</span>
+c._saldo = -<span class="num">99999</span>       <span class="cm"># viola la convención</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 11. PROPERTY ────────────────────────────────────── -->
+<div class="slide s-c" id="s11">
+  <div class="tag">Encapsulamiento</div>
+  <h2><code style="font-size:.75em">@property</code> — getter elegante</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>¿Qué es @property?</h3>
+        <ul class="s">
+          <li>Permite acceder a un atributo privado <strong>como si fuera público</strong></li>
+          <li>El getter se llama con <code>objeto.atributo</code> (sin paréntesis)</li>
+          <li>El setter valida antes de asignar</li>
+          <li>Patrón más "Pythónico" que <code>get_x()</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">Temperatura</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, grados: <span class="num">float</span>):
+        self._grados = grados
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">grados</span>(self) -> <span class="num">float</span>:
+        <span class="kw">return</span> self._grados
+
+    <span class="kw">@grados.setter</span>
+    <span class="kw">def</span> <span class="fn">grados</span>(self, valor: <span class="num">float</span>) -> <span class="kw">None</span>:
+        <span class="kw">if</span> valor < -<span class="num">273.15</span>:
+            <span class="kw">raise</span> <span class="cl">ValueError</span>(<span class="str">"Bajo cero absoluto"</span>)
+        self._grados = valor
+
+t = <span class="cl">Temperatura</span>(<span class="num">25.0</span>)
+<span class="fn">print</span>(t.grados)   <span class="cm"># 25.0  ← sin paréntesis</span>
+t.grados = <span class="num">30</span>    <span class="cm"># usa el setter</span>
+<span class="fn">print</span>(t.grados)   <span class="cm"># 30</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 12. SEC HERENCIA ─────────────────────────────────── -->
+<div class="slide s-sec gr" id="s12">
+  <div class="tag">Módulo 04</div>
+  <h2>Herencia</h2>
+  <p class="sub">Una clase puede heredar atributos y métodos de otra</p>
+</div>
+
+<!-- ─── 13. CLASE BASE Y CLASE HIJA ─────────────────────── -->
+<div class="slide s-c" id="s13">
+  <div class="tag">Herencia</div>
+  <h2>Clase base y clase <span style="color:var(--green)">hija</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>¿Qué es herencia?</h3>
+        <ul class="s">
+          <li>La clase hija <strong>recibe</strong> todos los atributos y métodos de la padre</li>
+          <li>Puede <strong>agregar</strong> nuevos atributos y métodos</li>
+          <li>Puede <strong>sobreescribir</strong> (override) métodos existentes</li>
+          <li>Evita repetir código — DRY aplicado a clases</li>
+        </ul>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>Sintaxis</h3>
+        <p class="t" style="margin-top:6px;font-family:'Fira Code',monospace"><span style="color:var(--blue);font-weight:700">class</span> <span style="color:#FDBA74;font-weight:700">Hija</span>(<span style="color:#FDBA74;font-weight:700">Padre</span>):</p>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nombre: <span class="num">str</span>):
+        self.nombre = nombre
+
+    <span class="kw">def</span> <span class="fn">describir</span>(self) -> <span class="kw">None</span>:
+        <span class="fn">print</span>(<span class="str">f"Soy {self.nombre}"</span>)
+
+    <span class="kw">def</span> <span class="fn">sonido</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">"..."</span>
+
+<span class="cm"># Perro hereda de Animal</span>
+<span class="kw">class</span> <span class="cl">Perro</span>(<span class="cl">Animal</span>):
+    <span class="kw">def</span> <span class="fn">sonido</span>(self) -> <span class="num">str</span>:   <span class="cm"># sobreescribe</span>
+        <span class="kw">return</span> <span class="str">"Guau"</span>
+
+p = <span class="cl">Perro</span>(<span class="str">"Rex"</span>)
+p.<span class="fn">describir</span>()           <span class="cm"># Soy Rex  ← heredado</span>
+<span class="fn">print</span>(p.<span class="fn">sonido</span>())       <span class="cm"># Guau     ← sobreescrito</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 14. SUPER() ─────────────────────────────────────── -->
+<div class="slide s-c" id="s14">
+  <div class="tag">Herencia</div>
+  <h2><code style="font-size:.8em">super()</code> y extender el constructor</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>¿Para qué sirve super()?</h3>
+        <ul class="s">
+          <li>Llama al método del <strong>padre</strong> desde la clase hija</li>
+          <li>En <code>__init__</code>: inicializa los atributos del padre <strong>sin repetir código</strong></li>
+          <li>Luego la hija puede agregar sus propios atributos</li>
+        </ul>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>Patrón típico</h3>
+        <ol class="s" style="margin-top:6px">
+          <li>Llama <code>super().__init__(args)</code></li>
+          <li>Agrega los atributos propios de la hija</li>
+        </ol>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">Empleado</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nombre: <span class="num">str</span>, sueldo: <span class="num">float</span>):
+        self.nombre = nombre
+        self.sueldo = sueldo
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"{self.nombre} (${self.sueldo})"</span>
+
+<span class="kw">class</span> <span class="cl">Gerente</span>(<span class="cl">Empleado</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nombre: <span class="num">str</span>, sueldo: <span class="num">float</span>, depto: <span class="num">str</span>):
+        <span class="fn">super</span>().__fn>__init__</span>(nombre, sueldo)  <span class="cm"># hereda init padre</span>
+        self.depto = depto   <span class="cm"># atributo propio</span>
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"{self.nombre} — Gerente de {self.depto}"</span>
+
+g = <span class="cl">Gerente</span>(<span class="str">"Luis"</span>, <span class="num">5000</span>, <span class="str">"Sistemas"</span>)
+<span class="fn">print</span>(g)  <span class="cm"># Luis — Gerente de Sistemas</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 15. ISINSTANCE ───────────────────────────────────── -->
+<div class="slide s-c" id="s15">
+  <div class="tag">Herencia</div>
+  <h2><code style="font-size:.8em">isinstance()</code> y polimorfismo</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>isinstance(obj, Clase)</h3>
+        <ul class="s">
+          <li>Retorna <code>True</code> si el objeto es de esa clase <strong>o de una hija</strong></li>
+          <li>Útil para verificar tipos en tiempo de ejecución</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>Polimorfismo</h3>
+        <ul class="s">
+          <li>Objetos distintos responden al <strong>mismo mensaje</strong> de formas diferentes</li>
+          <li>Puedes tratar a <code>Perro</code> y <code>Gato</code> como <code>Animal</code> — cada uno hace su <code>sonido()</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">Gato</span>(<span class="cl">Animal</span>):
+    <span class="kw">def</span> <span class="fn">sonido</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">"Miau"</span>
+
+animales = [<span class="cl">Perro</span>(<span class="str">"Rex"</span>), <span class="cl">Gato</span>(<span class="str">"Luna"</span>), <span class="cl">Perro</span>(<span class="str">"Max"</span>)]
+
+<span class="cm"># Polimorfismo — mismo método, distinto resultado</span>
+<span class="kw">for</span> a <span class="kw">in</span> animales:
+    <span class="fn">print</span>(<span class="str">f"{a.nombre}: {a.<span class="fn">sonido</span>()}"</span>)
+<span class="cm"># Rex: Guau / Luna: Miau / Max: Guau</span>
+
+<span class="cm"># isinstance</span>
+<span class="fn">print</span>(<span class="fn">isinstance</span>(animales[<span class="num">0</span>], <span class="cl">Perro</span>))   <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">isinstance</span>(animales[<span class="num">0</span>], <span class="cl">Animal</span>))  <span class="cm"># True (es hijo)</span>
+<span class="fn">print</span>(<span class="fn">isinstance</span>(animales[<span class="num">0</span>], <span class="cl">Gato</span>))    <span class="cm"># False</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 16. SEC EJERCICIOS ────────────────────────────────── -->
+<div class="slide s-sec dk" id="s16">
+  <div class="tag">Práctica</div>
+  <h2>Ejercicios</h2>
+  <p class="sub">Primero léelo, intenta resolverlo y luego revisa la solución</p>
+</div>
+
+<!-- ─── 17. EJ1 — ENUNCIADO ─────────────────────────────── -->
+<div class="slide s-e" id="s17">
+  <div class="tag">Ejercicio 1 — Clase básica</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Cuenta Bancaria</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Crea la clase <code>CuentaBancaria</code> con los atributos y métodos indicados.</p>
+      </div>
+      <div class="card gr mt">
+        <h3>Atributos</h3>
+        <ul class="s">
+          <li><code>titular: str</code></li>
+          <li><code>_saldo: float</code> (privado)</li>
+        </ul>
+      </div>
+      <div class="card bl mt">
+        <h3>Métodos</h3>
+        <ul class="s">
+          <li><code>depositar(monto: float)</code> — solo si monto > 0</li>
+          <li><code>retirar(monto: float) -> bool</code> — retorna <code>True</code> si había fondos, <code>False</code> si no</li>
+          <li><code>get_saldo() -> float</code></li>
+          <li><code>__str__</code> → <em>"Ana — Saldo: $1500.0"</em></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:240px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 18. EJ1 — SOLUCIÓN ──────────────────────────────── -->
+<div class="slide s-sol" id="s18">
+  <div class="tag">Ejercicio 1 — Clase básica</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Cuenta Bancaria</h2>
+  <div class="g2">
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">CuentaBancaria</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, titular: <span class="num">str</span>, saldo: <span class="num">float</span>):
+        self.titular = titular
+        self._saldo  = saldo
+
+    <span class="kw">def</span> <span class="fn">depositar</span>(self, monto: <span class="num">float</span>) -> <span class="kw">None</span>:
+        <span class="kw">if</span> monto > <span class="num">0</span>:
+            self._saldo += monto
+
+    <span class="kw">def</span> <span class="fn">retirar</span>(self, monto: <span class="num">float</span>) -> <span class="num">bool</span>:
+        <span class="kw">if</span> monto > self._saldo:
+            <span class="kw">return</span> <span class="kw">False</span>
+        self._saldo -= monto
+        <span class="kw">return</span> <span class="kw">True</span>
+
+    <span class="kw">def</span> <span class="fn">get_saldo</span>(self) -> <span class="num">float</span>:
+        <span class="kw">return</span> self._saldo
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"{self.titular} — Saldo: ${self._saldo}"</span></pre>
+    </div>
+    <div class="col">
+<pre><span class="cm"># Prueba</span>
+c = <span class="cl">CuentaBancaria</span>(<span class="str">"Ana"</span>, <span class="num">1000</span>)
+c.<span class="fn">depositar</span>(<span class="num">500</span>)
+<span class="fn">print</span>(c.<span class="fn">get_saldo</span>())      <span class="cm"># 1500</span>
+
+ok = c.<span class="fn">retirar</span>(<span class="num">200</span>)
+<span class="fn">print</span>(ok)                  <span class="cm"># True</span>
+<span class="fn">print</span>(c.<span class="fn">get_saldo</span>())      <span class="cm"># 1300</span>
+
+fallido = c.<span class="fn">retirar</span>(<span class="num">9999</span>)
+<span class="fn">print</span>(fallido)             <span class="cm"># False</span>
+<span class="fn">print</span>(c)                   <span class="cm"># Ana — Saldo: $1300</span></pre>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Puntos clave</h3>
+        <ul class="s">
+          <li><code>retirar</code> retorna <code>bool</code> — el llamador sabe si funcionó</li>
+          <li><code>_saldo</code> solo se modifica dentro de la clase</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 19. EJ2 — ENUNCIADO ─────────────────────────────── -->
+<div class="slide s-e" id="s19">
+  <div class="tag">Ejercicio 2 — Métodos con return</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Estudiante con notas</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Crea la clase <code>Estudiante</code> que gestione las notas de un alumno.</p>
+      </div>
+      <div class="card mt">
+        <h3>Atributos</h3>
+        <ul class="s">
+          <li><code>nombre: str</code></li>
+          <li><code>_notas: list</code> (lista vacía al inicio)</li>
+        </ul>
+      </div>
+      <div class="card bl mt">
+        <h3>Métodos</h3>
+        <ul class="s">
+          <li><code>agregar_nota(nota: float)</code></li>
+          <li><code>promedio() -> float</code> — retorna 0 si no hay notas</li>
+          <li><code>aprobo() -> bool</code> — promedio >= 6</li>
+          <li><code>__str__</code> → <em>"Ana — Promedio: 8.0"</em></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:260px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 20. EJ2 — SOLUCIÓN ──────────────────────────────── -->
+<div class="slide s-sol" id="s20">
+  <div class="tag">Ejercicio 2 — Métodos con return</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Estudiante con notas</h2>
+  <div class="g2">
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">Estudiante</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nombre: <span class="num">str</span>):
+        self.nombre  = nombre
+        self._notas  = []
+
+    <span class="kw">def</span> <span class="fn">agregar_nota</span>(self, nota: <span class="num">float</span>) -> <span class="kw">None</span>:
+        self._notas.<span class="fn">append</span>(nota)
+
+    <span class="kw">def</span> <span class="fn">promedio</span>(self) -> <span class="num">float</span>:
+        <span class="kw">if not</span> self._notas:
+            <span class="kw">return</span> <span class="num">0</span>
+        <span class="kw">return</span> <span class="fn">sum</span>(self._notas) / <span class="fn">len</span>(self._notas)
+
+    <span class="kw">def</span> <span class="fn">aprobo</span>(self) -> <span class="num">bool</span>:
+        <span class="kw">return</span> self.<span class="fn">promedio</span>() >= <span class="num">6</span>
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"{self.nombre} — Promedio: {self.<span class="fn">promedio</span>():.1f}"</span></pre>
+    </div>
+    <div class="col">
+<pre><span class="cm"># Prueba</span>
+e = <span class="cl">Estudiante</span>(<span class="str">"Ana"</span>)
+<span class="kw">for</span> nota <span class="kw">in</span> [<span class="num">8</span>, <span class="num">9</span>, <span class="num">7</span>, <span class="num">10</span>]:
+    e.<span class="fn">agregar_nota</span>(nota)
+
+<span class="fn">print</span>(e.<span class="fn">promedio</span>())  <span class="cm"># 8.5</span>
+<span class="fn">print</span>(e.<span class="fn">aprobo</span>())    <span class="cm"># True</span>
+<span class="fn">print</span>(e)             <span class="cm"># Ana — Promedio: 8.5</span>
+
+e2 = <span class="cl">Estudiante</span>(<span class="str">"Luis"</span>)
+e2.<span class="fn">agregar_nota</span>(<span class="num">3</span>)
+<span class="fn">print</span>(e2.<span class="fn">aprobo</span>())   <span class="cm"># False</span></pre>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Puntos clave</h3>
+        <ul class="s">
+          <li><code>aprobo()</code> reutiliza <code>promedio()</code> — DRY</li>
+          <li><code>_notas = []</code> en <code>__init__</code> evita el bug de lista compartida</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 21. EJ3 — ENUNCIADO ─────────────────────────────── -->
+<div class="slide s-e" id="s21">
+  <div class="tag">Ejercicio 3 — Herencia</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Jerarquía de vehículos</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Crea una jerarquía de clases para vehículos usando herencia y <code>super()</code>.</p>
+      </div>
+      <div class="card mt">
+        <h3>Clase base: Vehiculo</h3>
+        <ul class="s">
+          <li>Atributos: <code>marca: str</code>, <code>velocidad_max: int</code></li>
+          <li>Método: <code>describir() -> str</code></li>
+        </ul>
+      </div>
+      <div class="card bl mt">
+        <h3>Clase hija: Auto(Vehiculo)</h3>
+        <ul class="s">
+          <li>Atributo extra: <code>puertas: int</code></li>
+          <li>Sobreescribe <code>describir()</code> para incluir las puertas</li>
+        </ul>
+      </div>
+      <div class="card pu mt">
+        <h3>Clase hija: Moto(Vehiculo)</h3>
+        <ul class="s">
+          <li>Atributo extra: <code>tipo: str</code> (ej: "deportiva")</li>
+          <li>Sobreescribe <code>describir()</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:260px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 22. EJ3 — SOLUCIÓN ──────────────────────────────── -->
+<div class="slide s-sol" id="s22">
+  <div class="tag">Ejercicio 3 — Herencia</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Jerarquía de vehículos</h2>
+  <div class="g2">
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">Vehiculo</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, marca: <span class="num">str</span>, vel_max: <span class="num">int</span>):
+        self.marca    = marca
+        self.vel_max  = vel_max
+
+    <span class="kw">def</span> <span class="fn">describir</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"{self.marca} — {self.vel_max} km/h"</span>
+
+<span class="kw">class</span> <span class="cl">Auto</span>(<span class="cl">Vehiculo</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, marca, vel_max, puertas: <span class="num">int</span>):
+        <span class="fn">super</span>().__fn>__init__</span>(marca, vel_max)
+        self.puertas = puertas
+
+    <span class="kw">def</span> <span class="fn">describir</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"{self.marca} — {self.puertas} puertas"</span>
+
+<span class="kw">class</span> <span class="cl">Moto</span>(<span class="cl">Vehiculo</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, marca, vel_max, tipo: <span class="num">str</span>):
+        <span class="fn">super</span>().__fn>__init__</span>(marca, vel_max)
+        self.tipo = tipo
+
+    <span class="kw">def</span> <span class="fn">describir</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"{self.marca} ({self.tipo})"</span></pre>
+    </div>
+    <div class="col">
+<pre><span class="fn">vehiculos</span> = [
+    <span class="cl">Auto</span>(<span class="str">"Toyota"</span>, <span class="num">180</span>, <span class="num">4</span>),
+    <span class="cl">Moto</span>(<span class="str">"Honda"</span>,  <span class="num">220</span>, <span class="str">"deportiva"</span>),
+    <span class="cl">Auto</span>(<span class="str">"Ford"</span>,   <span class="num">160</span>, <span class="num">2</span>),
+]
+
+<span class="kw">for</span> v <span class="kw">in</span> vehiculos:
+    <span class="fn">print</span>(v.<span class="fn">describir</span>())
+<span class="cm"># Toyota — 4 puertas
+# Honda (deportiva)
+# Ford — 2 puertas</span>
+
+<span class="fn">print</span>(<span class="fn">isinstance</span>(vehiculos[<span class="num">0</span>], <span class="cl">Vehiculo</span>))  <span class="cm"># True</span></pre>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Puntos clave</h3>
+        <ul class="s">
+          <li><code>super().__init__</code> evita repetir <code>self.marca = marca</code></li>
+          <li>Polimorfismo: mismo <code>describir()</code>, resultados distintos</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 23. QUIZ SLIDE ────────────────────────────────────── -->
+<div class="slide s-e" id="s23">
+  <div class="tag">Evaluación</div>
+  <h2>Quiz teórico</h2>
+  <p class="sub" style="margin-bottom:1.5rem">8 preguntas sobre los conceptos vistos en clase</p>
+  <button class="quiz-btn" onclick="document.getElementById('quiz').classList.add('open')">
+    &#9998;&nbsp; Abrir quiz y calificar
+  </button>
+  <p class="t" style="color:var(--muted);margin-top:1rem;font-size:clamp(13px,1.4vw,16px)">Responde todas las preguntas y presiona <strong>Calificar</strong> para ver tu resultado al instante.</p>
+</div>
+
+<!-- ─── 24. RESUMEN ──────────────────────────────────────── -->
+<div class="slide s-c" id="s24">
+  <div class="tag">Resumen</div>
+  <h2>Lo que aprendimos</h2>
+  <div class="g2" style="margin-bottom:14px">
+    <div class="card bl">
+      <h3>Clases y Objetos</h3>
+      <ul class="s" style="margin-top:8px">
+        <li><code>class Nombre:</code></li>
+        <li><code>__init__(self, ...)</code></li>
+        <li><code>self.atributo</code></li>
+        <li><code>__str__</code> para print</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Métodos</h3>
+      <ul class="s" style="margin-top:8px">
+        <li>Siempre reciben <code>self</code></li>
+        <li>Acceden a atributos vía <code>self.x</code></li>
+        <li>Con / sin <code>return</code></li>
+        <li>Type hints <code>-> tipo</code></li>
+      </ul>
+    </div>
+    <div class="card gr">
+      <h3>Encapsulamiento</h3>
+      <ul class="s" style="margin-top:8px">
+        <li>Atributos <code>_privados</code></li>
+        <li>Getters y setters</li>
+        <li><code>@property</code></li>
+      </ul>
+    </div>
+    <div class="card pu">
+      <h3>Herencia</h3>
+      <ul class="s" style="margin-top:8px">
+        <li><code>class Hija(Padre)</code></li>
+        <li><code>super().__init__()</code></li>
+        <li>Override de métodos</li>
+        <li><code>isinstance()</code></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- ════════════════════════════════════════════════════════
+     QUIZ OVERLAY
+════════════════════════════════════════════════════════ -->
+<div id="quiz">
+  <div class="qwrap">
+    <div class="qheader">
+      <h1>Quiz — POO en Python</h1>
+      <button class="qclose" onclick="document.getElementById('quiz').classList.remove('open')">&#8592; Volver a la clase</button>
+    </div>
+
+    <!-- P1 -->
+    <div class="pregunta" id="p1">
+      <p>1. ¿Qué es una <strong>clase</strong> en Python?</p>
+      <div class="opcion"><input type="radio" name="p1" value="a"><label>Una función que retorna múltiples valores</label></div>
+      <div class="opcion"><input type="radio" name="p1" value="b"><label>Una plantilla o molde para crear objetos</label></div>
+      <div class="opcion"><input type="radio" name="p1" value="c"><label>Un tipo especial de lista</label></div>
+      <div class="opcion"><input type="radio" name="p1" value="d"><label>Un módulo externo de Python</label></div>
+    </div>
+
+    <!-- P2 -->
+    <div class="pregunta" id="p2">
+      <p>2. ¿Para qué sirve el método <strong>__init__</strong>?</p>
+      <div class="opcion"><input type="radio" name="p2" value="a"><label>Para eliminar el objeto de la memoria</label></div>
+      <div class="opcion"><input type="radio" name="p2" value="b"><label>Para imprimir los atributos del objeto</label></div>
+      <div class="opcion"><input type="radio" name="p2" value="c"><label>Para inicializar los atributos cuando se crea el objeto</label></div>
+      <div class="opcion"><input type="radio" name="p2" value="d"><label>Para heredar de otra clase</label></div>
+    </div>
+
+    <!-- P3 -->
+    <div class="pregunta" id="p3">
+      <p>3. ¿Qué representa <strong>self</strong> dentro de un método?</p>
+      <div class="opcion"><input type="radio" name="p3" value="a"><label>La clase en sí misma</label></div>
+      <div class="opcion"><input type="radio" name="p3" value="b"><label>El nombre del método</label></div>
+      <div class="opcion"><input type="radio" name="p3" value="c"><label>La instancia (objeto) que está llamando al método</label></div>
+      <div class="opcion"><input type="radio" name="p3" value="d"><label>Un parámetro que se puede omitir</label></div>
+    </div>
+
+    <!-- P4 -->
+    <div class="pregunta" id="p4">
+      <p>4. Teniendo <code>class Persona: def __init__(self, nombre, edad)</code> — ¿cómo se crea un objeto?</p>
+      <div class="opcion"><input type="radio" name="p4" value="a"><label>Persona.create("Ana", 20)</label></div>
+      <div class="opcion"><input type="radio" name="p4" value="b"><label>new Persona("Ana", 20)</label></div>
+      <div class="opcion"><input type="radio" name="p4" value="c"><label>Persona("Ana", 20)</label></div>
+      <div class="opcion"><input type="radio" name="p4" value="d"><label>Persona.__init__("Ana", 20)</label></div>
+    </div>
+
+    <!-- P5 -->
+    <div class="pregunta" id="p5">
+      <p>5. Un atributo que empieza con <strong>_</strong> (guión bajo) en Python significa:</p>
+      <div class="opcion"><input type="radio" name="p5" value="a"><label>Es un error de sintaxis</label></div>
+      <div class="opcion"><input type="radio" name="p5" value="b"><label>Por convención es privado — no se debería acceder desde fuera de la clase</label></div>
+      <div class="opcion"><input type="radio" name="p5" value="c"><label>Es un atributo de clase compartido por todos los objetos</label></div>
+      <div class="opcion"><input type="radio" name="p5" value="d"><label>Python lo elimina automáticamente al terminar __init__</label></div>
+    </div>
+
+    <!-- P6 -->
+    <div class="pregunta" id="p6">
+      <p>6. ¿Qué es el <strong>encapsulamiento</strong>?</p>
+      <div class="opcion"><input type="radio" name="p6" value="a"><label>Crear múltiples objetos de la misma clase</label></div>
+      <div class="opcion"><input type="radio" name="p6" value="b"><label>Agrupar datos y métodos en un objeto, protegiendo su estado interno</label></div>
+      <div class="opcion"><input type="radio" name="p6" value="c"><label>Heredar atributos de otra clase</label></div>
+      <div class="opcion"><input type="radio" name="p6" value="d"><label>Usar return en todos los métodos</label></div>
+    </div>
+
+    <!-- P7 -->
+    <div class="pregunta" id="p7">
+      <p>7. En una clase hija, ¿qué hace <strong>super().__init__(...)</strong>?</p>
+      <div class="opcion"><input type="radio" name="p7" value="a"><label>Elimina los atributos heredados del padre</label></div>
+      <div class="opcion"><input type="radio" name="p7" value="b"><label>Crea una nueva clase base</label></div>
+      <div class="opcion"><input type="radio" name="p7" value="c"><label>Llama al constructor de la clase padre para inicializar sus atributos</label></div>
+      <div class="opcion"><input type="radio" name="p7" value="d"><label>Retorna True si la herencia es correcta</label></div>
+    </div>
+
+    <!-- P8 -->
+    <div class="pregunta" id="p8">
+      <p>8. ¿Qué imprime este código?</p>
+      <pre>class A:
+    def f(self): return "A"
+class B(A):
+    def f(self): return "B"
+print(B().f())</pre>
+      <div class="opcion"><input type="radio" name="p8" value="a"><label>"A"</label></div>
+      <div class="opcion"><input type="radio" name="p8" value="b"><label>"B"</label></div>
+      <div class="opcion"><input type="radio" name="p8" value="c"><label>Error — B no tiene __init__</label></div>
+      <div class="opcion"><input type="radio" name="p8" value="d"><label>None</label></div>
+    </div>
+
+    <button class="qbtn" id="btn-calificar" onclick="calificar()">Calificar</button>
+
+    <div id="score-box">
+      <h2 id="score-num"></h2>
+      <p id="score-msg"></p>
+    </div>
+  </div>
+</div>
+
+<a id="home" href="../">&#8592; Inicio</a>
+<div id="prog"></div>
+<div id="nav">
+  <button class="nb" id="bp">&#8592;</button>
+  <span id="cnt">1 / 24</span>
+  <button class="nb" id="bn">&#8594;</button>
+</div>
+
+<script>
+/* ── slides ───────────────────────────────────────────────── */
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total  = slides.length;
+let cur = 0;
+const cnt  = document.getElementById('cnt');
+const prog = document.getElementById('prog');
+
+function go(n) {
+  if (n < 0 || n >= total) return;
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exit');
+  const prev = cur;
+  setTimeout(() => slides[prev].classList.remove('exit'), 340);
+  cur = n;
+  slides[cur].classList.add('active');
+  cnt.textContent = `${cur + 1} / ${total}`;
+  prog.style.width = `${((cur + 1) / total) * 100}%`;
+}
+
+document.getElementById('bn').addEventListener('click', () => go(cur + 1));
+document.getElementById('bp').addEventListener('click', () => go(cur - 1));
+document.addEventListener('keydown', e => {
+  if (document.getElementById('quiz').classList.contains('open')) return;
+  if (e.key === 'ArrowRight' || e.key === ' ') go(cur + 1);
+  if (e.key === 'ArrowLeft')                    go(cur - 1);
+});
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+document.addEventListener('touchend',   e => {
+  if (document.getElementById('quiz').classList.contains('open')) return;
+  const dx = tx - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 40) go(cur + (dx > 0 ? 1 : -1));
+});
+go(0);
+
+/* ── quiz ─────────────────────────────────────────────────── */
+const RESPUESTAS = {
+  p1: { correcta: 'b', explicacion: 'Una clase es una plantilla/molde. Los objetos son las instancias concretas creadas a partir de ella.' },
+  p2: { correcta: 'c', explicacion: '__init__ es el constructor: se ejecuta automáticamente al crear el objeto e inicializa sus atributos.' },
+  p3: { correcta: 'c', explicacion: 'self hace referencia al objeto que está llamando al método — es la instancia actual.' },
+  p4: { correcta: 'c', explicacion: 'Se llama como función: Persona("Ana", 20). Python pasa self automáticamente.' },
+  p5: { correcta: 'b', explicacion: 'El _ es una convención — indica que el atributo es privado. Python no lo fuerza, pero es un contrato de uso.' },
+  p6: { correcta: 'b', explicacion: 'Encapsulamiento = agrupar datos y métodos en un objeto y proteger su estado interno de accesos externos.' },
+  p7: { correcta: 'c', explicacion: 'super().__init__() llama al constructor de la clase padre, inicializando sus atributos sin repetir código.' },
+  p8: { correcta: 'b', explicacion: 'B sobreescribe el método f(), así que B().f() retorna "B". Esto es polimorfismo por herencia.' },
+};
+
+function calificar() {
+  let correctas = 0;
+  let sinResponder = false;
+
+  Object.entries(RESPUESTAS).forEach(([id, { correcta, explicacion }]) => {
+    const pregunta = document.getElementById(id);
+    const seleccion = document.querySelector(`input[name="${id}"]:checked`);
+
+    if (!seleccion) { sinResponder = true; return; }
+
+    // limpiar estado anterior
+    pregunta.classList.remove('correcta', 'incorrecta');
+    const tagAnterior = pregunta.querySelector('.resultado-tag');
+    const expAnterior = pregunta.querySelector('.explicacion');
+    if (tagAnterior) tagAnterior.remove();
+    if (expAnterior) expAnterior.remove();
+
+    if (seleccion.value === correcta) {
+      correctas++;
+      pregunta.classList.add('correcta');
+      pregunta.insertAdjacentHTML('beforeend', '<p class="resultado-tag">✓ Correcto</p>');
+    } else {
+      pregunta.classList.add('incorrecta');
+      const opCorrecta = pregunta.querySelector(`input[value="${correcta}"] + label`).textContent;
+      pregunta.insertAdjacentHTML('beforeend',
+        `<p class="resultado-tag">✗ Incorrecto — Respuesta correcta: ${opCorrecta}</p>
+         <p class="explicacion">${explicacion}</p>`);
+    }
+  });
+
+  if (sinResponder) {
+    alert('Responde todas las preguntas antes de calificar.');
+    return;
+  }
+
+  const total = Object.keys(RESPUESTAS).length;
+  const pct   = Math.round((correctas / total) * 100);
+  const msgs  = [
+    [100, '¡Perfecto! Dominas todos los conceptos.'],
+    [87,  '¡Excelente! Casi todo correcto.'],
+    [62,  'Bien. Repasa las marcadas en rojo.'],
+    [0,   'Necesitas repasar la clase. ¡Tú puedes!'],
+  ];
+  const msg = msgs.find(([min]) => pct >= min)[1];
+
+  const box = document.getElementById('score-box');
+  document.getElementById('score-num').textContent = `${correctas} / ${total}`;
+  document.getElementById('score-msg').textContent = `${pct}% — ${msg}`;
+  box.style.display = 'block';
+  box.scrollIntoView({ behavior: 'smooth' });
+
+  document.getElementById('btn-calificar').textContent  = 'Recalificar';
+}
+</script>
+</body>
+</html>
