@@ -3,83 +3,96 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clases - Programacion Avanzada</title>
+  <title>Programacion Avanzada</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
+      font-family: system-ui, sans-serif;
+      background: #f9f9f9;
+      color: #111;
       min-height: 100vh;
-      padding: 2rem;
+      padding: 3rem 1.5rem;
     }
 
     header {
-      max-width: 800px;
-      margin: 0 auto 2.5rem;
-      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 3rem;
+      border-bottom: 2px solid #111;
+      padding-bottom: 1rem;
     }
 
     header h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #f8fafc;
-      margin-bottom: 0.4rem;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
     }
 
     header p {
-      color: #94a3b8;
+      color: #555;
       font-size: 0.95rem;
+      margin-top: 0.3rem;
     }
 
-    #clases {
-      max-width: 800px;
-      margin: 0 auto;
-      display: grid;
-      gap: 0.75rem;
+    .seccion {
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
     }
 
-    .clase-card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 10px;
-      padding: 1.1rem 1.4rem;
+    .seccion h2 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 0.75rem;
+    }
+
+    .lista {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .item {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 0.85rem 1rem;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
       text-decoration: none;
-      color: inherit;
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .clase-card:hover {
-      background: #243044;
-      border-color: #6366f1;
-    }
-
-    .clase-card .nombre {
-      font-size: 1.05rem;
+      color: #111;
+      font-size: 0.95rem;
       font-weight: 500;
-      color: #e2e8f0;
-      text-transform: capitalize;
+      transition: border-color 0.15s, background 0.15s;
     }
 
-    .clase-card .flecha {
-      color: #6366f1;
-      font-size: 1.2rem;
+    .item:hover {
+      border-color: #111;
+      background: #f0f0f0;
     }
 
-    #estado {
-      max-width: 800px;
-      margin: 2rem auto;
-      text-align: center;
-      color: #64748b;
+    .item .flecha {
+      color: #aaa;
+      font-size: 1rem;
+    }
+
+    .vacio {
+      padding: 0.85rem 1rem;
+      background: #fff;
+      border: 1px dashed #ddd;
+      border-radius: 6px;
+      color: #aaa;
       font-size: 0.9rem;
     }
 
-    #estado a {
-      color: #6366f1;
+    #estado {
+      max-width: 700px;
+      margin: 0 auto;
+      color: #aaa;
+      font-size: 0.85rem;
     }
   </style>
 </head>
@@ -87,72 +100,81 @@
 
 <header>
   <h1>Programacion Avanzada</h1>
-  <p>Selecciona una clase para verla</p>
+  <p>Material de clases y ejercicios</p>
 </header>
 
-<div id="clases"></div>
-<div id="estado">Cargando clases...</div>
+<div class="seccion">
+  <h2>Clases</h2>
+  <div class="lista" id="lista-clases">
+    <div class="vacio">Cargando...</div>
+  </div>
+</div>
+
+<div class="seccion">
+  <h2>Ejercicios</h2>
+  <div class="lista" id="lista-ejercicios">
+    <div class="vacio">Cargando...</div>
+  </div>
+</div>
+
+<div id="estado"></div>
 
 <script>
-  // =====================================================
-  // CONFIGURACION: cambia estos dos valores
-  const GITHUB_USER = "eduluisf";   // tu usuario de GitHub
-  const GITHUB_REPO = "ClasesProAvanzada"; // nombre del repositorio
-  // =====================================================
+  const GITHUB_USER = "eduluisf";
+  const GITHUB_REPO = "ClasesProAvanzada";
 
-  const contenedor = document.getElementById("clases");
-  const estado = document.getElementById("estado");
+  function formatNombre(nombre) {
+    return nombre.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+  }
 
-  async function cargarClases() {
-    const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/`;
+  function renderLista(contenedor, carpetas) {
+    contenedor.innerHTML = "";
+    if (carpetas.length === 0) {
+      contenedor.innerHTML = '<div class="vacio">No hay contenido todavia</div>';
+      return;
+    }
+    carpetas.forEach(carpeta => {
+      const a = document.createElement("a");
+      a.href = `${carpeta.name}/`;
+      a.className = "item";
+      a.innerHTML = `<span>${formatNombre(carpeta.name)}</span><span class="flecha">&#8594;</span>`;
+      contenedor.appendChild(a);
+    });
+  }
+
+  async function cargar() {
+    const listaClases     = document.getElementById("lista-clases");
+    const listaEjercicios = document.getElementById("lista-ejercicios");
+    const estado          = document.getElementById("estado");
 
     try {
-      const res = await fetch(url, {
-        headers: { Accept: "application/vnd.github.v3+json" }
-      });
-
-      if (!res.ok) throw new Error(`GitHub API: ${res.status}`);
+      const res = await fetch(
+        `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/`,
+        { headers: { Accept: "application/vnd.github.v3+json" } }
+      );
+      if (!res.ok) throw new Error(`${res.status}`);
 
       const items = await res.json();
+      const carpetas = items
+        .filter(i => i.type === "dir" && !i.name.startsWith(".") && i.name !== "__pycache__")
+        .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
-      // Filtra solo carpetas que no sean ocultas ni especiales
-      const carpetas = items.filter(
-        i => i.type === "dir" && !i.name.startsWith(".") && i.name !== "__pycache__"
-      );
+      const clases     = carpetas.filter(c => c.name.startsWith("clase"));
+      const ejercicios = carpetas.filter(c => c.name.startsWith("ejercicio"));
 
-      if (carpetas.length === 0) {
-        estado.innerHTML = "No hay clases todavia. Crea una carpeta en el repositorio para empezar.";
-        return;
-      }
+      renderLista(listaClases,     clases);
+      renderLista(listaEjercicios, ejercicios);
 
-      // Ordenar alfabeticamente/numericamente
-      carpetas.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
-
-      carpetas.forEach((carpeta, idx) => {
-        const a = document.createElement("a");
-        // Enlace directo a la carpeta (GitHub Pages sirve index.html automaticamente)
-        a.href = `${carpeta.name}/`;
-        a.className = "clase-card";
-        a.innerHTML = `
-          <span class="nombre">${carpeta.name.replace(/-/g, " ")}</span>
-          <span class="flecha">&#8594;</span>
-        `;
-        contenedor.appendChild(a);
-      });
-
-      estado.textContent = `${carpetas.length} clase${carpetas.length !== 1 ? "s" : ""} disponible${carpetas.length !== 1 ? "s" : ""}`;
+      estado.textContent = `${clases.length} clase${clases.length !== 1 ? "s" : ""} · ${ejercicios.length} ejercicio${ejercicios.length !== 1 ? "s" : ""}`;
 
     } catch (err) {
-      console.error(err);
-      estado.innerHTML = `
-        No se pudo cargar la lista automaticamente.<br>
-        <small>Revisa que <code>GITHUB_USER</code> y <code>GITHUB_REPO</code> esten bien configurados
-        en este archivo, o que el repositorio sea <strong>publico</strong>.</small>
-      `;
+      listaClases.innerHTML     = '<div class="vacio">No se pudo cargar el contenido</div>';
+      listaEjercicios.innerHTML = '<div class="vacio">No se pudo cargar el contenido</div>';
+      estado.textContent = "Verifica que el repositorio sea publico";
     }
   }
 
-  cargarClases();
+  cargar();
 </script>
 
 </body>

@@ -1,15 +1,933 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clase 01 - Introduccion</title>
-  <!-- Aqui va tu presentacion HTML -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python — Material Didáctico</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#2563EB;--purple:#7C3AED;--green:#059669;--orange:#D97706;--text:#0F172A;--muted:#64748B}
+body{font-family:'Inter',sans-serif;background:#fff;color:var(--text);overflow:hidden;height:100vh;width:100vw}
+#deck{position:relative;width:100vw;height:100vh}
+
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:42px 70px;
+  opacity:0;transform:translateX(56px);
+  transition:opacity .3s ease,transform .3s ease;
+  pointer-events:none;overflow:hidden;
+}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-56px)}
+
+.s-hero{background:#fff;align-items:center;text-align:center}
+.s-sec{background:var(--blue);color:#fff}
+.s-sec.pu{background:var(--purple)}
+.s-sec.gr{background:var(--green)}
+.s-sec.dk{background:#0F172A}
+.s-c{background:#fff}
+.s-e{background:#F8FAFC}
+.s-sol{background:#fff}
+
+.tag{font-size:13px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.s-sec .tag{color:rgba(255,255,255,.7)}
+.s-sec.dk .tag{color:#93C5FD}
+
+h1{font-size:clamp(58px,8vw,96px);font-weight:900;letter-spacing:-.03em;line-height:1;color:var(--text)}
+h2{font-size:clamp(38px,5vw,62px);font-weight:900;letter-spacing:-.02em;line-height:1.06;margin-bottom:18px}
+.s-sec h2{color:#fff}
+h3{font-size:clamp(18px,2.1vw,24px);font-weight:700;margin-bottom:8px}
+.sub{font-size:clamp(20px,2.4vw,28px);color:var(--muted);line-height:1.45;margin-top:12px}
+.s-sec .sub{color:rgba(255,255,255,.8)}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%}
+.col{display:flex;flex-direction:column;gap:11px}
+.mt{margin-top:14px}
+.w100{width:100%}
+
+/* CARDS — background only, zero left-border */
+.card{background:#EFF6FF;border-radius:14px;padding:16px 20px}
+.card.pu{background:#F5F3FF}
+.card.gr{background:#ECFDF5}
+.card.or{background:#FFF7ED}
+.card.sl{background:#F1F5F9}
+
+li,p.t{font-size:clamp(16px,1.8vw,21px);line-height:1.55}
+li strong{font-weight:700}
+ul.s,ol.s{list-style:none;display:flex;flex-direction:column;gap:5px}
+ul.s li::before{content:'▸';color:var(--blue);font-weight:700;margin-right:8px}
+ol.s{counter-reset:ci}
+ol.s li{counter-increment:ci}
+ol.s li::before{content:counter(ci)'.';color:var(--blue);font-weight:700;margin-right:8px}
+
+pre{
+  background:#1E293B;color:#E2E8F0;
+  font-family:'Fira Code',monospace;
+  font-size:clamp(13px,1.3vw,16px);
+  line-height:1.65;border-radius:14px;
+  padding:16px 20px;overflow:hidden;width:100%
+}
+.lbl{font-size:11px;font-weight:700;letter-spacing:.08em;display:inline-block;padding:2px 10px;border-radius:999px;margin-bottom:5px}
+.lbl.py{background:#2563EB;color:#fff}
+.lbl.java{background:#EA580C;color:#fff}
+
+.kw{color:#93C5FD;font-weight:600}
+.fn{color:#6EE7B7}
+.str{color:#FDE68A}
+.num{color:#FCA5A5}
+.cm{color:#64748B;font-style:italic}
+.jkw{color:#FDBA74;font-weight:600}
+
+.bdg{display:inline-block;padding:3px 13px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:8px}
+.bdg.gr{background:var(--green);color:#fff}
+.bdg.or{background:#FEF3C7;color:#92400E;border:1px solid #FCD34D}
+.bdg.bl{background:var(--blue);color:#fff}
+.bdg.pu{background:var(--purple);color:#fff}
+
+table{width:100%;border-collapse:collapse}
+th{background:var(--blue);color:#fff;padding:10px 14px;text-align:left;font-size:15px;font-weight:700}
+td{padding:9px 14px;font-size:15px;border-bottom:1px solid #E2E8F0}
+tr:nth-child(even) td{background:#F8FAFC}
+code{font-family:'Fira Code',monospace;background:#E2E8F0;padding:2px 6px;border-radius:4px;font-size:.9em;color:#1E293B}
+
+.hero-deco{position:absolute;top:16px;right:44px;font-size:120px;font-weight:900;opacity:.05;color:var(--blue);line-height:1;user-select:none}
+.hero-pill{display:inline-block;background:var(--blue);color:#fff;padding:7px 22px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px}
+
+#prog{position:fixed;bottom:0;left:0;height:4px;background:var(--blue);transition:width .3s;z-index:100}
+#nav{position:fixed;bottom:20px;right:32px;display:flex;align-items:center;gap:9px;z-index:100}
+.nb{width:40px;height:40px;border-radius:50%;border:2px solid var(--blue);background:#fff;color:var(--blue);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;transition:background .2s,color .2s;box-shadow:0 2px 10px rgba(37,99,235,.15)}
+.nb:hover{background:var(--blue);color:#fff}
+#cnt{font-size:12px;font-weight:700;color:var(--muted);min-width:44px;text-align:center}
+#home{position:fixed;top:18px;left:24px;z-index:100;text-decoration:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#64748B;background:#fff;border:1px solid #e2e8f0;border-radius:999px;padding:5px 14px;box-shadow:0 1px 4px rgba(0,0,0,.08);transition:border-color .2s,color .2s}
+#home:hover{color:#0F172A;border-color:#0F172A}
+</style>
 </head>
 <body>
-  <h1>Clase 01 - Introduccion</h1>
-  <p>Reemplaza este archivo con tu presentacion.</p>
-  <br>
-  <a href="../">&larr; Volver al inicio</a>
+<div id="deck">
+
+<!-- ─── 1. HERO ─────────────────────────────────────────────── -->
+<div class="slide s-hero active" id="s1">
+  <div class="hero-deco">{ }</div>
+  <div class="hero-pill">Material Didáctico</div>
+  <h1><span style="color:var(--blue)">Python</span><br>Fundamentos</h1>
+  <p class="sub">Listas · Ciclos · Funciones<br>con ejercicios resueltos</p>
+</div>
+
+<!-- ─── 2. SEC LISTAS ─────────────────────────────────────────── -->
+<div class="slide s-sec" id="s2">
+  <div class="tag">Módulo 01</div>
+  <h2>Listas</h2>
+  <p class="sub">Colecciones ordenadas y mutables de datos</p>
+</div>
+
+<!-- ─── 3. QUÉ ES UNA LISTA ──────────────────────────────────── -->
+<div class="slide s-c" id="s3">
+  <div class="tag">Listas</div>
+  <h2>¿Qué es una lista?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Definición</h3>
+        <ul class="s">
+          <li>Colección <strong>ordenada</strong> de elementos</li>
+          <li>Puede contener <strong>cualquier tipo</strong> de dato</li>
+          <li><strong>Mutable</strong> — sus elementos se pueden cambiar</li>
+          <li>Acceso por <strong>índice</strong>, empieza en 0</li>
+        </ul>
+      </div>
+      <div class="card pu">
+        <h3>Índices clave</h3>
+        <ul class="s">
+          <li><code>lista[0]</code> → primer elemento</li>
+          <li><code>lista[-1]</code> → último elemento</li>
+          <li><code>lista[1:3]</code> → sublista (slice)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="cm"># Crear una lista</span>
+<span class="fn">frutas</span> = [<span class="str">"manzana"</span>, <span class="str">"pera"</span>, <span class="str">"uva"</span>]
+
+<span class="cm"># Lista mixta</span>
+<span class="fn">mixta</span> = [<span class="num">1</span>, <span class="str">"hola"</span>, <span class="num">3.14</span>, <span class="kw">True</span>]
+
+<span class="cm"># Acceder a elementos</span>
+<span class="fn">print</span>(frutas[<span class="num">0</span>])    <span class="cm"># manzana</span>
+<span class="fn">print</span>(frutas[-<span class="num">1</span>])   <span class="cm"># uva</span>
+<span class="fn">print</span>(frutas[<span class="num">0</span>:<span class="num">2</span>])  <span class="cm"># ['manzana', 'pera']</span>
+
+<span class="cm"># Modificar un elemento</span>
+frutas[<span class="num">1</span>] = <span class="str">"mango"</span>
+<span class="fn">print</span>(frutas)  <span class="cm"># ['manzana', 'mango', 'uva']</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 4. MÉTODOS DE LISTAS ──────────────────────────────────── -->
+<div class="slide s-c" id="s4">
+  <div class="tag">Listas</div>
+  <h2>Métodos esenciales</h2>
+  <div class="g2">
+    <table>
+      <tr><th>Método</th><th>¿Qué hace?</th></tr>
+      <tr><td><code>append(x)</code></td><td>Agrega x al final</td></tr>
+      <tr><td><code>insert(i, x)</code></td><td>Inserta x en posición i</td></tr>
+      <tr><td><code>remove(x)</code></td><td>Elimina la primera x</td></tr>
+      <tr><td><code>pop(i)</code></td><td>Elimina y retorna el elemento i</td></tr>
+      <tr><td><code>sort()</code></td><td>Ordena la lista</td></tr>
+      <tr><td><code>reverse()</code></td><td>Invierte la lista</td></tr>
+      <tr><td><code>len(lista)</code></td><td>Número de elementos</td></tr>
+      <tr><td><code>index(x)</code></td><td>Índice de la primera x</td></tr>
+      <tr><td><code>count(x)</code></td><td>Cuántas veces aparece x</td></tr>
+      <tr><td><code>clear()</code></td><td>Vacía la lista</td></tr>
+    </table>
+    <div class="col">
+<pre><span class="fn">nums</span> = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]
+
+nums.<span class="fn">append</span>(<span class="num">9</span>)
+<span class="fn">print</span>(nums)   <span class="cm"># [3, 1, 4, 1, 5, 9]</span>
+
+nums.<span class="fn">insert</span>(<span class="num">0</span>, <span class="num">100</span>)
+<span class="fn">print</span>(nums)   <span class="cm"># [100, 3, 1, 4, 1, 5, 9]</span>
+
+nums.<span class="fn">remove</span>(<span class="num">1</span>)
+<span class="fn">print</span>(nums)   <span class="cm"># [100, 3, 4, 1, 5, 9]</span>
+
+nums.<span class="fn">sort</span>()
+<span class="fn">print</span>(nums)   <span class="cm"># [1, 3, 4, 5, 9, 100]</span>
+
+<span class="fn">print</span>(<span class="fn">len</span>(nums))     <span class="cm"># 6</span>
+<span class="fn">print</span>(nums.<span class="fn">count</span>(<span class="num">1</span>)) <span class="cm"># 1</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 5. SEC FOR ────────────────────────────────────────────── -->
+<div class="slide s-sec pu" id="s5">
+  <div class="tag">Módulo 02</div>
+  <h2>Ciclo For</h2>
+  <p class="sub">Itera sobre cualquier secuencia de forma clara y directa</p>
+</div>
+
+<!-- ─── 6. FOR BÁSICO + RANGE ─────────────────────────────────── -->
+<div class="slide s-c" id="s6">
+  <div class="tag">Ciclo For</div>
+  <h2>For básico y <code style="font-size:0.75em">range()</code></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>¿Qué es range()?</h3>
+        <ul class="s">
+          <li><code>range(n)</code> genera <strong>0, 1, 2 … n-1</strong></li>
+          <li><code>range(a, b)</code> genera <strong>a, a+1 … b-1</strong></li>
+          <li><code>range(a, b, paso)</code> salta de <em>paso</em> en <em>paso</em></li>
+        </ul>
+      </div>
+<pre><span class="cm"># Iterar una lista directamente</span>
+<span class="fn">frutas</span> = [<span class="str">"manzana"</span>, <span class="str">"pera"</span>, <span class="str">"uva"</span>]
+<span class="kw">for</span> f <span class="kw">in</span> frutas:
+    <span class="fn">print</span>(f)
+<span class="cm"># manzana / pera / uva</span></pre>
+    </div>
+    <div class="col">
+<pre><span class="cm"># range(5) → 0, 1, 2, 3, 4</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):
+    <span class="fn">print</span>(i)
+
+<span class="cm"># range(2, 8) → 2, 3, 4, 5, 6, 7</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, <span class="num">8</span>):
+    <span class="fn">print</span>(i)
+
+<span class="cm"># range(0, 10, 2) → 0, 2, 4, 6, 8</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">2</span>):
+    <span class="fn">print</span>(i)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 7. FOR POR POSICIÓN — PYTHON VS JAVA ──────────────────── -->
+<div class="slide s-c" id="s7">
+  <div class="tag">Ciclo For — Python vs Java</div>
+  <h2>Recorrer una lista <span style="color:var(--purple)">por posición</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">Python</div>
+<pre><span class="fn">frutas</span> = [<span class="str">"manzana"</span>, <span class="str">"pera"</span>, <span class="str">"uva"</span>]
+
+<span class="cm"># range(len(frutas)) → 0, 1, 2</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(frutas)):
+    <span class="fn">print</span>(i, frutas[i])
+<span class="cm"># 0 manzana
+# 1 pera
+# 2 uva</span></pre>
+      <div class="card pu">
+        <h3>range() = índices de la lista</h3>
+        <p class="t"><code>range(len(lista))</code> genera exactamente los índices <strong>0, 1, 2 … n-1</strong>, igual que Java con <code>i &lt; arr.length</code></p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="lbl java">Java</div>
+<pre><span class="jkw">String</span>[] frutas = {<span class="str">"manzana"</span>, <span class="str">"pera"</span>, <span class="str">"uva"</span>};
+
+<span class="cm">// i empieza en 0, sube 1 a 1</span>
+<span class="kw">for</span> (<span class="jkw">int</span> i = <span class="num">0</span>; i &lt; frutas.<span class="fn">length</span>; i++) {
+    System.out.<span class="fn">println</span>(i + <span class="str">" "</span> + frutas[i]);
+}
+<span class="cm">// 0 manzana
+// 1 pera
+// 2 uva</span></pre>
+      <div class="card gr">
+        <h3>Son equivalentes</h3>
+        <ul class="s">
+          <li>Java: <code>i = 0; i &lt; arr.length; i++</code></li>
+          <li>Python: <code>i in range(len(lista))</code></li>
+          <li>Ambos recorren los índices <strong>0 → n-1</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 8. FOR VARIANTES ──────────────────────────────────────── -->
+<div class="slide s-c" id="s8">
+  <div class="tag">Ciclo For</div>
+  <h2>Variantes útiles</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>enumerate() — índice + valor</h3>
+      </div>
+<pre><span class="fn">frutas</span> = [<span class="str">"manzana"</span>, <span class="str">"pera"</span>, <span class="str">"uva"</span>]
+<span class="kw">for</span> i, f <span class="kw">in</span> <span class="fn">enumerate</span>(frutas):
+    <span class="fn">print</span>(i, f)
+<span class="cm"># 0 manzana / 1 pera / 2 uva</span></pre>
+      <div class="card gr mt">
+        <h3>zip() — dos listas en paralelo</h3>
+      </div>
+<pre><span class="fn">nombres</span> = [<span class="str">"Ana"</span>, <span class="str">"Luis"</span>]
+<span class="fn">notas</span>   = [<span class="num">9</span>, <span class="num">7</span>]
+<span class="kw">for</span> n, nota <span class="kw">in</span> <span class="fn">zip</span>(nombres, notas):
+    <span class="fn">print</span>(n, nota)   <span class="cm"># Ana 9 / Luis 7</span></pre>
+    </div>
+    <div class="col">
+      <div class="card or">
+        <h3>List comprehension — for en una línea</h3>
+      </div>
+<pre><span class="cm"># Cuadrados del 0 al 4</span>
+cuadrados = [x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>)]
+<span class="fn">print</span>(cuadrados)  <span class="cm"># [0, 1, 4, 9, 16]</span>
+
+<span class="cm"># Solo los pares</span>
+pares = [x <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]
+<span class="fn">print</span>(pares)  <span class="cm"># [0, 2, 4, 6, 8]</span></pre>
+      <div class="card mt">
+        <h3>for … else</h3>
+      </div>
+<pre><span class="kw">for</span> n <span class="kw">in</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]:
+    <span class="fn">print</span>(n)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"Ciclo terminó sin break"</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 9. SEC WHILE ─────────────────────────────────────────── -->
+<div class="slide s-sec gr" id="s9">
+  <div class="tag">Módulo 03</div>
+  <h2>Ciclo While</h2>
+  <p class="sub">Se repite mientras una condición sea verdadera</p>
+</div>
+
+<!-- ─── 10. WHILE BÁSICO ─────────────────────────────────────── -->
+<div class="slide s-c" id="s10">
+  <div class="tag">Ciclo While</div>
+  <h2>While básico</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>¿Cuándo usarlo?</h3>
+        <ul class="s">
+          <li>No sabes <strong>cuántas veces</strong> va a iterar</li>
+          <li>Ideal para <strong>validar input</strong> del usuario</li>
+          <li>La condición de salida <strong>depende del proceso</strong></li>
+          <li>Puede ser infinito → usar <code>break</code></li>
+        </ul>
+      </div>
+<pre><span class="cm"># Contador básico</span>
+contador = <span class="num">0</span>
+<span class="kw">while</span> contador &lt; <span class="num">5</span>:
+    <span class="fn">print</span>(contador)
+    contador += <span class="num">1</span>
+<span class="cm"># 0  1  2  3  4</span></pre>
+    </div>
+    <div class="col">
+<pre><span class="cm"># Pedir dato hasta que sea válido</span>
+edad = -<span class="num">1</span>
+<span class="kw">while</span> edad &lt; <span class="num">0</span>:
+    edad = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Ingresa tu edad: "</span>))
+<span class="fn">print</span>(<span class="str">"Edad válida:"</span>, edad)</pre>
+      <div class="card pu mt">
+        <h3>Diferencia clave con For</h3>
+        <ul class="s">
+          <li><code>for</code> → cantidad <strong>conocida</strong> de iteraciones</li>
+          <li><code>while</code> → cantidad <strong>desconocida</strong>, depende de condición</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 11. WHILE BREAK / CONTINUE ──────────────────────────── -->
+<div class="slide s-c" id="s11">
+  <div class="tag">Ciclo While</div>
+  <h2>break y continue</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card or">
+        <h3>break — sale del ciclo inmediatamente</h3>
+      </div>
+<pre><span class="fn">i</span> = <span class="num">0</span>
+<span class="kw">while True</span>:       <span class="cm"># loop infinito</span>
+    <span class="kw">if</span> i == <span class="num">5</span>:
+        <span class="kw">break</span>     <span class="cm"># sale aquí</span>
+    <span class="fn">print</span>(i)
+    i += <span class="num">1</span>
+<span class="cm"># imprime: 0 1 2 3 4</span></pre>
+      <div class="card gr mt">
+        <h3>Regla práctica</h3>
+        <ul class="s">
+          <li><code>break</code> → termina el ciclo</li>
+          <li><code>continue</code> → salta esta iteración</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card pu">
+        <h3>continue — salta al siguiente ciclo</h3>
+      </div>
+<pre><span class="fn">i</span> = <span class="num">0</span>
+<span class="kw">while</span> i &lt; <span class="num">6</span>:
+    i += <span class="num">1</span>
+    <span class="kw">if</span> i % <span class="num">2</span> == <span class="num">0</span>:
+        <span class="kw">continue</span>  <span class="cm"># salta los pares</span>
+    <span class="fn">print</span>(i)
+<span class="cm"># imprime: 1  3  5</span></pre>
+<pre class="mt"><span class="cm"># También funciona con for</span>
+<span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):
+    <span class="kw">if</span> x == <span class="num">3</span>:
+        <span class="kw">break</span>
+    <span class="fn">print</span>(x)  <span class="cm"># 0 1 2</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 12. FOR VS WHILE ─────────────────────────────────────── -->
+<div class="slide s-c" id="s12">
+  <div class="tag">Ciclos</div>
+  <h2>For vs While</h2>
+  <div class="g2">
+    <div class="card pu">
+      <h3 style="color:var(--purple)">for — úsalo cuando…</h3>
+      <ul class="s" style="margin-top:8px">
+        <li>Sabes <strong>cuántas veces</strong> va a iterar</li>
+        <li>Recorres una <strong>lista, string o rango</strong></li>
+        <li>Necesitas el <strong>índice</strong> con enumerate</li>
+        <li>Quieres iterar en <strong>paralelo</strong> con zip</li>
+      </ul>
+    </div>
+    <div class="card gr">
+      <h3 style="color:var(--green)">while — úsalo cuando…</h3>
+      <ul class="s" style="margin-top:8px">
+        <li>No sabes cuántas iteraciones habrá</li>
+        <li>Esperas <strong>input del usuario</strong></li>
+        <li>La condición de salida <strong>depende del proceso</strong></li>
+        <li>Necesitas un <strong>bucle infinito</strong> con break</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card mt w100" style="background:#F1F5F9">
+    <h3>Regla general</h3>
+    <p class="t" style="margin-top:6px">Si puedes expresar la condición como un rango o iterable concreto → usa <code>for</code>. Si la condición de parada es dinámica → usa <code>while</code>.</p>
+  </div>
+</div>
+
+<!-- ─── 13. SEC FUNCIONES ────────────────────────────────────── -->
+<div class="slide s-sec dk" id="s13">
+  <div class="tag">Módulo 04</div>
+  <h2>Funciones</h2>
+  <p class="sub">Bloques de código reutilizables que nos ayudan a organizar la lógica</p>
+</div>
+
+<!-- ─── 14. FUNCIONES SIN RETURN ─────────────────────────────── -->
+<div class="slide s-c" id="s14">
+  <div class="tag">Funciones</div>
+  <h2>Sin <code style="font-size:.75em">return</code></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>Características</h3>
+        <ul class="s">
+          <li>Realizan <strong>acciones</strong> (imprimir, modificar)</li>
+          <li>No devuelven un valor útil</li>
+          <li>Retornan <code>None</code> de forma implícita</li>
+          <li>Se llaman por sus <strong>efectos secundarios</strong></li>
+        </ul>
+      </div>
+<pre><span class="kw">def</span> <span class="fn">saludar</span>(nombre = <span class="str">"mundo"</span>):
+    <span class="fn">print</span>(<span class="str">f"¡Hola, {nombre}!"</span>)
+
+<span class="fn">saludar</span>()          <span class="cm"># ¡Hola, mundo!</span>
+<span class="fn">saludar</span>(<span class="str">"Ana"</span>)    <span class="cm"># ¡Hola, Ana!</span></pre>
+    </div>
+    <div class="col">
+<pre><span class="kw">def</span> <span class="fn">mostrar_lista</span>(lista):
+    <span class="fn">print</span>(<span class="str">"Elementos:"</span>)
+    <span class="kw">for</span> i, elem <span class="kw">in</span> <span class="fn">enumerate</span>(lista):
+        <span class="fn">print</span>(<span class="str">f"  [{i}] {elem}"</span>)
+
+<span class="fn">mostrar_lista</span>([<span class="str">"Python"</span>, <span class="str">"Java"</span>])
+<span class="cm"># Elementos:
+#   [0] Python
+#   [1] Java</span>
+
+<span class="cm"># Sin return → el valor es None</span>
+resultado = <span class="fn">saludar</span>(<span class="str">"Luis"</span>)
+<span class="fn">print</span>(resultado)  <span class="cm"># None</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 15. FUNCIONES CON RETURN ─────────────────────────────── -->
+<div class="slide s-c" id="s15">
+  <div class="tag">Funciones</div>
+  <h2>Con <code style="font-size:.75em">return</code></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>Características</h3>
+        <ul class="s">
+          <li><strong>Devuelven</strong> un valor al llamador</li>
+          <li>Podemos <strong>guardar o usar</strong> el resultado</li>
+          <li>El código tras <code>return</code> <strong>no se ejecuta</strong></li>
+          <li>Pueden retornar <strong>múltiples valores</strong></li>
+        </ul>
+      </div>
+<pre><span class="kw">def</span> <span class="fn">sumar</span>(a, b):
+    <span class="kw">return</span> a + b
+
+resultado = <span class="fn">sumar</span>(<span class="num">3</span>, <span class="num">4</span>)
+<span class="fn">print</span>(resultado)           <span class="cm"># 7</span>
+<span class="fn">print</span>(<span class="fn">sumar</span>(<span class="num">10</span>, <span class="num">5</span>) * <span class="num">2</span>)  <span class="cm"># 30</span></pre>
+    </div>
+    <div class="col">
+<pre><span class="cm"># Retornar múltiples valores</span>
+<span class="kw">def</span> <span class="fn">min_max</span>(lista):
+    <span class="kw">return</span> <span class="fn">min</span>(lista), <span class="fn">max</span>(lista)
+
+menor, mayor = <span class="fn">min_max</span>([<span class="num">3</span>, <span class="num">1</span>, <span class="num">9</span>, <span class="num">2</span>])
+<span class="fn">print</span>(menor, mayor)  <span class="cm"># 1  9</span></pre>
+      <div class="card pu mt">
+        <h3>Diferencia clave</h3>
+        <ul class="s">
+          <li><strong>Sin return</strong> → solo imprime, valor es <code>None</code></li>
+          <li><strong>Con return</strong> → podemos usar el valor en cálculos</li>
+        </ul>
+      </div>
+<pre class="mt"><span class="cm"># Con return → usable en expresiones</span>
+<span class="kw">def</span> <span class="fn">doble</span>(x):
+    <span class="kw">return</span> x * <span class="num">2</span>
+
+<span class="fn">print</span>(<span class="fn">doble</span>(<span class="num">3</span>) + <span class="fn">doble</span>(<span class="num">4</span>))  <span class="cm"># 14</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 16. SEC EJERCICIOS ───────────────────────────────────── -->
+<div class="slide s-sec dk" id="s16">
+  <div class="tag">Práctica</div>
+  <h2>Ejercicios</h2>
+  <p class="sub">Primero léelo, intenta resolverlo y luego revisa la solución en el siguiente slide</p>
+</div>
+
+<!-- ─── 17. EJ1 — ENUNCIADO ──────────────────────────────────── -->
+<div class="slide s-e" id="s17">
+  <div class="tag">Ejercicio 1 — Listas</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Gestionar una lista de compras</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card or">
+        <h3>Pasos a seguir</h3>
+        <ol class="s" style="margin-top:8px">
+          <li>Crea una lista con 3 productos</li>
+          <li>Agrega 2 productos más con <code>append</code></li>
+          <li>Elimina el primer producto con <code>pop(0)</code></li>
+          <li>Ordena la lista alfabéticamente</li>
+          <li>Imprime la lista final</li>
+        </ol>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:180px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 18. EJ1 — SOLUCIÓN ───────────────────────────────────── -->
+<div class="slide s-sol" id="s18">
+  <div class="tag">Ejercicio 1 — Listas</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Gestionar una lista de compras</h2>
+  <div class="g2">
+    <div class="col">
+<pre><span class="fn">compras</span> = [<span class="str">"leche"</span>, <span class="str">"pan"</span>, <span class="str">"huevos"</span>]
+
+<span class="cm"># Agregar 2 productos</span>
+compras.<span class="fn">append</span>(<span class="str">"arroz"</span>)
+compras.<span class="fn">append</span>(<span class="str">"café"</span>)
+
+<span class="cm"># Eliminar el primero</span>
+compras.<span class="fn">pop</span>(<span class="num">0</span>)
+
+<span class="cm"># Ordenar</span>
+compras.<span class="fn">sort</span>()
+
+<span class="fn">print</span>(compras)
+<span class="cm"># ['arroz', 'café', 'huevos', 'pan']</span></pre>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>Puntos clave</h3>
+        <ul class="s">
+          <li><code>append()</code> siempre agrega <strong>al final</strong></li>
+          <li><code>pop(0)</code> elimina y devuelve el índice 0</li>
+          <li><code>sort()</code> ordena <strong>la misma lista</strong> (in-place)</li>
+          <li>El orden final: ["arroz", "café", "huevos", "pan"]</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 19. EJ2 — ENUNCIADO ──────────────────────────────────── -->
+<div class="slide s-e" id="s19">
+  <div class="tag">Ejercicio 2 — Ciclo For</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Suma de números pares</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Usa un ciclo <code>for</code> para sumar todos los números pares del 1 al 100 e imprimir el resultado.</p>
+      </div>
+      <div class="card mt">
+        <h3>Pista</h3>
+        <ul class="s">
+          <li>Usa <code>range()</code> con el paso correcto <strong>ó</strong></li>
+          <li>Usa <code>if n % 2 == 0</code> dentro del for</li>
+          <li>Resultado esperado: <strong>2550</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:180px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 20. EJ2 — SOLUCIÓN ───────────────────────────────────── -->
+<div class="slide s-sol" id="s20">
+  <div class="tag">Ejercicio 2 — Ciclo For</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Suma de números pares</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">Opción A — paso en range</div>
+<pre>total = <span class="num">0</span>
+<span class="kw">for</span> n <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, <span class="num">101</span>, <span class="num">2</span>):
+    total += n
+
+<span class="fn">print</span>(<span class="str">"Suma:"</span>, total)  <span class="cm"># 2550</span></pre>
+    </div>
+    <div class="col">
+      <div class="lbl py">Opción B — condicional dentro del for</div>
+<pre>total = <span class="num">0</span>
+<span class="kw">for</span> n <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">101</span>):
+    <span class="kw">if</span> n % <span class="num">2</span> == <span class="num">0</span>:
+        total += n
+
+<span class="fn">print</span>(<span class="str">"Suma:"</span>, total)  <span class="cm"># 2550</span></pre>
+    </div>
+  </div>
+  <div class="card gr mt w100">
+    <h3>¿Por qué range(2, 101, 2)?</h3>
+    <p class="t" style="margin-top:6px">Empieza en 2 (primer par), termina antes de 101 (incluye 100), salta de 2 en 2 → solo números pares.</p>
+  </div>
+</div>
+
+<!-- ─── 21. EJ3 — ENUNCIADO ──────────────────────────────────── -->
+<div class="slide s-e" id="s21">
+  <div class="tag">Ejercicio 3 — Ciclo While</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Adivina el número</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Crea un juego donde el usuario tiene que adivinar el número secreto <strong>42</strong>. Usa un <code>while</code> que siga pidiendo intentos hasta que acierte. Muestra si debe ir más alto o más bajo.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:150px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 22. EJ3 — SOLUCIÓN ───────────────────────────────────── -->
+<div class="slide s-sol" id="s22">
+  <div class="tag">Ejercicio 3 — Ciclo While</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Adivina el número</h2>
+  <div class="g2">
+    <div class="col">
+<pre>secreto = <span class="num">42</span>
+intento = <span class="num">0</span>
+
+<span class="kw">while</span> intento != secreto:
+    intento = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Adivina: "</span>))
+
+    <span class="kw">if</span> intento &lt; secreto:
+        <span class="fn">print</span>(<span class="str">"Más alto ↑"</span>)
+    <span class="kw">elif</span> intento &gt; secreto:
+        <span class="fn">print</span>(<span class="str">"Más bajo ↓"</span>)
+
+<span class="fn">print</span>(<span class="str">"¡Correcto!"</span>)</pre>
+    </div>
+    <div class="col">
+      <div class="card pu">
+        <h3>¿Por qué while aquí?</h3>
+        <ul class="s">
+          <li>No sabemos cuántos intentos hará el usuario</li>
+          <li>La condición depende del <strong>valor ingresado</strong></li>
+          <li>Podría resolverlo en 1 intento o en 100</li>
+          <li>Un <code>for</code> requeriría saber el número de vueltas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 23. EJ4 — ENUNCIADO ──────────────────────────────────── -->
+<div class="slide s-e" id="s23">
+  <div class="tag">Ejercicio 4 — Función sin return</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Tabla de multiplicar</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Crea una función <code>tabla(n)</code> que reciba un número <code>n</code> e imprima su tabla de multiplicar del 1 al 10. La función <strong>no debe retornar nada</strong>.</p>
+      </div>
+      <div class="card mt">
+        <h3>Ejemplo de salida</h3>
+        <p class="t" style="margin-top:8px;font-family:'Fira Code',monospace">tabla(3)<br>→ 3 x 1 = 3<br>→ 3 x 2 = 6<br>→ ...<br>→ 3 x 10 = 30</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:150px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 24. EJ4 — SOLUCIÓN ───────────────────────────────────── -->
+<div class="slide s-sol" id="s24">
+  <div class="tag">Ejercicio 4 — Función sin return</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Tabla de multiplicar</h2>
+  <div class="g2">
+    <div class="col">
+<pre><span class="kw">def</span> <span class="fn">tabla</span>(n):
+    <span class="fn">print</span>(<span class="str">f"--- Tabla del {n} ---"</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>):
+        <span class="fn">print</span>(<span class="str">f"{n} x {i} = {n * i}"</span>)
+
+<span class="fn">tabla</span>(<span class="num">3</span>)
+<span class="fn">tabla</span>(<span class="num">7</span>)</pre>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>Puntos clave</h3>
+        <ul class="s">
+          <li>La función <strong>imprime</strong> pero no retorna</li>
+          <li><code>range(1, 11)</code> genera 1, 2, … 10</li>
+          <li>Podemos <strong>reutilizar</strong> la función con cualquier n</li>
+          <li>f-string permite formatear fácilmente</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 25. EJ5 — ENUNCIADO ──────────────────────────────────── -->
+<div class="slide s-e" id="s25">
+  <div class="tag">Ejercicio 5 — Función con return</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Promedio de una lista</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Crea una función <code>promedio(lista)</code> que reciba una lista de números y <strong>retorne</strong> su promedio. Si la lista está vacía, retorna <code>0</code>.</p>
+      </div>
+      <div class="card or mt">
+        <h3>Extra</h3>
+        <p class="t" style="margin-top:8px">Usa el valor retornado en una expresión para verificar si el promedio es mayor o igual a 6 (aprobado).</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:150px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 26. EJ5 — SOLUCIÓN ───────────────────────────────────── -->
+<div class="slide s-sol" id="s26">
+  <div class="tag">Ejercicio 5 — Función con return</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Promedio de una lista</h2>
+  <div class="g2">
+    <div class="col">
+<pre><span class="kw">def</span> <span class="fn">promedio</span>(lista):
+    <span class="kw">if</span> <span class="fn">len</span>(lista) == <span class="num">0</span>:
+        <span class="kw">return</span> <span class="num">0</span>
+    <span class="kw">return</span> <span class="fn">sum</span>(lista) / <span class="fn">len</span>(lista)
+
+notas = [<span class="num">8</span>, <span class="num">9</span>, <span class="num">7</span>, <span class="num">10</span>, <span class="num">6</span>]
+p = <span class="fn">promedio</span>(notas)
+
+<span class="fn">print</span>(<span class="str">f"Promedio: {p}"</span>)      <span class="cm"># 8.0</span>
+<span class="fn">print</span>(<span class="str">f"Aprobado: {p >= 6}"</span>) <span class="cm"># True</span>
+
+<span class="fn">print</span>(<span class="fn">promedio</span>([]))  <span class="cm"># 0</span></pre>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>¿Por qué return aquí?</h3>
+        <ul class="s">
+          <li>El valor se <strong>usa en expresiones</strong>: <code>p >= 6</code></li>
+          <li>Podemos pasarlo a otras funciones</li>
+          <li>Sin return solo podríamos imprimirlo</li>
+        </ul>
+      </div>
+      <div class="card pu mt">
+        <h3>Dos returns</h3>
+        <ul class="s">
+          <li>El primero cubre el caso especial (lista vacía)</li>
+          <li>El segundo retorna el cálculo normal</li>
+          <li>Python ejecuta el <strong>primero que encuentra</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 27. RESUMEN ──────────────────────────────────────────── -->
+<div class="slide s-c" id="s27">
+  <div class="tag">Resumen</div>
+  <h2>Lo que aprendimos</h2>
+  <div class="g3">
+    <div class="card">
+      <h3>Listas</h3>
+      <ul class="s" style="margin-top:8px">
+        <li>Crear y acceder por índice</li>
+        <li><code>append</code>, <code>pop</code>, <code>sort</code></li>
+        <li>Slicing <code>[a:b]</code></li>
+        <li>Índices negativos</li>
+      </ul>
+    </div>
+    <div class="card pu">
+      <h3>Ciclos</h3>
+      <ul class="s" style="margin-top:8px">
+        <li><code>for</code> + <code>range</code>, <code>enumerate</code>, <code>zip</code></li>
+        <li>Recorrer por posición (≡ Java)</li>
+        <li><code>while</code> con condición dinámica</li>
+        <li><code>break</code>, <code>continue</code></li>
+      </ul>
+    </div>
+    <div class="card gr">
+      <h3>Funciones</h3>
+      <ul class="s" style="margin-top:8px">
+        <li><code>def nombre(params)</code></li>
+        <li>Sin <code>return</code> → efectos / imprime</li>
+        <li>Con <code>return</code> → valor reutilizable</li>
+        <li>Parámetros por defecto</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card or mt w100" style="text-align:center;padding:18px">
+    <h3 style="color:var(--orange)">La práctica hace al programador</h3>
+    <p class="t" style="color:var(--muted);margin-top:6px">Escribe código todos los días. Los errores son parte del aprendizaje.</p>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<a id="home" href="../">&#8592; Inicio</a>
+<div id="prog"></div>
+<div id="nav">
+  <button class="nb" id="bp">&#8592;</button>
+  <span id="cnt">1 / 27</span>
+  <button class="nb" id="bn">&#8594;</button>
+</div>
+
+<script>
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total = slides.length;
+let cur = 0;
+const cnt = document.getElementById('cnt');
+const prog = document.getElementById('prog');
+
+function go(n) {
+  if (n < 0 || n >= total) return;
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exit');
+  const prev = cur;
+  setTimeout(() => slides[prev].classList.remove('exit'), 340);
+  cur = n;
+  slides[cur].classList.add('active');
+  cnt.textContent = `${cur + 1} / ${total}`;
+  prog.style.width = `${((cur + 1) / total) * 100}%`;
+}
+
+document.getElementById('bn').addEventListener('click', () => go(cur + 1));
+document.getElementById('bp').addEventListener('click', () => go(cur - 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ')  go(cur + 1);
+  if (e.key === 'ArrowLeft')                     go(cur - 1);
+});
+
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+document.addEventListener('touchend',   e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 40) go(cur + (dx > 0 ? 1 : -1));
+});
+
+go(0);
+</script>
 </body>
 </html>
