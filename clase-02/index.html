@@ -138,33 +138,40 @@ code{font-family:'Fira Code',monospace;background:#E2E8F0;padding:2px 6px;border
           <li><code>def</code> → palabra clave que <strong>define</strong> la función</li>
           <li><strong>nombre</strong> → identificador con el que la llamamos</li>
           <li><strong>parámetros</strong> → datos que recibe (pueden ser ninguno)</li>
-          <li><strong>cuerpo</strong> → las instrucciones (indentado)</li>
+          <li><strong>cuerpo</strong> → instrucciones indentadas</li>
           <li><code>return</code> → valor que devuelve (opcional)</li>
         </ul>
       </div>
       <div class="card gr">
         <h3>Definir ≠ Ejecutar</h3>
         <ul class="s">
-          <li>Escribir <code>def</code> solo <strong>define</strong> la función</li>
+          <li>Escribir <code>def</code> solo <strong>prepara</strong> la función</li>
           <li>Para ejecutarla hay que <strong>llamarla</strong>: <code>nombre()</code></li>
+          <li>Se puede llamar <strong>tantas veces</strong> como se quiera</li>
         </ul>
       </div>
     </div>
     <div class="col">
-<pre><span class="cm"># Definición — aún no se ejecuta</span>
+<pre><span class="cm"># Sin parámetros</span>
 <span class="kw">def</span> <span class="fn">saludar</span>():
     <span class="fn">print</span>(<span class="str">"Hola mundo"</span>)
 
-<span class="cm"># Llamada — aquí sí se ejecuta</span>
 <span class="fn">saludar</span>()   <span class="cm"># Hola mundo</span>
-<span class="fn">saludar</span>()   <span class="cm"># Hola mundo  (de nuevo)</span>
+<span class="fn">saludar</span>()   <span class="cm"># Hola mundo  (llamada 2)</span>
 
-<span class="cm"># Función con parámetro</span>
+<span class="cm"># Con un parámetro</span>
 <span class="kw">def</span> <span class="fn">saludar_a</span>(nombre):
     <span class="fn">print</span>(<span class="str">f"Hola, {nombre}!"</span>)
 
-<span class="fn">saludar_a</span>(<span class="str">"Ana"</span>)   <span class="cm"># Hola, Ana!</span>
-<span class="fn">saludar_a</span>(<span class="str">"Luis"</span>)  <span class="cm"># Hola, Luis!</span></pre>
+<span class="fn">saludar_a</span>(<span class="str">"Ana"</span>)    <span class="cm"># Hola, Ana!</span>
+<span class="fn">saludar_a</span>(<span class="str">"Luis"</span>)   <span class="cm"># Hola, Luis!</span>
+
+<span class="cm"># Con varios parámetros y return</span>
+<span class="kw">def</span> <span class="fn">sumar</span>(a, b):
+    <span class="kw">return</span> a + b
+
+resultado = <span class="fn">sumar</span>(<span class="num">3</span>, <span class="num">5</span>)
+<span class="fn">print</span>(resultado)      <span class="cm"># 8</span></pre>
     </div>
   </div>
 </div>
@@ -178,34 +185,35 @@ code{font-family:'Fira Code',monospace;background:#E2E8F0;padding:2px 6px;border
       <div class="card or">
         <h3>Sin funciones — código repetido</h3>
       </div>
-<pre><span class="cm"># Calcular área 3 veces</span>
-area1 = <span class="num">5</span> * <span class="num">3</span>
-<span class="fn">print</span>(<span class="str">f"Área: {area1}"</span>)
+<pre><span class="cm"># Mismo cálculo copiado 3 veces</span>
+nota1 = (<span class="num">8</span> + <span class="num">9</span> + <span class="num">7</span>) / <span class="num">3</span>
+<span class="fn">print</span>(<span class="str">f"Promedio: {nota1:.1f}"</span>)
 
-area2 = <span class="num">8</span> * <span class="num">2</span>
-<span class="fn">print</span>(<span class="str">f"Área: {area2}"</span>)
+nota2 = (<span class="num">6</span> + <span class="num">10</span> + <span class="num">8</span>) / <span class="num">3</span>
+<span class="fn">print</span>(<span class="str">f"Promedio: {nota2:.1f}"</span>)
 
-area3 = <span class="num">7</span> * <span class="num">4</span>
-<span class="fn">print</span>(<span class="str">f"Área: {area3}"</span>)
-<span class="cm"># Si cambia la fórmula → cambiar 3 veces</span></pre>
+nota3 = (<span class="num">5</span> + <span class="num">7</span> + <span class="num">9</span>) / <span class="num">3</span>
+<span class="fn">print</span>(<span class="str">f"Promedio: {nota3:.1f}"</span>)
+<span class="cm"># Si cambia el cálculo → editar 3 lugares</span></pre>
     </div>
     <div class="col">
       <div class="card gr">
         <h3>Con funciones — DRY (Don't Repeat Yourself)</h3>
       </div>
-<pre><span class="kw">def</span> <span class="fn">area_rectangulo</span>(base, altura):
-    <span class="fn">print</span>(<span class="str">f"Área: {base * altura}"</span>)
+<pre><span class="kw">def</span> <span class="fn">promedio</span>(n1, n2, n3):
+    resultado = (n1 + n2 + n3) / <span class="num">3</span>
+    <span class="fn">print</span>(<span class="str">f"Promedio: {resultado:.1f}"</span>)
 
-<span class="fn">area_rectangulo</span>(<span class="num">5</span>, <span class="num">3</span>)
-<span class="fn">area_rectangulo</span>(<span class="num">8</span>, <span class="num">2</span>)
-<span class="fn">area_rectangulo</span>(<span class="num">7</span>, <span class="num">4</span>)
-<span class="cm"># Si cambia la fórmula → cambiar 1 sola vez</span></pre>
+<span class="fn">promedio</span>(<span class="num">8</span>, <span class="num">9</span>, <span class="num">7</span>)   <span class="cm"># Promedio: 8.0</span>
+<span class="fn">promedio</span>(<span class="num">6</span>, <span class="num">10</span>, <span class="num">8</span>)  <span class="cm"># Promedio: 8.0</span>
+<span class="fn">promedio</span>(<span class="num">5</span>, <span class="num">7</span>, <span class="num">9</span>)   <span class="cm"># Promedio: 7.0</span>
+<span class="cm"># Cambio → editar 1 sola vez</span></pre>
       <div class="card pu">
-        <h3>Ventajas</h3>
+        <h3>Principio DRY</h3>
         <ul class="s">
           <li><strong>Reutilización</strong> — escribir una vez, usar muchas</li>
-          <li><strong>Legibilidad</strong> — el nombre explica qué hace</li>
-          <li><strong>Mantenimiento</strong> — un cambio afecta todo</li>
+          <li><strong>Legibilidad</strong> — el nombre dice qué hace</li>
+          <li><strong>Mantenimiento</strong> — un cambio aplica a todo</li>
         </ul>
       </div>
     </div>
@@ -307,8 +315,66 @@ area3 = <span class="num">7</span> * <span class="num">4</span>
   </div>
 </div>
 
-<!-- ─── 8. SEC RETURN ────────────────────────────────────────── -->
-<div class="slide s-sec gr" id="s8">
+<!-- ─── 8. TYPE HINTS ────────────────────────────────────────── -->
+<div class="slide s-c" id="s8">
+  <div class="tag">Parámetros</div>
+  <h2>Type hints — <span style="color:var(--blue)">anotar los tipos</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>¿Qué son?</h3>
+        <ul class="s">
+          <li>Anotaciones que indican <strong>qué tipo espera</strong> cada parámetro</li>
+          <li>Y qué tipo <strong>va a retornar</strong> la función (<code>-&gt; tipo</code>)</li>
+          <li>Python <strong>no las obliga</strong> — son una guía para el programador</li>
+          <li>Mejoran mucho la <strong>legibilidad</strong> del código</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>Sintaxis</h3>
+        <p class="t" style="margin-top:8px;font-family:'Fira Code',monospace;font-size:clamp(13px,1.3vw,15px)"><span style="color:var(--blue);font-weight:700">def</span> nombre(<span style="color:#6EE7B7">param</span>: <span style="color:#FCA5A5">tipo</span>) <span style="color:var(--blue);font-weight:700">-&gt;</span> <span style="color:#FCA5A5">tipo_retorno</span>:</p>
+      </div>
+      <div class="card or" style="margin-top:11px">
+        <h3>Tipos más comunes</h3>
+        <ul class="s">
+          <li><code>int</code> — número entero</li>
+          <li><code>float</code> — número decimal</li>
+          <li><code>str</code> — texto</li>
+          <li><code>bool</code> — True / False</li>
+          <li><code>list</code> — lista</li>
+          <li><code>None</code> — cuando no retorna nada</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="cm"># Sin type hints — ¿qué tipo recibe/retorna?</span>
+<span class="kw">def</span> <span class="fn">calcular_imc</span>(peso, altura):
+    <span class="kw">return</span> peso / altura ** <span class="num">2</span>
+
+<span class="cm"># Con type hints — queda claro al leer</span>
+<span class="kw">def</span> <span class="fn">calcular_imc</span>(peso: <span class="num">float</span>, altura: <span class="num">float</span>) -> <span class="num">float</span>:
+    <span class="kw">return</span> peso / altura ** <span class="num">2</span>
+
+<span class="kw">def</span> <span class="fn">es_par</span>(n: <span class="num">int</span>) -> <span class="num">bool</span>:
+    <span class="kw">return</span> n % <span class="num">2</span> == <span class="num">0</span>
+
+<span class="kw">def</span> <span class="fn">saludar</span>(nombre: <span class="num">str</span>, veces: <span class="num">int</span> = <span class="num">1</span>) -> <span class="kw">None</span>:
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(veces):
+        <span class="fn">print</span>(<span class="str">f"Hola, {nombre}!"</span>)
+
+<span class="kw">def</span> <span class="fn">dividir</span>(a: <span class="num">float</span>, b: <span class="num">float</span>) -> <span class="num">float</span>:
+    <span class="kw">return</span> a / b
+
+<span class="cm"># Python no fuerza el tipo — esto funciona igual</span>
+<span class="fn">print</span>(<span class="fn">es_par</span>(<span class="num">4</span>))    <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">es_par</span>(<span class="num">7</span>))    <span class="cm"># False</span>
+<span class="fn">saludar</span>(<span class="str">"Ana"</span>, <span class="num">3</span>)  <span class="cm"># Hola, Ana! x3</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 9. SEC RETURN ────────────────────────────────────────── -->
+<div class="slide s-sec gr" id="s9_sec">
   <div class="tag">Módulo 03</div>
   <h2>Funciones con return</h2>
   <p class="sub">La diferencia entre imprimir y devolver un valor</p>

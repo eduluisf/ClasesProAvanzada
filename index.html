@@ -111,7 +111,7 @@
 </div>
 
 <div class="seccion">
-  <h2>Ejercicios</h2>
+  <h2>Materiales</h2>
   <div class="lista" id="lista-ejercicios">
     <div class="vacio">Cargando...</div>
   </div>
@@ -160,12 +160,12 @@
         .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
       const clases     = carpetas.filter(c => c.name.startsWith("clase"));
-      const ejercicios = carpetas.filter(c => c.name.startsWith("ejercicio"));
+      const ejercicios = carpetas.filter(c => c.name.startsWith("material"));
 
       renderLista(listaClases,     clases);
       renderLista(listaEjercicios, ejercicios);
 
-      estado.textContent = `${clases.length} clase${clases.length !== 1 ? "s" : ""} · ${ejercicios.length} ejercicio${ejercicios.length !== 1 ? "s" : ""}`;
+      estado.textContent = `${clases.length} clase${clases.length !== 1 ? "s" : ""} · ${ejercicios.length} carpeta${ejercicios.length !== 1 ? "s" : ""} de materiales`;
 
     } catch (err) {
       listaClases.innerHTML     = '<div class="vacio">No se pudo cargar el contenido</div>';

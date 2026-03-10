@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ejercicios - Programacion Avanzada</title>
+  <title>Materiales - Programacion Avanzada</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -47,8 +47,8 @@
 <div class="contenedor">
   <a class="home" href="../">&#8592; Inicio</a>
   <header>
-    <h1>Ejercicios</h1>
-    <p>Practica lo visto en clase</p>
+    <h1>Materiales</h1>
+    <p>Ejercicios, apuntes y código de clase</p>
   </header>
   <div class="seccion">
     <h2>Disponibles</h2>
@@ -64,14 +64,14 @@
     const lista = document.getElementById("lista");
     try {
       const res = await fetch(
-        `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/ejercicios`,
+        `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/materiales`,
         { headers: { Accept: "application/vnd.github.v3+json" } }
       );
       if (!res.ok) throw new Error();
       const items = await res.json();
       const archivos = items.filter(i => i.name.endsWith(".html") && i.name !== "index.html");
       if (archivos.length === 0) {
-        lista.innerHTML = '<p style="color:#aaa;font-size:.9rem;padding:.5rem 0">No hay ejercicios todavia.</p>';
+        lista.innerHTML = '<p style="color:#aaa;font-size:.9rem;padding:.5rem 0">No hay materiales todavia.</p>';
         return;
       }
       archivos
