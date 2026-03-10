@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clases - Programacion Avanzada</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    header {
+      max-width: 800px;
+      margin: 0 auto 2.5rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 0.4rem;
+    }
+
+    header p {
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    #clases {
+      max-width: 800px;
+      margin: 0 auto;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .clase-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 1.1rem 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .clase-card:hover {
+      background: #243044;
+      border-color: #6366f1;
+    }
+
+    .clase-card .nombre {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #e2e8f0;
+      text-transform: capitalize;
+    }
+
+    .clase-card .flecha {
+      color: #6366f1;
+      font-size: 1.2rem;
+    }
+
+    #estado {
+      max-width: 800px;
+      margin: 2rem auto;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    #estado a {
+      color: #6366f1;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Programacion Avanzada</h1>
+  <p>Selecciona una clase para verla</p>
+</header>
+
+<div id="clases"></div>
+<div id="estado">Cargando clases...</div>
+
+<script>
+  // =====================================================
+  // CONFIGURACION: cambia estos dos valores
+  const GITHUB_USER = "eduluisf";   // tu usuario de GitHub
+  const GITHUB_REPO = "ClasesProAvanzada"; // nombre del repositorio
+  // =====================================================
+
+  const contenedor = document.getElementById("clases");
+  const estado = document.getElementById("estado");
+
+  async function cargarClases() {
+    const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/`;
+
+    try {
+      const res = await fetch(url, {
+        headers: { Accept: "application/vnd.github.v3+json" }
+      });
+
+      if (!res.ok) throw new Error(`GitHub API: ${res.status}`);
+
+      const items = await res.json();
+
+      // Filtra solo carpetas que no sean ocultas ni especiales
+      const carpetas = items.filter(
+        i => i.type === "dir" && !i.name.startsWith(".") && i.name !== "__pycache__"
+      );
+
+      if (carpetas.length === 0) {
+        estado.innerHTML = "No hay clases todavia. Crea una carpeta en el repositorio para empezar.";
+        return;
+      }
+
+      // Ordenar alfabeticamente/numericamente
+      carpetas.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+      carpetas.forEach((carpeta, idx) => {
+        const a = document.createElement("a");
+        // Enlace directo a la carpeta (GitHub Pages sirve index.html automaticamente)
+        a.href = `${carpeta.name}/`;
+        a.className = "clase-card";
+        a.innerHTML = `
+          <span class="nombre">${carpeta.name.replace(/-/g, " ")}</span>
+          <span class="flecha">&#8594;</span>
+        `;
+        contenedor.appendChild(a);
+      });
+
+      estado.textContent = `${carpetas.length} clase${carpetas.length !== 1 ? "s" : ""} disponible${carpetas.length !== 1 ? "s" : ""}`;
+
+    } catch (err) {
+      console.error(err);
+      estado.innerHTML = `
+        No se pudo cargar la lista automaticamente.<br>
+        <small>Revisa que <code>GITHUB_USER</code> y <code>GITHUB_REPO</code> esten bien configurados
+        en este archivo, o que el repositorio sea <strong>publico</strong>.</small>
+      `;
+    }
+  }
+
+  cargarClases();
+</script>
+
+</body>
+</html>
