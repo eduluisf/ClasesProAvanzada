@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python — Funciones Avanzadas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#2563EB;--purple:#7C3AED;--green:#059669;--orange:#D97706;--text:#0F172A;--muted:#64748B}
+body{font-family:'Inter',sans-serif;background:#fff;color:var(--text);overflow:hidden;height:100vh;width:100vw}
+#deck{position:relative;width:100vw;height:100vh}
+
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:42px 70px;
+  opacity:0;transform:translateX(56px);
+  transition:opacity .3s ease,transform .3s ease;
+  pointer-events:none;overflow:hidden;
+}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-56px)}
+
+.s-hero{background:#fff;align-items:center;text-align:center}
+.s-sec{background:var(--blue);color:#fff}
+.s-sec.pu{background:var(--purple)}
+.s-sec.gr{background:var(--green)}
+.s-sec.dk{background:#0F172A}
+.s-c{background:#fff}
+.s-e{background:#F8FAFC}
+.s-sol{background:#fff}
+
+.tag{font-size:13px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.s-sec .tag{color:rgba(255,255,255,.7)}
+.s-sec.dk .tag{color:#93C5FD}
+
+h1{font-size:clamp(58px,8vw,96px);font-weight:900;letter-spacing:-.03em;line-height:1;color:var(--text)}
+h2{font-size:clamp(38px,5vw,62px);font-weight:900;letter-spacing:-.02em;line-height:1.06;margin-bottom:18px}
+.s-sec h2{color:#fff}
+h3{font-size:clamp(18px,2.1vw,24px);font-weight:700;margin-bottom:8px}
+.sub{font-size:clamp(20px,2.4vw,28px);color:var(--muted);line-height:1.45;margin-top:12px}
+.s-sec .sub{color:rgba(255,255,255,.8)}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%}
+.col{display:flex;flex-direction:column;gap:11px}
+.mt{margin-top:14px}
+.w100{width:100%}
+
+.card{background:#EFF6FF;border-radius:14px;padding:16px 20px}
+.card.pu{background:#F5F3FF}
+.card.gr{background:#ECFDF5}
+.card.or{background:#FFF7ED}
+.card.sl{background:#F1F5F9}
+
+li,p.t{font-size:clamp(16px,1.8vw,21px);line-height:1.55}
+li strong{font-weight:700}
+ul.s,ol.s{list-style:none;display:flex;flex-direction:column;gap:5px}
+ul.s li::before{content:'▸';color:var(--blue);font-weight:700;margin-right:8px}
+ol.s{counter-reset:ci}
+ol.s li{counter-increment:ci}
+ol.s li::before{content:counter(ci)'.';color:var(--blue);font-weight:700;margin-right:8px}
+
+pre{
+  background:#1E293B;color:#E2E8F0;
+  font-family:'Fira Code',monospace;
+  font-size:clamp(13px,1.3vw,16px);
+  line-height:1.65;border-radius:14px;
+  padding:16px 20px;overflow:hidden;width:100%
+}
+.lbl{font-size:11px;font-weight:700;letter-spacing:.08em;display:inline-block;padding:2px 10px;border-radius:999px;margin-bottom:5px}
+.lbl.py{background:#2563EB;color:#fff}
+
+.kw{color:#93C5FD;font-weight:600}
+.fn{color:#6EE7B7}
+.str{color:#FDE68A}
+.num{color:#FCA5A5}
+.cm{color:#64748B;font-style:italic}
+
+.bdg{display:inline-block;padding:3px 13px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:8px}
+.bdg.gr{background:var(--green);color:#fff}
+.bdg.or{background:#FEF3C7;color:#92400E;border:1px solid #FCD34D}
+.bdg.bl{background:var(--blue);color:#fff}
+.bdg.pu{background:var(--purple);color:#fff}
+
+table{width:100%;border-collapse:collapse}
+th{background:var(--blue);color:#fff;padding:10px 14px;text-align:left;font-size:15px;font-weight:700}
+td{padding:9px 14px;font-size:15px;border-bottom:1px solid #E2E8F0}
+tr:nth-child(even) td{background:#F8FAFC}
+code{font-family:'Fira Code',monospace;background:#E2E8F0;padding:2px 6px;border-radius:4px;font-size:.9em;color:#1E293B}
+
+.hero-deco{position:absolute;top:16px;right:44px;font-size:120px;font-weight:900;opacity:.05;color:var(--purple);line-height:1;user-select:none}
+.hero-pill{display:inline-block;background:var(--purple);color:#fff;padding:7px 22px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px}
+
+#prog{position:fixed;bottom:0;left:0;height:4px;background:var(--purple);transition:width .3s;z-index:100}
+#nav{position:fixed;bottom:20px;right:32px;display:flex;align-items:center;gap:9px;z-index:100}
+.nb{width:40px;height:40px;border-radius:50%;border:2px solid var(--purple);background:#fff;color:var(--purple);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;transition:background .2s,color .2s;box-shadow:0 2px 10px rgba(124,58,237,.15)}
+.nb:hover{background:var(--purple);color:#fff}
+#cnt{font-size:12px;font-weight:700;color:var(--muted);min-width:44px;text-align:center}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- ─── 1. HERO ─────────────────────────────────────────────── -->
+<div class="slide s-hero active" id="s1">
+  <div class="hero-deco">ƒ</div>
+  <div class="hero-pill">Clase 02</div>
+  <h1><span style="color:var(--purple)">Funciones</span><br>en Python</h1>
+  <p class="sub">Parámetros · Lambda · Scope<br>Recursión · Orden Superior</p>
+</div>
+
+<!-- ─── 2. SEC PARÁMETROS ─────────────────────────────────── -->
+<div class="slide s-sec pu" id="s2">
+  <div class="tag">Módulo 01</div>
+  <h2>Parámetros y Argumentos</h2>
+  <p class="sub">Cómo pasar datos a una función</p>
+</div>
+
+<!-- ─── 3. POSICIONALES VS KEYWORD ──────────────────────── -->
+<div class="slide s-c" id="s3">
+  <div class="tag">Parámetros</div>
+  <h2>Posicionales vs <span style="color:var(--purple)">Keyword</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>Posicionales</h3>
+        <ul class="s">
+          <li>El orden <strong>importa</strong></li>
+          <li>Se asignan por posición al llamar</li>
+          <li>Deben pasarse <strong>todos</strong></li>
+        </ul>
+      </div>
+      <div class="card gr">
+        <h3>Keyword (por nombre)</h3>
+        <ul class="s">
+          <li>El orden <strong>no importa</strong></li>
+          <li>Se nombra el parámetro al llamar</li>
+          <li>Más <strong>legible</strong> en funciones largas</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">def</span> <span class="fn">crear_usuario</span>(nombre, edad, rol):
+    <span class="fn">print</span>(<span class="str">f"{nombre}, {edad}, {rol}"</span>)
+
+<span class="cm"># Posicional — orden importa</span>
+<span class="fn">crear_usuario</span>(<span class="str">"Ana"</span>, <span class="num">25</span>, <span class="str">"admin"</span>)
+
+<span class="cm"># Keyword — orden libre</span>
+<span class="fn">crear_usuario</span>(rol=<span class="str">"user"</span>, nombre=<span class="str">"Luis"</span>, edad=<span class="num">30</span>)
+
+<span class="cm"># Mixto — posicional primero</span>
+<span class="fn">crear_usuario</span>(<span class="str">"Mia"</span>, rol=<span class="str">"admin"</span>, edad=<span class="num">22</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 4. PARÁMETROS POR DEFECTO ────────────────────────── -->
+<div class="slide s-c" id="s4">
+  <div class="tag">Parámetros</div>
+  <h2>Valores por <span style="color:var(--purple)">defecto</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>Regla de oro</h3>
+        <ul class="s">
+          <li>Los parámetros con defecto van <strong>al final</strong></li>
+          <li>Si no se pasa el argumento, usa el <strong>valor por defecto</strong></li>
+          <li>Permite hacer funciones <strong>opcionales</strong></li>
+        </ul>
+      </div>
+      <div class="card or">
+        <h3>Error común</h3>
+        <ul class="s">
+          <li>Nunca uses una <strong>lista o dict</strong> como defecto</li>
+          <li>Usa <code>None</code> y crea el objeto <strong>dentro</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">def</span> <span class="fn">saludar</span>(nombre, saludo=<span class="str">"Hola"</span>):
+    <span class="fn">print</span>(<span class="str">f"{saludo}, {nombre}!"</span>)
+
+<span class="fn">saludar</span>(<span class="str">"Ana"</span>)              <span class="cm"># Hola, Ana!</span>
+<span class="fn">saludar</span>(<span class="str">"Luis"</span>, <span class="str">"Buenas"</span>) <span class="cm"># Buenas, Luis!</span>
+
+<span class="cm"># MAL — lista mutable como defecto</span>
+<span class="kw">def</span> <span class="fn">agregar_mal</span>(x, lista=[]):
+    lista.<span class="fn">append</span>(x)
+    <span class="kw">return</span> lista
+
+<span class="cm"># BIEN — None como centinela</span>
+<span class="kw">def</span> <span class="fn">agregar_bien</span>(x, lista=<span class="kw">None</span>):
+    <span class="kw">if</span> lista <span class="kw">is None</span>:
+        lista = []
+    lista.<span class="fn">append</span>(x)
+    <span class="kw">return</span> lista</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 5. *ARGS Y **KWARGS ──────────────────────────────── -->
+<div class="slide s-c" id="s5">
+  <div class="tag">Parámetros</div>
+  <h2><code style="font-size:.75em">*args</code> y <code style="font-size:.75em">**kwargs</code></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>*args — cantidad variable de valores</h3>
+        <ul class="s">
+          <li>Recibe <strong>cualquier cantidad</strong> de argumentos</li>
+          <li>Se convierte en una <strong>tupla</strong></li>
+          <li>El <code>*</code> es lo importante, no el nombre</li>
+        </ul>
+      </div>
+<pre><span class="kw">def</span> <span class="fn">sumar</span>(*nums):
+    <span class="kw">return</span> <span class="fn">sum</span>(nums)
+
+<span class="fn">print</span>(<span class="fn">sumar</span>(<span class="num">1</span>, <span class="num">2</span>))          <span class="cm"># 3</span>
+<span class="fn">print</span>(<span class="fn">sumar</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>))   <span class="cm"># 10</span></pre>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>**kwargs — cantidad variable de clave=valor</h3>
+        <ul class="s">
+          <li>Recibe argumentos nombrados <strong>extras</strong></li>
+          <li>Se convierte en un <strong>diccionario</strong></li>
+        </ul>
+      </div>
+<pre><span class="kw">def</span> <span class="fn">perfil</span>(nombre, **datos):
+    <span class="fn">print</span>(<span class="str">f"Nombre: {nombre}"</span>)
+    <span class="kw">for</span> k, v <span class="kw">in</span> datos.<span class="fn">items</span>():
+        <span class="fn">print</span>(<span class="str">f"  {k}: {v}"</span>)
+
+<span class="fn">perfil</span>(<span class="str">"Ana"</span>, edad=<span class="num">25</span>, ciudad=<span class="str">"Lima"</span>)
+<span class="cm"># Nombre: Ana
+#   edad: 25
+#   ciudad: Lima</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 6. SEC LAMBDA ────────────────────────────────────── -->
+<div class="slide s-sec" id="s6">
+  <div class="tag">Módulo 02</div>
+  <h2>Funciones Lambda</h2>
+  <p class="sub">Funciones anónimas en una sola línea</p>
+</div>
+
+<!-- ─── 7. LAMBDA BÁSICO ─────────────────────────────────── -->
+<div class="slide s-c" id="s7">
+  <div class="tag">Lambda</div>
+  <h2>¿Qué es una <span style="color:var(--blue)">lambda</span>?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Sintaxis</h3>
+        <p class="t" style="margin-top:8px;font-family:'Fira Code',monospace;font-size:clamp(14px,1.5vw,18px)"><span style="color:var(--blue);font-weight:700">lambda</span> params : expresión</p>
+      </div>
+      <div class="card pu">
+        <h3>Características</h3>
+        <ul class="s">
+          <li>Una sola <strong>expresión</strong> (no sentencias)</li>
+          <li>Retorna el valor <strong>automáticamente</strong></li>
+          <li>Ideal para funciones <strong>simples y cortas</strong></li>
+          <li>Se usa donde se necesita una función <strong>momentánea</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="cm"># Función normal vs lambda</span>
+<span class="kw">def</span> <span class="fn">doble</span>(x):
+    <span class="kw">return</span> x * <span class="num">2</span>
+
+doble_l = <span class="kw">lambda</span> x: x * <span class="num">2</span>
+
+<span class="fn">print</span>(<span class="fn">doble</span>(<span class="num">5</span>))    <span class="cm"># 10</span>
+<span class="fn">print</span>(doble_l(<span class="num">5</span>)) <span class="cm"># 10</span>
+
+<span class="cm"># Lambda con varios parámetros</span>
+suma = <span class="kw">lambda</span> a, b: a + b
+<span class="fn">print</span>(<span class="fn">suma</span>(<span class="num">3</span>, <span class="num">4</span>))  <span class="cm"># 7</span>
+
+<span class="cm"># Lambda con condición</span>
+par = <span class="kw">lambda</span> n: <span class="str">"par"</span> <span class="kw">if</span> n % <span class="num">2</span> == <span class="num">0</span> <span class="kw">else</span> <span class="str">"impar"</span>
+<span class="fn">print</span>(<span class="fn">par</span>(<span class="num">7</span>))  <span class="cm"># impar</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 8. MAP Y FILTER ──────────────────────────────────── -->
+<div class="slide s-c" id="s8">
+  <div class="tag">Lambda</div>
+  <h2><code style="font-size:.75em">map()</code> y <code style="font-size:.75em">filter()</code></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>map(funcion, lista)</h3>
+        <ul class="s">
+          <li>Aplica la función a <strong>cada elemento</strong></li>
+          <li>Retorna un nuevo iterable con los resultados</li>
+          <li>No modifica la lista original</li>
+        </ul>
+      </div>
+<pre><span class="fn">nums</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+
+cuadrados = <span class="fn">list</span>(<span class="fn">map</span>(<span class="kw">lambda</span> x: x**<span class="num">2</span>, nums))
+<span class="fn">print</span>(cuadrados)  <span class="cm"># [1, 4, 9, 16, 25]</span>
+
+mayus = <span class="fn">list</span>(<span class="fn">map</span>(<span class="fn">str.upper</span>, [<span class="str">"ana"</span>, <span class="str">"luis"</span>]))
+<span class="fn">print</span>(mayus)  <span class="cm"># ['ANA', 'LUIS']</span></pre>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>filter(funcion, lista)</h3>
+        <ul class="s">
+          <li>Conserva solo los elementos donde la función retorna <strong>True</strong></li>
+          <li>Filtra la lista según condición</li>
+        </ul>
+      </div>
+<pre><span class="fn">nums</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>]
+
+pares = <span class="fn">list</span>(<span class="fn">filter</span>(<span class="kw">lambda</span> x: x % <span class="num">2</span> == <span class="num">0</span>, nums))
+<span class="fn">print</span>(pares)  <span class="cm"># [2, 4, 6]</span>
+
+mayores = <span class="fn">list</span>(<span class="fn">filter</span>(<span class="kw">lambda</span> x: x > <span class="num">3</span>, nums))
+<span class="fn">print</span>(mayores)  <span class="cm"># [4, 5, 6]</span>
+
+<span class="cm"># Equivalente con list comprehension</span>
+pares_lc = [x <span class="kw">for</span> x <span class="kw">in</span> nums <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 9. SEC SCOPE ─────────────────────────────────────── -->
+<div class="slide s-sec gr" id="s9">
+  <div class="tag">Módulo 03</div>
+  <h2>Scope (Alcance)</h2>
+  <p class="sub">Dónde vive cada variable</p>
+</div>
+
+<!-- ─── 10. LOCAL VS GLOBAL ─────────────────────────────── -->
+<div class="slide s-c" id="s10">
+  <div class="tag">Scope</div>
+  <h2>Local vs <span style="color:var(--green)">Global</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>Regla LEGB</h3>
+        <ul class="s">
+          <li><strong>L</strong>ocal → dentro de la función actual</li>
+          <li><strong>E</strong>nclosing → función que la contiene</li>
+          <li><strong>G</strong>lobal → nivel del módulo</li>
+          <li><strong>B</strong>uilt-in → funciones de Python</li>
+        </ul>
+      </div>
+      <div class="card or">
+        <h3>Buena práctica</h3>
+        <ul class="s">
+          <li>Evita usar <code>global</code> — pasa datos por <strong>parámetros</strong></li>
+          <li>Las funciones deben depender de sus <strong>entradas</strong>, no de variables externas</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre>x = <span class="num">10</span>  <span class="cm"># variable global</span>
+
+<span class="kw">def</span> <span class="fn">ver_x</span>():
+    <span class="fn">print</span>(x)   <span class="cm"># puede LEER la global</span>
+
+<span class="kw">def</span> <span class="fn">cambiar_x</span>():
+    <span class="kw">global</span> x   <span class="cm"># declara que usará la global</span>
+    x = <span class="num">99</span>
+
+<span class="kw">def</span> <span class="fn">local_x</span>():
+    x = <span class="num">50</span>     <span class="cm"># crea una variable LOCAL, no afecta la global</span>
+    <span class="fn">print</span>(x)   <span class="cm"># 50</span>
+
+<span class="fn">ver_x</span>()      <span class="cm"># 10</span>
+<span class="fn">local_x</span>()    <span class="cm"># 50</span>
+<span class="fn">ver_x</span>()      <span class="cm"># 10  ← global no cambió</span>
+<span class="fn">cambiar_x</span>()
+<span class="fn">ver_x</span>()      <span class="cm"># 99  ← ahora sí cambió</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 11. NONLOCAL ─────────────────────────────────────── -->
+<div class="slide s-c" id="s11">
+  <div class="tag">Scope</div>
+  <h2>Funciones anidadas y <code style="font-size:.75em">nonlocal</code></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>Función anidada (closure)</h3>
+        <ul class="s">
+          <li>Una función <strong>definida dentro</strong> de otra</li>
+          <li>Puede acceder a variables de la función <strong>exterior</strong></li>
+          <li><code>nonlocal</code> permite <strong>modificar</strong> esa variable</li>
+        </ul>
+      </div>
+      <div class="card pu">
+        <h3>¿Para qué sirve?</h3>
+        <ul class="s">
+          <li>Crear funciones <strong>fábrica</strong> (factory)</li>
+          <li>Encapsular estado sin usar clases</li>
+          <li>Decoradores (tema avanzado)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="cm"># Closure básico</span>
+<span class="kw">def</span> <span class="fn">contador</span>():
+    cuenta = <span class="num">0</span>
+    <span class="kw">def</span> <span class="fn">incrementar</span>():
+        <span class="kw">nonlocal</span> cuenta
+        cuenta += <span class="num">1</span>
+        <span class="fn">print</span>(cuenta)
+    <span class="kw">return</span> incrementar
+
+c = <span class="fn">contador</span>()
+<span class="fn">c</span>()  <span class="cm"># 1</span>
+<span class="fn">c</span>()  <span class="cm"># 2</span>
+<span class="fn">c</span>()  <span class="cm"># 3</span>
+
+<span class="cm"># Función fábrica</span>
+<span class="kw">def</span> <span class="fn">multiplicador</span>(factor):
+    <span class="kw">return lambda</span> x: x * factor
+
+doble  = <span class="fn">multiplicador</span>(<span class="num">2</span>)
+triple = <span class="fn">multiplicador</span>(<span class="num">3</span>)
+<span class="fn">print</span>(<span class="fn">doble</span>(<span class="num">5</span>))   <span class="cm"># 10</span>
+<span class="fn">print</span>(<span class="fn">triple</span>(<span class="num">5</span>))  <span class="cm"># 15</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 12. SEC RECURSIÓN ────────────────────────────────── -->
+<div class="slide s-sec dk" id="s12">
+  <div class="tag">Módulo 04</div>
+  <h2>Recursión</h2>
+  <p class="sub">Una función que se llama a sí misma</p>
+</div>
+
+<!-- ─── 13. RECURSIÓN BÁSICA ────────────────────────────── -->
+<div class="slide s-c" id="s13">
+  <div class="tag">Recursión</div>
+  <h2>Anatomía de una función <span style="color:var(--blue)">recursiva</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Dos partes obligatorias</h3>
+        <ul class="s">
+          <li><strong>Caso base</strong> → condición de parada (sin ella, loop infinito)</li>
+          <li><strong>Caso recursivo</strong> → se llama a sí misma con un problema <strong>más pequeño</strong></li>
+        </ul>
+      </div>
+      <div class="card or">
+        <h3>Limitación en Python</h3>
+        <ul class="s">
+          <li>Límite de ~1000 llamadas recursivas por defecto</li>
+          <li>Para problemas grandes → usar <strong>iteración</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="cm"># Factorial: n! = n × (n-1) × … × 1</span>
+<span class="kw">def</span> <span class="fn">factorial</span>(n):
+    <span class="kw">if</span> n == <span class="num">0</span> <span class="kw">or</span> n == <span class="num">1</span>:   <span class="cm"># caso base</span>
+        <span class="kw">return</span> <span class="num">1</span>
+    <span class="kw">return</span> n * <span class="fn">factorial</span>(n - <span class="num">1</span>)  <span class="cm"># recursivo</span>
+
+<span class="fn">print</span>(<span class="fn">factorial</span>(<span class="num">5</span>))  <span class="cm"># 120</span>
+<span class="cm"># factorial(5)
+# → 5 × factorial(4)
+# → 5 × 4 × factorial(3)
+# → 5 × 4 × 3 × factorial(2)
+# → 5 × 4 × 3 × 2 × 1  = 120</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 14. RECURSIÓN VS ITERACIÓN ──────────────────────── -->
+<div class="slide s-c" id="s14">
+  <div class="tag">Recursión</div>
+  <h2>Recursión vs <span style="color:var(--green)">Iteración</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">Fibonacci Recursivo</div>
+<pre><span class="kw">def</span> <span class="fn">fib_r</span>(n):
+    <span class="kw">if</span> n &lt;= <span class="num">1</span>:
+        <span class="kw">return</span> n
+    <span class="kw">return</span> <span class="fn">fib_r</span>(n-<span class="num">1</span>) + <span class="fn">fib_r</span>(n-<span class="num">2</span>)
+
+<span class="fn">print</span>(<span class="fn">fib_r</span>(<span class="num">10</span>))  <span class="cm"># 55</span>
+<span class="cm"># Elegante pero lento para n grande</span></pre>
+      <div class="card or">
+        <h3>Recursivo</h3>
+        <ul class="s">
+          <li>Código <strong>mas legible</strong></li>
+          <li>Más lento (re-calcula)</li>
+          <li>Riesgo de stack overflow</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="lbl py">Fibonacci Iterativo</div>
+<pre><span class="kw">def</span> <span class="fn">fib_i</span>(n):
+    a, b = <span class="num">0</span>, <span class="num">1</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n):
+        a, b = b, a + b
+    <span class="kw">return</span> a
+
+<span class="fn">print</span>(<span class="fn">fib_i</span>(<span class="num">10</span>))  <span class="cm"># 55</span>
+<span class="cm"># Rápido y sin límite de pila</span></pre>
+      <div class="card gr">
+        <h3>Iterativo</h3>
+        <ul class="s">
+          <li>Más <strong>eficiente</strong></li>
+          <li>Sin límite de profundidad</li>
+          <li>Ideal para problemas <strong>grandes</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 15. SEC ORDEN SUPERIOR ──────────────────────────── -->
+<div class="slide s-sec pu" id="s15">
+  <div class="tag">Módulo 05</div>
+  <h2>Funciones de Orden Superior</h2>
+  <p class="sub">Funciones que reciben o retornan otras funciones</p>
+</div>
+
+<!-- ─── 16. SORTED Y FUNCIONES COMO ARGUMENTO ─────────── -->
+<div class="slide s-c" id="s16">
+  <div class="tag">Orden Superior</div>
+  <h2>Funciones como <span style="color:var(--purple)">argumento</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>sorted() con key=</h3>
+        <ul class="s">
+          <li><code>sorted()</code> acepta una función como criterio de ordenamiento</li>
+          <li>Se usa <code>key=lambda ...</code> para personalizar</li>
+        </ul>
+      </div>
+<pre><span class="fn">nombres</span> = [<span class="str">"Zara"</span>, <span class="str">"Ana"</span>, <span class="str">"Miguel"</span>, <span class="str">"Lu"</span>]
+
+<span class="cm"># Ordenar por longitud</span>
+<span class="fn">print</span>(<span class="fn">sorted</span>(nombres, key=<span class="kw">lambda</span> x: <span class="fn">len</span>(x)))
+<span class="cm"># ['Lu', 'Ana', 'Zara', 'Miguel']</span>
+
+<span class="cm"># Ordenar por última letra</span>
+<span class="fn">print</span>(<span class="fn">sorted</span>(nombres, key=<span class="kw">lambda</span> x: x[-<span class="num">1</span>]))
+<span class="cm"># ['Zara', 'Ana', 'Miguel', 'Lu']</span></pre>
+    </div>
+    <div class="col">
+<pre><span class="cm"># Lista de diccionarios</span>
+<span class="fn">alumnos</span> = [
+    {<span class="str">"nombre"</span>: <span class="str">"Ana"</span>,   <span class="str">"nota"</span>: <span class="num">9</span>},
+    {<span class="str">"nombre"</span>: <span class="str">"Luis"</span>,  <span class="str">"nota"</span>: <span class="num">7</span>},
+    {<span class="str">"nombre"</span>: <span class="str">"Maria"</span>, <span class="str">"nota"</span>: <span class="num">10</span>},
+]
+
+<span class="cm"># Ordenar por nota de mayor a menor</span>
+top = <span class="fn">sorted</span>(alumnos, key=<span class="kw">lambda</span> a: a[<span class="str">"nota"</span>], reverse=<span class="kw">True</span>)
+
+<span class="kw">for</span> a <span class="kw">in</span> top:
+    <span class="fn">print</span>(a[<span class="str">"nombre"</span>], a[<span class="str">"nota"</span>])
+<span class="cm"># Maria 10
+# Ana   9
+# Luis  7</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 17. FUNCIONES QUE RETORNAN FUNCIONES ────────────── -->
+<div class="slide s-c" id="s17">
+  <div class="tag">Orden Superior</div>
+  <h2>Funciones que <span style="color:var(--purple)">retornan</span> funciones</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>Patrón fábrica</h3>
+        <ul class="s">
+          <li>Una función <strong>crea y retorna</strong> otra función</li>
+          <li>La función retornada <strong>recuerda</strong> el contexto de creación</li>
+          <li>Muy usado en validadores y configuradores</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">def</span> <span class="fn">crear_saludo</span>(idioma):
+    <span class="kw">if</span> idioma == <span class="str">"es"</span>:
+        <span class="kw">return lambda</span> n: <span class="str">f"Hola, {n}!"</span>
+    <span class="kw">elif</span> idioma == <span class="str">"en"</span>:
+        <span class="kw">return lambda</span> n: <span class="str">f"Hello, {n}!"</span>
+    <span class="kw">else</span>:
+        <span class="kw">return lambda</span> n: <span class="str">f"Hi, {n}!"</span>
+
+saludar_es = <span class="fn">crear_saludo</span>(<span class="str">"es"</span>)
+saludar_en = <span class="fn">crear_saludo</span>(<span class="str">"en"</span>)
+
+<span class="fn">print</span>(<span class="fn">saludar_es</span>(<span class="str">"Ana"</span>))   <span class="cm"># Hola, Ana!</span>
+<span class="fn">print</span>(<span class="fn">saludar_en</span>(<span class="str">"John"</span>))  <span class="cm"># Hello, John!</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 18. SEC EJERCICIOS ───────────────────────────────── -->
+<div class="slide s-sec dk" id="s18">
+  <div class="tag">Práctica</div>
+  <h2>Ejercicios</h2>
+  <p class="sub">Primero léelo, intenta resolverlo y luego revisa la solución</p>
+</div>
+
+<!-- ─── 19. EJ1 — ENUNCIADO ─────────────────────────────── -->
+<div class="slide s-e" id="s19">
+  <div class="tag">Ejercicio 1 — *args</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Calculadora flexible</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card or">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Crea una función <code>estadisticas(*nums)</code> que reciba cualquier cantidad de números y retorne un diccionario con: <strong>suma</strong>, <strong>promedio</strong>, <strong>mínimo</strong> y <strong>máximo</strong>.</p>
+      </div>
+      <div class="card">
+        <h3>Ejemplo esperado</h3>
+        <p class="t" style="margin-top:8px;font-family:'Fira Code',monospace">estadisticas(3, 7, 2, 9, 1)<br>→ {"suma": 22, "promedio": 4.4,<br>&nbsp;&nbsp;&nbsp;"min": 1, "max": 9}</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:200px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 20. EJ1 — SOLUCIÓN ──────────────────────────────── -->
+<div class="slide s-sol" id="s20">
+  <div class="tag">Ejercicio 1 — *args</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Calculadora flexible</h2>
+  <div class="g2">
+    <div class="col">
+<pre><span class="kw">def</span> <span class="fn">estadisticas</span>(*nums):
+    <span class="kw">return</span> {
+        <span class="str">"suma"</span>:     <span class="fn">sum</span>(nums),
+        <span class="str">"promedio"</span>: <span class="fn">sum</span>(nums) / <span class="fn">len</span>(nums),
+        <span class="str">"min"</span>:      <span class="fn">min</span>(nums),
+        <span class="str">"max"</span>:      <span class="fn">max</span>(nums),
+    }
+
+resultado = <span class="fn">estadisticas</span>(<span class="num">3</span>, <span class="num">7</span>, <span class="num">2</span>, <span class="num">9</span>, <span class="num">1</span>)
+<span class="fn">print</span>(resultado)
+<span class="cm"># {'suma': 22, 'promedio': 4.4, 'min': 1, 'max': 9}</span></pre>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>Puntos clave</h3>
+        <ul class="s">
+          <li><code>*nums</code> convierte todos los args en <strong>tupla</strong></li>
+          <li><code>sum()</code>, <code>min()</code>, <code>max()</code> aceptan cualquier iterable</li>
+          <li>La función sirve para <strong>cualquier cantidad</strong> de números</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 21. EJ2 — ENUNCIADO ─────────────────────────────── -->
+<div class="slide s-e" id="s21">
+  <div class="tag">Ejercicio 2 — Lambda + sorted</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Ranking de estudiantes</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Dada la lista de alumnos, usa <code>sorted()</code> con una <strong>lambda</strong> para ordenarlos de <strong>mayor a menor nota</strong>. Luego imprime el podio (top 3) con su posición.</p>
+      </div>
+<pre><span class="fn">alumnos</span> = [
+    {<span class="str">"nombre"</span>: <span class="str">"Carlos"</span>, <span class="str">"nota"</span>: <span class="num">8</span>},
+    {<span class="str">"nombre"</span>: <span class="str">"Sofia"</span>,  <span class="str">"nota"</span>: <span class="num">10</span>},
+    {<span class="str">"nombre"</span>: <span class="str">"Pedro"</span>,  <span class="str">"nota"</span>: <span class="num">7</span>},
+    {<span class="str">"nombre"</span>: <span class="str">"Lucia"</span>,  <span class="str">"nota"</span>: <span class="num">9</span>},
+    {<span class="str">"nombre"</span>: <span class="str">"Tomas"</span>,  <span class="str">"nota"</span>: <span class="num">6</span>},
+]</pre>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:180px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 22. EJ2 — SOLUCIÓN ──────────────────────────────── -->
+<div class="slide s-sol" id="s22">
+  <div class="tag">Ejercicio 2 — Lambda + sorted</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Ranking de estudiantes</h2>
+  <div class="g2">
+    <div class="col">
+<pre>ranking = <span class="fn">sorted</span>(
+    alumnos,
+    key=<span class="kw">lambda</span> a: a[<span class="str">"nota"</span>],
+    reverse=<span class="kw">True</span>
+)
+
+<span class="kw">for</span> i, a <span class="kw">in</span> <span class="fn">enumerate</span>(ranking[:<span class="num">3</span>], <span class="num">1</span>):
+    <span class="fn">print</span>(<span class="str">f"#{i} {a['nombre']} — {a['nota']}"</span>)
+
+<span class="cm"># #1 Sofia  — 10
+# #2 Lucia  — 9
+# #3 Carlos — 8</span></pre>
+    </div>
+    <div class="col">
+      <div class="card pu">
+        <h3>Puntos clave</h3>
+        <ul class="s">
+          <li><code>key=lambda a: a["nota"]</code> extrae la nota para comparar</li>
+          <li><code>reverse=True</code> invierte el orden (mayor primero)</li>
+          <li><code>enumerate(..., 1)</code> empieza a contar desde 1</li>
+          <li><code>ranking[:3]</code> toma solo los primeros 3</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 23. EJ3 — ENUNCIADO ─────────────────────────────── -->
+<div class="slide s-e" id="s23">
+  <div class="tag">Ejercicio 3 — Recursión</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Suma recursiva de una lista</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>Objetivo</h3>
+        <p class="t" style="margin-top:8px">Crea una función <strong>recursiva</strong> <code>suma_lista(lista)</code> que calcule la suma de todos los elementos de una lista <strong>sin usar</strong> <code>sum()</code> ni ciclos.</p>
+      </div>
+      <div class="card mt">
+        <h3>Pista</h3>
+        <ul class="s">
+          <li>Caso base: lista vacía → retorna <code>0</code></li>
+          <li>Caso recursivo: <code>lista[0] + suma_lista(lista[1:])</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl" style="padding:28px;display:flex;align-items:center;justify-content:center;min-height:200px">
+        <p class="t" style="color:var(--muted);text-align:center;font-size:clamp(18px,2.2vw,26px);font-weight:700;line-height:1.6">Intenta resolverlo<br>antes de pasar al siguiente slide</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 24. EJ3 — SOLUCIÓN ──────────────────────────────── -->
+<div class="slide s-sol" id="s24">
+  <div class="tag">Ejercicio 3 — Recursión</div>
+  <div class="bdg gr">Solución</div>
+  <h2>Suma recursiva de una lista</h2>
+  <div class="g2">
+    <div class="col">
+<pre><span class="kw">def</span> <span class="fn">suma_lista</span>(lista):
+    <span class="kw">if</span> <span class="fn">len</span>(lista) == <span class="num">0</span>:   <span class="cm"># caso base</span>
+        <span class="kw">return</span> <span class="num">0</span>
+    <span class="kw">return</span> lista[<span class="num">0</span>] + <span class="fn">suma_lista</span>(lista[<span class="num">1</span>:])
+
+<span class="fn">print</span>(<span class="fn">suma_lista</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]))  <span class="cm"># 10</span>
+<span class="fn">print</span>(<span class="fn">suma_lista</span>([]))             <span class="cm"># 0</span>
+
+<span class="cm"># ¿Cómo funciona?
+# suma([1,2,3,4])
+# → 1 + suma([2,3,4])
+# → 1 + 2 + suma([3,4])
+# → 1 + 2 + 3 + suma([4])
+# → 1 + 2 + 3 + 4 + suma([])
+# → 1 + 2 + 3 + 4 + 0 = 10</span></pre>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>Puntos clave</h3>
+        <ul class="s">
+          <li><code>lista[1:]</code> crea una sublista <strong>sin el primer elemento</strong></li>
+          <li>Cada llamada el problema es <strong>1 elemento más pequeño</strong></li>
+          <li>La pila se va resolviendo de <strong>adentro hacia afuera</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 25. RESUMEN ──────────────────────────────────────── -->
+<div class="slide s-c" id="s25">
+  <div class="tag">Resumen</div>
+  <h2>Lo que aprendimos</h2>
+  <div class="g3">
+    <div class="card pu">
+      <h3>Parámetros</h3>
+      <ul class="s" style="margin-top:8px">
+        <li>Posicionales y keyword</li>
+        <li>Valores por defecto</li>
+        <li><code>*args</code> y <code>**kwargs</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Lambda y HOF</h3>
+      <ul class="s" style="margin-top:8px">
+        <li><code>lambda</code> anónimas</li>
+        <li><code>map()</code> y <code>filter()</code></li>
+        <li><code>sorted(key=...)</code></li>
+        <li>Fábricas de funciones</li>
+      </ul>
+    </div>
+    <div class="card gr">
+      <h3>Scope y Recursión</h3>
+      <ul class="s" style="margin-top:8px">
+        <li>Local / Global (LEGB)</li>
+        <li><code>global</code> y <code>nonlocal</code></li>
+        <li>Caso base + recursivo</li>
+        <li>Recursión vs Iteración</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card or mt w100" style="text-align:center;padding:18px">
+    <h3 style="color:var(--orange)">Las funciones son ciudadanos de primera clase en Python</h3>
+    <p class="t" style="color:var(--muted);margin-top:6px">Puedes pasarlas, retornarlas y crearlas en tiempo de ejecución — eso las hace muy poderosas.</p>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<div id="prog"></div>
+<div id="nav">
+  <button class="nb" id="bp">&#8592;</button>
+  <span id="cnt">1 / 25</span>
+  <button class="nb" id="bn">&#8594;</button>
+</div>
+
+<script>
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total = slides.length;
+let cur = 0;
+const cnt = document.getElementById('cnt');
+const prog = document.getElementById('prog');
+
+function go(n) {
+  if (n < 0 || n >= total) return;
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exit');
+  const prev = cur;
+  setTimeout(() => slides[prev].classList.remove('exit'), 340);
+  cur = n;
+  slides[cur].classList.add('active');
+  cnt.textContent = `${cur + 1} / ${total}`;
+  prog.style.width = `${((cur + 1) / total) * 100}%`;
+}
+
+document.getElementById('bn').addEventListener('click', () => go(cur + 1));
+document.getElementById('bp').addEventListener('click', () => go(cur - 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ')  go(cur + 1);
+  if (e.key === 'ArrowLeft')                     go(cur - 1);
+});
+
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+document.addEventListener('touchend',   e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 40) go(cur + (dx > 0 ? 1 : -1));
+});
+
+go(0);
+</script>
+</body>
+</html>
