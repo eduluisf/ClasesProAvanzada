@@ -59,6 +59,7 @@ ol.s li::before{content:counter(ci)'.';color:var(--ac);font-weight:700;margin-ri
 pre{background:#1E293B;color:#E2E8F0;font-family:'Fira Code',monospace;font-size:clamp(13px,1.3vw,16px);line-height:1.65;border-radius:14px;padding:16px 20px;overflow:hidden;width:100%}
 .lbl{font-size:11px;font-weight:700;letter-spacing:.08em;display:inline-block;padding:2px 10px;border-radius:999px;margin-bottom:5px}
 .lbl.py{background:var(--ac);color:#fff}
+.lbl.jv{background:#E11D48;color:#fff}
 
 .kw{color:#93C5FD;font-weight:600}
 .fn{color:#6EE7B7}
@@ -118,6 +119,21 @@ code{font-family:'Fira Code',monospace;background:#FEF3C7;padding:2px 6px;border
 #score-box h2{font-size:2rem;font-weight:900;color:var(--ac)}
 #score-box p{color:#555;margin-top:.4rem}
 
+/* ── quiz nombre / expulsado ───────────────────────────────── */
+#nombre-screen{padding:2rem 0 1rem}
+#nombre-screen h2{font-size:1.25rem;font-weight:800;margin-bottom:.4rem}
+#nombre-screen .aviso{font-size:.82rem;color:var(--muted);margin-top:1rem;line-height:1.55}
+#nombre-screen .aviso span{color:#DC2626;font-weight:700}
+#input-nombre{width:100%;padding:.8rem 1rem;font-size:1rem;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;margin-top:.5rem}
+#input-nombre:focus{border-color:var(--ac)}
+#btn-comenzar{margin-top:1rem;display:block;width:100%;padding:.9rem;background:var(--ac);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:800;cursor:pointer;transition:background .2s;font-family:'Inter',sans-serif}
+#btn-comenzar:hover{background:var(--ac2)}
+#preguntas-section{display:none}
+#expulsado-overlay{display:none;position:fixed;inset:0;background:#0d0000;z-index:500;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
+#expulsado-overlay h1{font-size:clamp(2rem,5vw,3.5rem);color:#f87171;font-weight:900;margin-bottom:1rem;letter-spacing:-.02em}
+#expulsado-overlay p{font-size:clamp(.95rem,1.5vw,1.15rem);color:#fca5a5;line-height:1.75;max-width:580px}
+#expulsado-overlay .exp-nombre{font-size:1.3rem;font-weight:800;color:#fff;margin:.5rem 0 1.5rem}
+#quiz.examen-activo{user-select:none;-webkit-user-select:none}
 /* quiz button en slide */
 .quiz-btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:14px 30px;font-size:1rem;font-weight:800;cursor:pointer;margin-top:1.5rem;transition:background .2s;font-family:'Inter',sans-serif}
 .quiz-btn:hover{background:var(--ac2)}
@@ -141,86 +157,497 @@ code{font-family:'Fira Code',monospace;background:#FEF3C7;padding:2px 6px;border
   <p class="sub">Programación Orientada a Objetos — modelar el mundo en código</p>
 </div>
 
-<!-- ─── 3. PARADIGMA ─────────────────────────────────────── -->
-<div class="slide s-c" id="s3">
-  <div class="tag">POO</div>
-  <h2>Paradigma orientado a objetos</h2>
+<!-- ─── EL PROBLEMA — POR QUÉ NECESITAMOS POO ────────────── -->
+<div class="slide s-c">
+  <div class="tag">POO — El problema</div>
+  <h2>¿Por qué no alcanza con funciones y variables?</h2>
   <div class="g2">
     <div class="col">
       <div class="card sl">
-        <h3>Programación procedural (lo que conocemos)</h3>
+        <h3>Programación procedural — lo que ya conocemos</h3>
         <ul class="s">
-          <li>El programa es una <strong>lista de instrucciones</strong></li>
-          <li>Los datos y las funciones están <strong>separados</strong></li>
-          <li>Funciona bien para problemas pequeños</li>
+          <li>El programa es una <strong>lista de instrucciones</strong> que se ejecutan en orden</li>
+          <li>Los datos (variables) y las acciones (funciones) están <strong>separados</strong></li>
+          <li>Funciona bien cuando el problema es simple y pequeño</li>
         </ul>
       </div>
-<pre><span class="cm"># Procedural — datos sueltos</span>
+<pre style="margin-top:8px"><span class="cm"># Procedural — datos y funciones sueltos, sin relación</span>
 nombre = <span class="str">"Ana"</span>
 saldo  = <span class="num">1000</span>
 
 <span class="kw">def</span> <span class="fn">depositar</span>(saldo, monto):
     <span class="kw">return</span> saldo + monto
 
-saldo = <span class="fn">depositar</span>(saldo, <span class="num">500</span>)</pre>
+saldo = <span class="fn">depositar</span>(saldo, <span class="num">500</span>)
+<span class="cm"># ¿Qué pasa si tenemos 100 cuentas?</span>
+<span class="cm"># ¿Y si queremos agregar validaciones?</span></pre>
     </div>
     <div class="col">
       <div class="card">
-        <h3>POO — datos + comportamiento juntos</h3>
+        <h3>El problema al escalar</h3>
         <ul class="s">
-          <li>El programa se modela con <strong>objetos</strong></li>
-          <li>Cada objeto tiene sus <strong>datos</strong> y sus <strong>acciones</strong></li>
-          <li>Más organizado, reutilizable y escalable</li>
+          <li>¿Cómo sabés qué <code>nombre</code> corresponde a qué <code>saldo</code>?</li>
+          <li>Si agregás una cuenta nueva, tenés que crear más variables sueltas</li>
+          <li>No hay forma de <strong>agrupar</strong> los datos con sus funciones relacionadas</li>
+          <li>Con 10 cuentas el código se vuelve difícil de mantener</li>
         </ul>
       </div>
-<pre><span class="cm"># POO — todo junto en un objeto</span>
-cuenta = <span class="cl">CuentaBancaria</span>(<span class="str">"Ana"</span>, <span class="num">1000</span>)
-cuenta.<span class="fn">depositar</span>(<span class="num">500</span>)
-<span class="fn">print</span>(cuenta.<span class="fn">saldo</span>())  <span class="cm"># 1500</span></pre>
+      <div class="card gr" style="margin-top:11px">
+        <h3>La solución que propone POO</h3>
+        <ul class="s">
+          <li><strong>Agrupar</strong> datos y funciones en una sola unidad</li>
+          <li>Esa unidad se llama <strong>objeto</strong></li>
+          <li>La descripción de cómo se construye esa unidad se llama <strong>clase</strong></li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 4. CLASES Y OBJETOS ──────────────────────────────── -->
-<div class="slide s-c" id="s4">
-  <div class="tag">POO</div>
-  <h2>Clase vs Objeto</h2>
+<!-- ─── QUÉ ES UNA CLASE ──────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">POO — Concepto fundamental</div>
+  <h2>¿Qué es una <span style="color:var(--ac)">Clase</span>?</h2>
   <div class="g2">
     <div class="col">
       <div class="card">
-        <h3>Clase = molde / plantilla</h3>
-        <ul class="s">
-          <li>Define <strong>qué atributos</strong> tiene (datos)</li>
-          <li>Define <strong>qué métodos</strong> tiene (acciones)</li>
-          <li>No ocupa memoria de datos — es solo la <strong>descripción</strong></li>
+        <h3>La clase es el molde, la plantilla, el plano</h3>
+        <p class="t" style="margin-top:8px">Una clase <strong>describe</strong> cómo van a ser los objetos que se creen a partir de ella. Define dos cosas:</p>
+        <ul class="s" style="margin-top:8px">
+          <li><strong>Qué datos va a tener</strong> cada objeto (nombres de atributos)</li>
+          <li><strong>Qué puede hacer</strong> cada objeto (métodos / comportamientos)</li>
+        </ul>
+        <p class="t" style="margin-top:10px;color:var(--muted)">La clase en sí misma <strong>no representa ningún objeto concreto</strong> — es solo la descripción. No dice "el nombre es Ana", dice "habrá un atributo llamado nombre".</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Analogías</h3>
+        <table style="margin-top:8px">
+          <tr><th>Clase (el molde)</th><th>Objeto (lo creado)</th></tr>
+          <tr><td>Plano de arquitectura</td><td>La casa construida</td></tr>
+          <tr><td>Molde de galletitas</td><td>Cada galletita</td></tr>
+          <tr><td>Receta de cocina</td><td>El plato preparado</td></tr>
+          <tr><td>Blueprint de un auto</td><td>Cada auto fabricado</td></tr>
+        </table>
+      </div>
+      <div class="card bl" style="margin-top:11px">
+        <h3>Clave para entender</h3>
+        <p class="t" style="margin-top:6px">El plano no es la casa. El molde no es la galletita. La receta no es el plato. La <strong>clase</strong> no es el objeto — es lo que permite <em>crear</em> objetos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── QUÉ DEFINE UNA CLASE ─────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Clase</div>
+  <h2>¿Qué define una clase exactamente?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Atributos — los datos que va a tener</h3>
+        <p class="t" style="margin-top:8px">La clase dice <em>"cada objeto de este tipo va a tener un nombre y una edad"</em>. No dice cuáles son los valores — eso lo decide cada objeto cuando se crea.</p>
+        <ul class="s" style="margin-top:8px">
+          <li>La clase define los <strong>nombres</strong> de los atributos</li>
+          <li>Cada objeto tendrá sus <strong>propios valores</strong> para esos atributos</li>
         </ul>
       </div>
       <div class="card gr" style="margin-top:11px">
-        <h3>Objeto = instancia concreta</h3>
+        <h3>Métodos — las acciones que puede realizar</h3>
+        <p class="t" style="margin-top:8px">La clase define qué acciones pueden realizar los objetos: <code>saludar()</code>, <code>depositar()</code>, <code>calcular_promedio()</code>. Todos los objetos de esa clase comparten esos métodos.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>La clase Persona en pseudocódigo</h3>
+<pre style="margin-top:8px;background:transparent;padding:0;color:var(--text);font-size:clamp(14px,1.4vw,17px)">CLASE Persona
+  ATRIBUTOS:
+    nombre  (texto)
+    edad    (número)
+
+  MÉTODOS:
+    saludar()   → imprime un saludo
+    cumpleaños() → incrementa la edad
+
+<span style="color:var(--muted)">  ← No hay valores aún.
+     Solo la DESCRIPCIÓN de cómo
+     serán los objetos Persona.</span></pre>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>Importante</h3>
+        <p class="t" style="margin-top:6px">Cuando escribimos <code>class Persona:</code> en Python, <strong>no creamos ningún objeto todavía</strong>. Solo estamos definiendo el molde. Los objetos se crean después.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── QUÉ ES UN OBJETO ──────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Objeto</div>
+  <h2>¿Qué es un <span style="color:var(--ac)">Objeto</span>?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>El objeto es la instancia concreta</h3>
+        <p class="t" style="margin-top:8px">Un objeto se crea <strong>a partir de una clase</strong>. En ese momento la clase toma vida: los atributos reciben valores reales, y el objeto ocupa espacio en memoria.</p>
+        <ul class="s" style="margin-top:8px">
+          <li><strong>Estado</strong> — los valores reales de sus atributos</li>
+          <li><strong>Comportamiento</strong> — puede ejecutar los métodos de su clase</li>
+          <li><strong>Identidad</strong> — es único; dos objetos distintos aunque tengan los mismos valores</li>
+        </ul>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>La relación clase → objeto</h3>
         <ul class="s">
-          <li>Se crea <strong>a partir</strong> de una clase</li>
-          <li>Tiene sus propios <strong>valores reales</strong> de atributos</li>
-          <li>De una clase se pueden crear <strong>muchos objetos</strong></li>
+          <li>La clase dijo <em>"habrá un atributo nombre"</em></li>
+          <li>El objeto dice <em>"mi nombre es Ana"</em></li>
+          <li>La clase dijo <em>"habrá un método saludar()"</em></li>
+          <li>El objeto lo ejecuta: <em>"Hola, soy Ana"</em></li>
         </ul>
       </div>
     </div>
     <div class="col">
       <div class="card sl">
-        <h3>Analogía</h3>
-        <p class="t" style="margin-top:8px">La <strong>clase</strong> <code>Persona</code> es como el <em>plano</em> de una casa — describe cómo será.<br><br>Los <strong>objetos</strong> <code>ana</code> y <code>luis</code> son casas reales construidas con ese plano — cada una con sus propios valores.</p>
+        <h3>Dos objetos de la misma clase</h3>
+        <table style="margin-top:8px">
+          <tr><th>Atributo</th><th>objeto <code>ana</code></th><th>objeto <code>luis</code></th></tr>
+          <tr><td>nombre</td><td>"Ana"</td><td>"Luis"</td></tr>
+          <tr><td>edad</td><td>20</td><td>25</td></tr>
+        </table>
+        <p class="t" style="margin-top:10px;color:var(--muted)">Misma estructura (definida por la clase <code>Persona</code>), pero datos propios e independientes.</p>
       </div>
-<pre><span class="cl">Persona</span>  <span class="cm">← clase (el molde)</span>
-  - nombre: str
-  - edad: int
-  - saludar()
-
-ana  = <span class="cl">Persona</span>(<span class="str">"Ana"</span>,  <span class="num">20</span>)  <span class="cm">← objeto</span>
-luis = <span class="cl">Persona</span>(<span class="str">"Luis"</span>, <span class="num">25</span>)  <span class="cm">← objeto</span></pre>
+      <div class="card bl" style="margin-top:11px">
+        <h3>Terminología</h3>
+        <ul class="s">
+          <li>Crear un objeto = <strong>instanciar</strong> una clase</li>
+          <li>Un objeto = una <strong>instancia</strong> de su clase</li>
+          <li><code>ana</code> es una instancia de <code>Persona</code></li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 5. SEC CLASES EN PYTHON ──────────────────────────── -->
+<!-- ─── CLASE VS OBJETO — COMPARATIVA ────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Clase vs Objeto</div>
+  <h2>Clase vs Objeto — lado a lado</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card" style="border-top:4px solid var(--ac)">
+        <h3 style="color:var(--ac)">CLASE — el molde</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Define los <strong>nombres</strong> de los atributos</li>
+          <li>Define los <strong>métodos</strong> disponibles</li>
+          <li>No tiene valores de datos propios</li>
+          <li>Se escribe <strong>una sola vez</strong></li>
+          <li>No ocupa memoria de datos</li>
+          <li>Existe en el código fuente</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card gr" style="border-top:4px solid var(--green)">
+        <h3 style="color:var(--green)">OBJETO — la instancia</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Tiene <strong>valores reales</strong> en sus atributos</li>
+          <li>Puede ejecutar los métodos de la clase</li>
+          <li>Tiene su propio estado independiente</li>
+          <li>Se pueden crear <strong>muchos</strong> de una misma clase</li>
+          <li>Ocupa memoria en tiempo de ejecución</li>
+          <li>Existe mientras el programa corre</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+<pre style="margin-top:14px"><span class="cl">Persona</span>            <span class="cm">← CLASE: el molde (no tiene valores)</span>
+  atributos: nombre, edad
+  métodos:   saludar()
+
+ana  = <span class="cl">Persona</span>(<span class="str">"Ana"</span>,  <span class="num">20</span>)   <span class="cm">← OBJETO: instancia concreta con valores reales</span>
+luis = <span class="cl">Persona</span>(<span class="str">"Luis"</span>, <span class="num">25</span>)   <span class="cm">← OBJETO: otro, independiente de ana</span></pre>
+</div>
+
+<!-- ─── UNA CLASE, MUCHOS OBJETOS ─────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Clase vs Objeto</div>
+  <h2>Una clase → <span style="color:var(--green)">muchos objetos</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>El poder del molde</h3>
+        <p class="t" style="margin-top:8px">De una sola clase se pueden crear <strong>todos los objetos que necesites</strong>, cada uno con sus propios datos. No tenés que redefinir la estructura cada vez — ya está en la clase.</p>
+        <ul class="s" style="margin-top:8px">
+          <li>Un molde de galletitas produce <strong>muchas galletitas</strong></li>
+          <li>Un plano de arquitectura construye <strong>muchas casas</strong></li>
+          <li>La clase <code>Persona</code> crea <strong>muchos objetos persona</strong></li>
+        </ul>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Cada objeto es independiente</h3>
+        <ul class="s">
+          <li>Modificar <code>ana.edad</code> no afecta a <code>luis.edad</code></li>
+          <li>Cada objeto tiene su <strong>propio espacio en memoria</strong></li>
+          <li>Comparten la estructura, no los datos</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">Persona</span>:
+    nombre, edad, saludar()  <span class="cm">← un solo molde</span>
+
+<span class="cm"># Creamos todos los objetos que queramos</span>
+ana    = <span class="cl">Persona</span>(<span class="str">"Ana"</span>,    <span class="num">20</span>)
+luis   = <span class="cl">Persona</span>(<span class="str">"Luis"</span>,   <span class="num">25</span>)
+carlos = <span class="cl">Persona</span>(<span class="str">"Carlos"</span>, <span class="num">30</span>)
+maria  = <span class="cl">Persona</span>(<span class="str">"María"</span>,  <span class="num">22</span>)
+
+<span class="cm"># Cada uno tiene sus propios datos</span>
+ana.<span class="fn">saludar</span>()    <span class="cm"># "Hola, soy Ana"</span>
+carlos.<span class="fn">saludar</span>() <span class="cm"># "Hola, soy Carlos"</span>
+
+<span class="cm"># Modificar uno no afecta al otro</span>
+ana.edad = <span class="num">21</span>
+<span class="fn">print</span>(luis.edad)  <span class="cm"># 25 — no cambió</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── POR QUÉ USAR POO ──────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">POO</div>
+  <h2>¿Por qué usar este paradigma?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card sl">
+        <h3>Lo que ganamos con clases y objetos</h3>
+        <ul class="s">
+          <li><strong>Organización</strong> — los datos y sus funciones viven juntos, no separados</li>
+          <li><strong>Reutilización</strong> — una clase, infinitos objetos; herencia evita copiar</li>
+          <li><strong>Mantenimiento</strong> — cambiar una clase no rompe el resto del sistema</li>
+          <li><strong>Modelado natural</strong> — el código refleja cómo pensamos el problema</li>
+          <li><strong>Escalabilidad</strong> — proyectos grandes con múltiples personas</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card bl">
+        <h3>¿Cuándo conviene usar POO?</h3>
+        <ul class="s" style="margin-top:6px">
+          <li>Cuando tienes <strong>varias entidades</strong> con datos y comportamientos propios</li>
+          <li>Cuando necesitas crear <strong>muchas instancias</strong> similares (usuarios, productos...)</li>
+          <li>Cuando el proyecto va a <strong>crecer</strong> o trabajarán varias personas</li>
+          <li>Cuando querés <strong>modelar relaciones</strong> entre conceptos (herencia, composición)</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>Los 4 pilares que veremos</h3>
+        <ul class="s" style="margin-top:6px">
+          <li><strong>Encapsulamiento</strong> — ocultar el estado interno</li>
+          <li><strong>Herencia</strong> — reutilizar código entre clases</li>
+          <li><strong>Polimorfismo</strong> — mismo mensaje, distintas respuestas</li>
+          <li><strong>Abstracción</strong> — mostrar solo lo necesario</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SEC: LOS 4 PILARES ───────────────────────────────── -->
+<div class="slide s-sec pu" id="sec-pilares">
+  <div class="tag">Teoría</div>
+  <h2>Los 4 pilares de POO</h2>
+  <p class="sub">Primero el concepto, luego el código</p>
+</div>
+
+<!-- ─── PILAR 1: ENCAPSULAMIENTO ─────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Pilar 1 de 4</div>
+  <h2>Encapsulamiento</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>¿Qué es?</h3>
+        <p class="t" style="margin-top:8px">Agrupar los datos y el comportamiento en una sola unidad, y <strong>proteger el estado interno</strong> del objeto del acceso directo desde afuera. La idea es separar <em>qué hace</em> el objeto de <em>cómo lo hace</em>.</p>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>¿Por qué importa?</h3>
+        <ul class="s">
+          <li>Evita que el estado se corrompa accidentalmente</li>
+          <li>Fuerza que los cambios pasen por métodos controlados</li>
+          <li>Podés cambiar la implementación interna sin romper lo que usa el objeto</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Analogía — el cajero automático</h3>
+        <p class="t" style="margin-top:8px">Presionás botones (interfaz pública) sin ver ni tocar los billetes internamente (estado protegido). No podés cambiar el saldo directamente — solo a través de las operaciones permitidas.</p>
+      </div>
+      <div class="g2" style="margin-top:11px;gap:10px">
+        <div class="card" style="border-left:4px solid #DC2626">
+          <h3 style="color:#DC2626">Sin — peligroso</h3>
+          <p class="t" style="margin-top:6px;font-family:'Fira Code',monospace;font-size:.85em">cuenta.saldo = -999999</p>
+          <p class="t" style="color:var(--muted);font-size:.85em">directo, sin ningún control</p>
+        </div>
+        <div class="card gr">
+          <h3>Con — seguro</h3>
+          <p class="t" style="margin-top:6px;font-family:'Fira Code',monospace;font-size:.85em">cuenta.depositar(-100)</p>
+          <p class="t" style="color:var(--muted);font-size:.85em">el método valida el monto</p>
+        </div>
+      </div>
+      <div class="card bl" style="margin-top:10px">
+        <h3>Lo veremos en código</h3>
+        <p class="t" style="margin-top:4px">Atributos <code>_privados</code>, <code>__doble_guion</code>, getters/setters, <code>@property</code> y diferencias con Java.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PILAR 2: HERENCIA ─────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Pilar 2 de 4</div>
+  <h2>Herencia</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>¿Qué es?</h3>
+        <p class="t" style="margin-top:8px">Una clase puede <strong>heredar atributos y métodos</strong> de otra clase. La clase hija recibe automáticamente todo lo de la clase padre, y puede agregar lo suyo o modificar lo que necesite.</p>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>¿Por qué importa?</h3>
+        <ul class="s">
+          <li>Evita repetir código — principio <strong>DRY</strong> aplicado a clases</li>
+          <li>Expresa relaciones naturales: <em>"un Perro ES un Animal"</em></li>
+          <li>Permite especializarse sin reescribir lo general</li>
+        </ul>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>Analogía — biología</h3>
+        <p class="t" style="margin-top:8px">Un perro hereda de mamífero: respirar, sangre caliente, amamantar. No redefine todo eso — solo agrega lo suyo: ladrar, olfato agudo. La herencia en código funciona igual.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Jerarquías de ejemplo</h3>
+        <div class="g2" style="gap:8px;margin-top:8px">
+          <div>
+            <p class="t" style="font-family:'Fira Code',monospace;font-size:.82em;line-height:1.9;color:var(--text)">
+              Animal<br>
+              &nbsp;├── Perro<br>
+              &nbsp;│&nbsp;&nbsp;&nbsp;&nbsp; + ladrar()<br>
+              &nbsp;└── Gato<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ maullar()
+            </p>
+          </div>
+          <div>
+            <p class="t" style="font-family:'Fira Code',monospace;font-size:.82em;line-height:1.9;color:var(--text)">
+              Empleado<br>
+              &nbsp;├── Gerente<br>
+              &nbsp;│&nbsp;&nbsp;&nbsp;&nbsp; + departamento<br>
+              &nbsp;└── Analista<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ especialidad
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="card bl" style="margin-top:11px">
+        <h3>Lo veremos en código</h3>
+        <ul class="s">
+          <li><code>class Perro(Animal):</code></li>
+          <li><code>super().__init__()</code> para reutilizar el constructor del padre</li>
+          <li>Sobreescribir (override) métodos</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PILAR 3: POLIMORFISMO ─────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Pilar 3 de 4</div>
+  <h2>Polimorfismo</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3>¿Qué es?</h3>
+        <p class="t" style="margin-top:8px">Una clase hija puede <strong>reescribir (override)</strong> un método que heredó del padre. Cuando llamás ese método, Python ejecuta automáticamente la versión de la clase real del objeto — no la del padre.</p>
+        <p class="t" style="margin-top:8px;color:var(--muted)">El código que llama al método <strong>no necesita saber</strong> de qué tipo exacto es el objeto. Solo llama al método y Python hace lo correcto.</p>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>La clave — el override</h3>
+        <ul class="s">
+          <li>El padre define el método: <em>"todos los animales tienen <code>sonido()</code>"</em></li>
+          <li>Cada hijo lo <strong>reescribe</strong> con su propia implementación</li>
+          <li>Python decide en tiempo de ejecución cuál versión usar</li>
+          <li>Podés agregar nuevos tipos sin tocar el código existente</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Analogía — "hablar"</h3>
+        <p class="t" style="margin-top:8px">Todos los seres vivos tienen el verbo <strong>"hablar"</strong>, pero cada especie lo implementa diferente. El perro lo reescribe como "ladrar". El gato como "maullar". La persona como "conversar".</p>
+        <p class="t" style="margin-top:8px;color:var(--muted)">No hay un <code>if es_perro → ladrar / elif es_gato → maullar</code>. Cada uno tiene su propia versión del método.</p>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Lo veremos en código</h3>
+        <ul class="s">
+          <li>Clase padre define <code>sonido()</code> base</li>
+          <li>Cada clase hija <strong>reescribe</strong> <code>sonido()</code> con su comportamiento</li>
+          <li>Un <code>for</code> llama al mismo método en objetos distintos — cada uno responde diferente</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PILAR 4: ABSTRACCIÓN ──────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Pilar 4 de 4</div>
+  <h2>Abstracción</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>¿Qué es?</h3>
+        <p class="t" style="margin-top:8px">Mostrar al exterior <strong>solo lo necesario</strong> para usar el objeto, ocultando la complejidad interna. La interfaz pública es simple y clara; la implementación puede ser todo lo compleja que necesite.</p>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>¿Por qué importa?</h3>
+        <ul class="s">
+          <li>El usuario del objeto no necesita entender los detalles internos</li>
+          <li>Podés cambiar la implementación sin afectar a quien usa la clase</li>
+          <li>Define <strong>qué puede hacer</strong> el objeto, no <strong>cómo</strong> lo hace</li>
+        </ul>
+      </div>
+      <div class="card bl" style="margin-top:11px">
+        <h3>Abstracción vs Encapsulamiento</h3>
+        <ul class="s">
+          <li><strong>Abstracción</strong> → decidís <em>qué</em> mostrar al exterior</li>
+          <li><strong>Encapsulamiento</strong> → el <em>mecanismo</em> para ocultar lo interno</li>
+          <li>Son complementarios, no son lo mismo</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Analogía — manejar un auto</h3>
+        <p class="t" style="margin-top:8px">Usás el volante, el acelerador y el freno. No necesitás saber cómo funciona el motor, la transmisión ni el sistema de frenos. La interfaz es simple; el interior, complejo.</p>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>Ya usaste abstracción sin saberlo</h3>
+        <p class="t" style="margin-top:8px">Cuando llamás <code>lista.append(x)</code> no sabés cómo Python maneja la memoria internamente. Cuando usás <code>print()</code> no sabés cómo escribe en el terminal. Eso es abstracción.</p>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Lo veremos en código</h3>
+        <p class="t" style="margin-top:4px">Al diseñar clases con interfaces claras: qué métodos exponemos, cuáles ocultamos, y por qué.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SEC CLASES EN PYTHON ─────────────────────────────── -->
 <div class="slide s-sec bl" id="s5">
   <div class="tag">Módulo 02</div>
   <h2>Clases en Python</h2>
@@ -351,60 +778,292 @@ ana = <span class="cl">Persona</span>(<span class="str">"Ana"</span>, <span clas
   </div>
 </div>
 
-<!-- ─── 9. SEC ENCAPSULAMIENTO ───────────────────────────── -->
+<!-- ─── X. IMPORTAR CLASES DESDE OTRO ARCHIVO ────────────── -->
+<div class="slide s-c" id="sx-import">
+  <div class="tag">Módulos</div>
+  <h2>Importar clases desde otro archivo</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3>¿Por qué separar en archivos?</h3>
+        <ul class="s">
+          <li>Cada clase en su propio archivo → código más <strong>organizado y legible</strong></li>
+          <li>Facilita la <strong>reutilización</strong> desde otros proyectos o módulos</li>
+          <li>Evita un único archivo enorme con todo mezclado</li>
+          <li>Patrón estándar en proyectos reales con Python</li>
+        </ul>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Formas de importar</h3>
+        <ul class="s">
+          <li><code>from archivo import Clase</code> — importa solo esa clase</li>
+          <li><code>from archivo import Clase1, Clase2</code> — varias a la vez</li>
+          <li><code>import archivo</code> → usar como <code>archivo.Clase()</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="lbl py">persona.py</div>
+<pre style="margin-top:4px"><span class="cm"># persona.py — definimos la clase aquí</span>
+<span class="kw">class</span> <span class="cl">Persona</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nombre: <span class="num">str</span>, edad: <span class="num">int</span>):
+        self.nombre = nombre
+        self.edad   = edad
+
+    <span class="kw">def</span> <span class="fn">saludar</span>(self) -> <span class="kw">None</span>:
+        <span class="fn">print</span>(<span class="str">f"Hola, soy {self.nombre}"</span>)</pre>
+      <div class="lbl py" style="margin-top:10px">main.py</div>
+<pre style="margin-top:4px"><span class="cm"># main.py — importamos y usamos la clase</span>
+<span class="kw">from</span> persona <span class="kw">import</span> <span class="cl">Persona</span>
+
+ana = <span class="cl">Persona</span>(<span class="str">"Ana"</span>, <span class="num">20</span>)
+ana.<span class="fn">saludar</span>()    <span class="cm"># Hola, soy Ana</span>
+
+<span class="cm"># Importar múltiples clases desde un módulo</span>
+<span class="kw">from</span> modelos <span class="kw">import</span> <span class="cl">Estudiante</span>, <span class="cl">Profesor</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SEC ENCAPSULAMIENTO ──────────────────────────────── -->
 <div class="slide s-sec" id="s9">
   <div class="tag">Módulo 03</div>
   <h2>Encapsulamiento</h2>
   <p class="sub">Proteger el estado interno de un objeto</p>
 </div>
 
-<!-- ─── 10. ATRIBUTOS PRIVADOS ──────────────────────────── -->
-<div class="slide s-c" id="s10">
+<!-- ─── ENCAPSULAMIENTO — QUÉ SIGNIFICA "PRIVADO" ─────────── -->
+<div class="slide s-c">
   <div class="tag">Encapsulamiento</div>
-  <h2>Atributos <span style="color:var(--ac)">privados</span></h2>
+  <h2>¿Qué significa que un atributo sea <span style="color:var(--ac)">privado</span>?</h2>
   <div class="g2">
     <div class="col">
       <div class="card">
-        <h3>Convención en Python</h3>
-        <ul class="s">
-          <li><code>_atributo</code> → por convención <strong>privado</strong> — no acceder desde fuera</li>
-          <li><code>__atributo</code> → privado fuerte — Python lo renombra internamente</li>
-          <li>Python <strong>no impide</strong> el acceso, pero es un contrato de uso</li>
+        <h3>La idea detrás del encapsulamiento</h3>
+        <p class="t" style="margin-top:8px">Queremos que el estado interno de un objeto <strong>no sea modificable directamente desde afuera</strong>. Si el saldo de una cuenta bancaria se puede cambiar libremente, nada garantiza que sea válido.</p>
+        <ul class="s" style="margin-top:8px">
+          <li>El problema no es técnico — es de <strong>control</strong></li>
+          <li>Queremos que los cambios pasen por métodos que <strong>validan</strong></li>
+          <li>Si no hay control, cualquiera puede poner un saldo negativo directo</li>
         </ul>
       </div>
       <div class="card gr" style="margin-top:11px">
-        <h3>¿Para qué sirve?</h3>
+        <h3>Lo que esperaríamos de "privado"</h3>
         <ul class="s">
-          <li>Evitar que el saldo de una cuenta se cambie <strong>directamente</strong></li>
-          <li>Forzar que los cambios pasen por <strong>métodos controlados</strong></li>
-          <li>Validar los valores antes de asignarlos</li>
+          <li>Que el lenguaje <strong>impida</strong> el acceso desde afuera de la clase</li>
+          <li>Que si alguien intenta acceder, reciba un <strong>error</strong></li>
+          <li>Que la única forma de cambiar el valor sea a través de <strong>métodos controlados</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>El escenario sin encapsulamiento</h3>
+<pre style="margin-top:8px"><span class="kw">class</span> <span class="cl">CuentaBancaria</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, saldo):
+        self.saldo = saldo  <span class="cm"># público</span>
+
+c = <span class="cl">CuentaBancaria</span>(<span class="num">1000</span>)
+
+<span class="cm"># Cualquiera puede hacer esto:</span>
+c.saldo = -<span class="num">99999</span>    <span class="cm"># sin error</span>
+c.saldo = <span class="str">"hola"</span>    <span class="cm"># sin error</span>
+c.saldo = <span class="kw">None</span>      <span class="cm"># sin error</span>
+
+<span class="cm"># El objeto quedó en estado inválido</span>
+<span class="cm"># y Python no dijo nada</span></pre>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>La pregunta clave</h3>
+        <p class="t" style="margin-top:6px">¿Cómo resuelven esto Java y Python? Spoiler: de formas <strong>muy distintas</strong>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── JAVA — PRIVADO REAL ───────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Encapsulamiento</div>
+  <h2>Java — <span style="color:#E11D48">privado de verdad</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl jv">Java</div>
+      <div class="card sl" style="margin-top:6px">
+        <h3>¿Cómo lo hace Java?</h3>
+        <p class="t" style="margin-top:8px">Java tiene modificadores de acceso que el <strong>compilador impone</strong>. No es una sugerencia, no es una convención — el lenguaje directamente <strong>no compila el código</strong> si violás la privacidad.</p>
+        <ul class="s" style="margin-top:8px">
+          <li><code>private</code> → solo accesible dentro de la propia clase</li>
+          <li><code>protected</code> → accesible desde la clase y sus subclases</li>
+          <li><code>public</code> → accesible desde cualquier lado</li>
+          <li>Sin palabra clave → acceso a nivel de paquete</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="cm">// Java</span>
+<span class="kw">public class</span> <span class="cl">CuentaBancaria</span> {
+    <span class="kw">private double</span> saldo;  <span class="cm">// REALMENTE privado</span>
+
+    <span class="kw">public</span> <span class="cl">CuentaBancaria</span>(<span class="kw">double</span> s) { saldo = s; }
+
+    <span class="kw">public double</span> <span class="fn">getSaldo</span>() { <span class="kw">return</span> saldo; }
+
+    <span class="kw">public void</span> <span class="fn">depositar</span>(<span class="kw">double</span> monto) {
+        <span class="kw">if</span> (monto > <span class="num">0</span>) saldo += monto;
+    }
+}
+
+<span class="cm">// En otro archivo / clase:</span>
+<span class="cl">CuentaBancaria</span> c = <span class="kw">new</span> <span class="cl">CuentaBancaria</span>(<span class="num">1000</span>);
+c.<span class="fn">getSaldo</span>();       <span class="cm">// ✓ OK — hay getter público</span>
+c.saldo = -<span class="num">100</span>;    <span class="cm">// ✗ ERROR DE COMPILACIÓN</span>
+<span class="cm">// error: saldo has private access in CuentaBancaria</span></pre>
+      <div class="card" style="margin-top:10px;border-left:4px solid #E11D48">
+        <h3 style="color:#E11D48">El compilador lo impide — no hay vuelta atrás</h3>
+        <p class="t" style="margin-top:4px">El código <strong>no compila</strong>. No se ejecuta. No hay forma de saltear esto en tiempo de ejecución sin usar Reflection (que es otra historia).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PYTHON — LO QUE REALMENTE PASA ───────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Encapsulamiento</div>
+  <h2>Python — lo que <span style="color:var(--ac)">realmente pasa</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">Python</div>
+      <div class="card" style="margin-top:6px">
+        <h3>El guion bajo <code>_</code> es solo una convención</h3>
+        <p class="t" style="margin-top:8px">En Python, poner <code>_saldo</code> <strong>no hace nada técnico</strong>. Es equivalente a escribirle un cartel al programador que diga <em>"por favor no toques esto"</em>. Pero si alguien decide ignorarlo, Python lo deja.</p>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>¿Qué significa en la práctica?</h3>
+        <ul class="s">
+          <li>El IDE puede advertirte, pero el código <strong>corre igual</strong></li>
+          <li>No hay error en tiempo de ejecución</li>
+          <li>No hay error de compilación (Python no compila)</li>
+          <li>El atributo está ahí, accesible, sin restricción real</li>
         </ul>
       </div>
     </div>
     <div class="col">
 <pre><span class="kw">class</span> <span class="cl">CuentaBancaria</span>:
-    <span class="kw">def</span> <span class="fn">__init__</span>(self, titular: <span class="num">str</span>, saldo: <span class="num">float</span>):
-        self.titular = titular
-        self._saldo  = saldo   <span class="cm"># _ = privado por convención</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, saldo: <span class="num">float</span>):
+        self._saldo = saldo  <span class="cm"># _ = "no toques esto"</span>
 
-    <span class="kw">def</span> <span class="fn">depositar</span>(self, monto: <span class="num">float</span>) -> <span class="kw">None</span>:
+    <span class="kw">def</span> <span class="fn">depositar</span>(self, monto: <span class="num">float</span>):
         <span class="kw">if</span> monto > <span class="num">0</span>:
             self._saldo += monto
 
-    <span class="kw">def</span> <span class="fn">get_saldo</span>(self) -> <span class="num">float</span>:
-        <span class="kw">return</span> self._saldo
-
-c = <span class="cl">CuentaBancaria</span>(<span class="str">"Ana"</span>, <span class="num">1000</span>)
+c = <span class="cl">CuentaBancaria</span>(<span class="num">1000</span>)
 c.<span class="fn">depositar</span>(<span class="num">500</span>)
-<span class="fn">print</span>(c.<span class="fn">get_saldo</span>())    <span class="cm"># 1500</span>
+<span class="fn">print</span>(c._saldo)      <span class="cm"># 1500 — funciona sin error</span>
 
-<span class="cm"># No hacer esto:</span>
-c._saldo = -<span class="num">99999</span>       <span class="cm"># viola la convención</span></pre>
+<span class="cm"># Violamos la "privacidad" — Python no dice nada</span>
+c._saldo = -<span class="num">99999</span>   <span class="cm"># funciona. Sin error. Sin advertencia.</span>
+<span class="fn">print</span>(c._saldo)      <span class="cm"># -99999</span>
+
+<span class="cm"># Python confía en que el programador sabe lo que hace</span></pre>
+      <div class="card" style="margin-top:10px;border-left:4px solid var(--ac)">
+        <h3>La diferencia es filosófica</h3>
+        <p class="t" style="margin-top:4px">Java no te deja. Python te deja pero te pide que no lo hagas. Son dos enfoques distintos sobre cuánto controlar al programador.</p>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 11. PROPERTY ────────────────────────────────────── -->
+<!-- ─── PYTHON — EL DOBLE GUION ──────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Encapsulamiento</div>
+  <h2>Python — el doble guion <code style="font-size:.75em">__attr</code></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>¿Qué hace <code>__saldo</code>?</h3>
+        <p class="t" style="margin-top:8px">Python aplica <strong>name mangling</strong>: renombra internamente el atributo de <code>__saldo</code> a <code>_CuentaBancaria__saldo</code>. El objetivo es dificultar el acceso accidental desde fuera.</p>
+        <ul class="s" style="margin-top:8px">
+          <li>Acceder con <code>c.__saldo</code> da <code>AttributeError</code></li>
+          <li>Pero podés acceder con <code>c._CuentaBancaria__saldo</code></li>
+          <li>Sigue sin ser privado real — solo es <strong>más difícil de llegar</strong></li>
+        </ul>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>¿Cuándo usar cada uno?</h3>
+        <ul class="s">
+          <li><code>_attr</code> → la mayoría de los casos, atributo "interno"</li>
+          <li><code>__attr</code> → cuando querés evitar colisiones en herencia</li>
+          <li>En Python real de producción: <code>_attr</code> es suficiente</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">CuentaBancaria</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, saldo: <span class="num">float</span>):
+        self.__saldo = saldo  <span class="cm"># doble guion</span>
+
+c = <span class="cl">CuentaBancaria</span>(<span class="num">1000</span>)
+
+<span class="cm"># Intento de acceso directo:</span>
+<span class="fn">print</span>(c.__saldo)
+<span class="cm"># AttributeError: 'CuentaBancaria' object has no attribute '__saldo'</span>
+
+<span class="cm"># Pero Python solo lo renombró — sigue existiendo:</span>
+<span class="fn">print</span>(c._CuentaBancaria__saldo)   <span class="cm"># 1000 — funciona igual</span>
+
+<span class="cm"># Ver todos los atributos reales del objeto:</span>
+<span class="fn">print</span>(c.__dict__)
+<span class="cm"># {'_CuentaBancaria__saldo': 1000}</span>
+
+<span class="cm"># Conclusión: no hay privado real en Python.</span>
+<span class="cm"># El __ solo hace el acceso menos obvio.</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PYTHON — LA FILOSOFÍA ─────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Encapsulamiento</div>
+  <h2>La filosofía de Python — <span style="color:var(--ac)">"We're all adults here"</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Python confía en el programador</h3>
+        <p class="t" style="margin-top:8px">Python no te impone restricciones de acceso porque asume que si estás usando la clase, <strong>sabés lo que hacés</strong>. La comunidad Python tiene un dicho:</p>
+        <p class="t" style="margin-top:10px;font-style:italic;font-size:1.1em;color:var(--ac)">"We're all consenting adults here"</p>
+        <p class="t" style="margin-top:10px;color:var(--muted)">Somos todos adultos que saben lo que hacen. No hace falta que el lenguaje nos proteja de nosotros mismos.</p>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>Java vs Python — el resumen honesto</h3>
+        <table style="margin-top:8px">
+          <tr><th></th><th>Java</th><th>Python</th></tr>
+          <tr><td><code>private</code></td><td>Impide acceso</td><td>No existe</td></tr>
+          <tr><td><code>_attr</code></td><td>No aplica</td><td>Convención</td></tr>
+          <tr><td><code>__attr</code></td><td>No aplica</td><td>Name mangling</td></tr>
+          <tr><td>¿Se puede violar?</td><td>No (sin Reflection)</td><td>Sí, siempre</td></tr>
+          <tr><td>¿Lo impide el lenguaje?</td><td>Sí</td><td>No</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>¿Entonces para qué sirve <code>_</code> en Python?</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Comunica intención: <em>"esto es interno, no parte de la interfaz pública"</em></li>
+          <li>Los IDEs y linters lo usan para advertirte</li>
+          <li>Cuando otra persona lee tu código, entiende el contrato</li>
+          <li>En equipos, la convención <strong>sí importa</strong> aunque no sea forzada</li>
+        </ul>
+      </div>
+      <div class="card bl" style="margin-top:11px">
+        <h3>La conclusión real</h3>
+        <p class="t" style="margin-top:8px">El encapsulamiento en Python es una <strong>convención de equipo</strong>, no una restricción del lenguaje. Funciona porque los programadores la respetan — no porque Python la imponga. Eso no lo hace menos válido, pero sí diferente a Java.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── @PROPERTY ────────────────────────────────────────── -->
 <div class="slide s-c" id="s11">
   <div class="tag">Encapsulamiento</div>
   <h2><code style="font-size:.75em">@property</code> — getter elegante</h2>
@@ -526,7 +1185,7 @@ p.<span class="fn">describir</span>()           <span class="cm"># Soy Rex  ← 
 
 <span class="kw">class</span> <span class="cl">Gerente</span>(<span class="cl">Empleado</span>):
     <span class="kw">def</span> <span class="fn">__init__</span>(self, nombre: <span class="num">str</span>, sueldo: <span class="num">float</span>, depto: <span class="num">str</span>):
-        <span class="fn">super</span>().__fn>__init__</span>(nombre, sueldo)  <span class="cm"># hereda init padre</span>
+        <span class="fn">super</span>().__init__(nombre, sueldo)  <span class="cm"># hereda init padre</span>
         self.depto = depto   <span class="cm"># atributo propio</span>
 
     <span class="kw">def</span> <span class="fn">__str__</span>(self) -> <span class="num">str</span>:
@@ -538,43 +1197,89 @@ g = <span class="cl">Gerente</span>(<span class="str">"Luis"</span>, <span class
   </div>
 </div>
 
-<!-- ─── 15. ISINSTANCE ───────────────────────────────────── -->
+<!-- ─── POLIMORFISMO EN CÓDIGO ─────────────────────────────── -->
 <div class="slide s-c" id="s15">
   <div class="tag">Herencia</div>
-  <h2><code style="font-size:.8em">isinstance()</code> y polimorfismo</h2>
+  <h2>Polimorfismo — override en la práctica</h2>
   <div class="g2">
     <div class="col">
       <div class="card gr">
-        <h3>isinstance(obj, Clase)</h3>
+        <h3>¿Qué está pasando exactamente?</h3>
         <ul class="s">
-          <li>Retorna <code>True</code> si el objeto es de esa clase <strong>o de una hija</strong></li>
-          <li>Útil para verificar tipos en tiempo de ejecución</li>
+          <li><code>Animal</code> define <code>sonido()</code> — es el método base</li>
+          <li><code>Perro</code> lo <strong>reescribe</strong> con <code>"Guau"</code></li>
+          <li><code>Gato</code> lo <strong>reescribe</strong> con <code>"Miau"</code></li>
+          <li>Cuando llamás <code>a.sonido()</code>, Python mira el tipo real de <code>a</code> y ejecuta la versión correcta</li>
         </ul>
       </div>
       <div class="card" style="margin-top:11px">
-        <h3>Polimorfismo</h3>
+        <h3>Por qué esto es poderoso</h3>
         <ul class="s">
-          <li>Objetos distintos responden al <strong>mismo mensaje</strong> de formas diferentes</li>
-          <li>Puedes tratar a <code>Perro</code> y <code>Gato</code> como <code>Animal</code> — cada uno hace su <code>sonido()</code></li>
+          <li>El <code>for</code> no sabe ni le importa si es <code>Perro</code> o <code>Gato</code></li>
+          <li>Si agregás <code>Pajaro</code> mañana, el <code>for</code> <strong>no cambia</strong></li>
+          <li>No hay <code>if tipo == "perro"</code> por ningún lado</li>
         </ul>
       </div>
     </div>
     <div class="col">
-<pre><span class="kw">class</span> <span class="cl">Gato</span>(<span class="cl">Animal</span>):
+<pre><span class="kw">class</span> <span class="cl">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nombre: <span class="num">str</span>):
+        self.nombre = nombre
     <span class="kw">def</span> <span class="fn">sonido</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">"..."</span>   <span class="cm"># versión base</span>
+
+<span class="kw">class</span> <span class="cl">Perro</span>(<span class="cl">Animal</span>):
+    <span class="kw">def</span> <span class="fn">sonido</span>(self) -> <span class="num">str</span>:  <span class="cm"># reescribe</span>
+        <span class="kw">return</span> <span class="str">"Guau"</span>
+
+<span class="kw">class</span> <span class="cl">Gato</span>(<span class="cl">Animal</span>):
+    <span class="kw">def</span> <span class="fn">sonido</span>(self) -> <span class="num">str</span>:  <span class="cm"># reescribe</span>
         <span class="kw">return</span> <span class="str">"Miau"</span>
 
 animales = [<span class="cl">Perro</span>(<span class="str">"Rex"</span>), <span class="cl">Gato</span>(<span class="str">"Luna"</span>), <span class="cl">Perro</span>(<span class="str">"Max"</span>)]
 
-<span class="cm"># Polimorfismo — mismo método, distinto resultado</span>
+<span class="cm"># El for no sabe qué tipo es cada uno</span>
+<span class="cm"># Python sí — y ejecuta la versión correcta</span>
 <span class="kw">for</span> a <span class="kw">in</span> animales:
     <span class="fn">print</span>(<span class="str">f"{a.nombre}: {a.<span class="fn">sonido</span>()}"</span>)
-<span class="cm"># Rex: Guau / Luna: Miau / Max: Guau</span>
+<span class="cm"># Rex: Guau</span>
+<span class="cm"># Luna: Miau</span>
+<span class="cm"># Max: Guau</span></pre>
+    </div>
+  </div>
+</div>
 
-<span class="cm"># isinstance</span>
-<span class="fn">print</span>(<span class="fn">isinstance</span>(animales[<span class="num">0</span>], <span class="cl">Perro</span>))   <span class="cm"># True</span>
-<span class="fn">print</span>(<span class="fn">isinstance</span>(animales[<span class="num">0</span>], <span class="cl">Animal</span>))  <span class="cm"># True (es hijo)</span>
-<span class="fn">print</span>(<span class="fn">isinstance</span>(animales[<span class="num">0</span>], <span class="cl">Gato</span>))    <span class="cm"># False</span></pre>
+<!-- ─── ISINSTANCE ────────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Herencia</div>
+  <h2><code style="font-size:.8em">isinstance()</code> — verificar tipos</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card sl">
+        <h3>¿Qué es isinstance?</h3>
+        <p class="t" style="margin-top:8px">Es una función de Python que te dice si un objeto es instancia de una clase determinada. <strong>No tiene nada que ver con el polimorfismo</strong> — es simplemente una herramienta para verificar tipos en tiempo de ejecución.</p>
+        <ul class="s" style="margin-top:8px">
+          <li>Retorna <code>True</code> si el objeto es de esa clase <strong>o de una clase hija</strong></li>
+          <li>Útil cuando necesitás tomar decisiones basadas en el tipo real del objeto</li>
+          <li>Si lo usás mucho, puede ser señal de que el diseño necesita más polimorfismo</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="cm"># isinstance verifica el tipo del objeto</span>
+rex = <span class="cl">Perro</span>(<span class="str">"Rex"</span>)
+
+<span class="fn">isinstance</span>(rex, <span class="cl">Perro</span>)   <span class="cm"># True  — es un Perro</span>
+<span class="fn">isinstance</span>(rex, <span class="cl">Animal</span>)  <span class="cm"># True  — Perro hereda de Animal</span>
+<span class="fn">isinstance</span>(rex, <span class="cl">Gato</span>)    <span class="cm"># False — no es un Gato</span>
+
+<span class="cm"># Ejemplo de uso válido:</span>
+<span class="kw">def</span> <span class="fn">procesar</span>(animal):
+    <span class="kw">if isinstance</span>(animal, <span class="cl">Perro</span>):
+        animal.<span class="fn">buscar_pelota</span>()  <span class="cm"># método solo de Perro</span>
+    animal.<span class="fn">sonido</span>()             <span class="cm"># esto ya es polimorfismo</span>
+
+<span class="cm"># El polimorfismo va en .sonido() — no en el isinstance</span></pre>
     </div>
   </div>
 </div>
@@ -818,7 +1523,7 @@ e2.<span class="fn">agregar_nota</span>(<span class="num">3</span>)
 
 <span class="kw">class</span> <span class="cl">Auto</span>(<span class="cl">Vehiculo</span>):
     <span class="kw">def</span> <span class="fn">__init__</span>(self, marca, vel_max, puertas: <span class="num">int</span>):
-        <span class="fn">super</span>().__fn>__init__</span>(marca, vel_max)
+        <span class="fn">super</span>().__init__(marca, vel_max)
         self.puertas = puertas
 
     <span class="kw">def</span> <span class="fn">describir</span>(self) -> <span class="num">str</span>:
@@ -826,7 +1531,7 @@ e2.<span class="fn">agregar_nota</span>(<span class="num">3</span>)
 
 <span class="kw">class</span> <span class="cl">Moto</span>(<span class="cl">Vehiculo</span>):
     <span class="kw">def</span> <span class="fn">__init__</span>(self, marca, vel_max, tipo: <span class="num">str</span>):
-        <span class="fn">super</span>().__fn>__init__</span>(marca, vel_max)
+        <span class="fn">super</span>().__init__(marca, vel_max)
         self.tipo = tipo
 
     <span class="kw">def</span> <span class="fn">describir</span>(self) -> <span class="num">str</span>:
@@ -862,7 +1567,7 @@ e2.<span class="fn">agregar_nota</span>(<span class="num">3</span>)
   <div class="tag">Evaluación</div>
   <h2>Quiz teórico</h2>
   <p class="sub" style="margin-bottom:1.5rem">8 preguntas sobre los conceptos vistos en clase</p>
-  <button class="quiz-btn" onclick="document.getElementById('quiz').classList.add('open')">
+  <button class="quiz-btn" onclick="abrirQuiz()">
     &#9998;&nbsp; Abrir quiz y calificar
   </button>
   <p class="t" style="color:var(--muted);margin-top:1rem;font-size:clamp(13px,1.4vw,16px)">Responde todas las preguntas y presiona <strong>Calificar</strong> para ver tu resultado al instante.</p>
@@ -916,96 +1621,45 @@ e2.<span class="fn">agregar_nota</span>(<span class="num">3</span>)
 <!-- ════════════════════════════════════════════════════════
      QUIZ OVERLAY
 ════════════════════════════════════════════════════════ -->
+<div id="expulsado-overlay">
+  <h1>&#9888; Examen cerrado</h1>
+  <p class="exp-nombre" id="exp-nombre-txt"></p>
+  <p>Saliste del examen <strong>2 veces</strong>.<br><br>
+  El examen fue cerrado automáticamente.<br>
+  <strong>No podés volver a ingresar.</strong></p>
+</div>
+
 <div id="quiz">
   <div class="qwrap">
     <div class="qheader">
       <h1>Quiz — POO en Python</h1>
-      <button class="qclose" onclick="document.getElementById('quiz').classList.remove('open')">&#8592; Volver a la clase</button>
+      <button class="qclose" id="btn-cerrar-quiz" onclick="cerrarQuiz()">&#8592; Volver a la clase</button>
     </div>
 
-    <!-- P1 -->
-    <div class="pregunta" id="p1">
-      <p>1. ¿Qué es una <strong>clase</strong> en Python?</p>
-      <div class="opcion"><input type="radio" name="p1" value="a"><label>Una función que retorna múltiples valores</label></div>
-      <div class="opcion"><input type="radio" name="p1" value="b"><label>Una plantilla o molde para crear objetos</label></div>
-      <div class="opcion"><input type="radio" name="p1" value="c"><label>Un tipo especial de lista</label></div>
-      <div class="opcion"><input type="radio" name="p1" value="d"><label>Un módulo externo de Python</label></div>
+    <!-- Pantalla de nombre -->
+    <div id="nombre-screen">
+      <h2>Ingresá tu nombre completo para comenzar</h2>
+      <input type="text" id="input-nombre" placeholder="Nombre y apellido" autocomplete="off" spellcheck="false">
+      <button id="btn-comenzar" onclick="comenzarExamen()">Comenzar examen &rarr;</button>
+      <p class="aviso">
+        <span>&#9888; Reglas del examen:</span> No podés cambiar de pestaña ni de ventana.
+        Tenés <strong>2 advertencias</strong> — al tercer intento el examen se cierra automáticamente.
+        Tampoco podés copiar ni pegar texto.
+      </p>
     </div>
 
-    <!-- P2 -->
-    <div class="pregunta" id="p2">
-      <p>2. ¿Para qué sirve el método <strong>__init__</strong>?</p>
-      <div class="opcion"><input type="radio" name="p2" value="a"><label>Para eliminar el objeto de la memoria</label></div>
-      <div class="opcion"><input type="radio" name="p2" value="b"><label>Para imprimir los atributos del objeto</label></div>
-      <div class="opcion"><input type="radio" name="p2" value="c"><label>Para inicializar los atributos cuando se crea el objeto</label></div>
-      <div class="opcion"><input type="radio" name="p2" value="d"><label>Para heredar de otra clase</label></div>
-    </div>
+    <!-- Preguntas (ocultas hasta que el estudiante ingresa su nombre) -->
+    <div id="preguntas-section">
 
-    <!-- P3 -->
-    <div class="pregunta" id="p3">
-      <p>3. ¿Qué representa <strong>self</strong> dentro de un método?</p>
-      <div class="opcion"><input type="radio" name="p3" value="a"><label>La clase en sí misma</label></div>
-      <div class="opcion"><input type="radio" name="p3" value="b"><label>El nombre del método</label></div>
-      <div class="opcion"><input type="radio" name="p3" value="c"><label>La instancia (objeto) que está llamando al método</label></div>
-      <div class="opcion"><input type="radio" name="p3" value="d"><label>Un parámetro que se puede omitir</label></div>
-    </div>
+      <div id="preguntas-dinamicas"></div>
 
-    <!-- P4 -->
-    <div class="pregunta" id="p4">
-      <p>4. Teniendo <code>class Persona: def __init__(self, nombre, edad)</code> — ¿cómo se crea un objeto?</p>
-      <div class="opcion"><input type="radio" name="p4" value="a"><label>Persona.create("Ana", 20)</label></div>
-      <div class="opcion"><input type="radio" name="p4" value="b"><label>new Persona("Ana", 20)</label></div>
-      <div class="opcion"><input type="radio" name="p4" value="c"><label>Persona("Ana", 20)</label></div>
-      <div class="opcion"><input type="radio" name="p4" value="d"><label>Persona.__init__("Ana", 20)</label></div>
-    </div>
+      <button class="qbtn" id="btn-calificar" onclick="calificar()">Calificar</button>
 
-    <!-- P5 -->
-    <div class="pregunta" id="p5">
-      <p>5. Un atributo que empieza con <strong>_</strong> (guión bajo) en Python significa:</p>
-      <div class="opcion"><input type="radio" name="p5" value="a"><label>Es un error de sintaxis</label></div>
-      <div class="opcion"><input type="radio" name="p5" value="b"><label>Por convención es privado — no se debería acceder desde fuera de la clase</label></div>
-      <div class="opcion"><input type="radio" name="p5" value="c"><label>Es un atributo de clase compartido por todos los objetos</label></div>
-      <div class="opcion"><input type="radio" name="p5" value="d"><label>Python lo elimina automáticamente al terminar __init__</label></div>
-    </div>
-
-    <!-- P6 -->
-    <div class="pregunta" id="p6">
-      <p>6. ¿Qué es el <strong>encapsulamiento</strong>?</p>
-      <div class="opcion"><input type="radio" name="p6" value="a"><label>Crear múltiples objetos de la misma clase</label></div>
-      <div class="opcion"><input type="radio" name="p6" value="b"><label>Agrupar datos y métodos en un objeto, protegiendo su estado interno</label></div>
-      <div class="opcion"><input type="radio" name="p6" value="c"><label>Heredar atributos de otra clase</label></div>
-      <div class="opcion"><input type="radio" name="p6" value="d"><label>Usar return en todos los métodos</label></div>
-    </div>
-
-    <!-- P7 -->
-    <div class="pregunta" id="p7">
-      <p>7. En una clase hija, ¿qué hace <strong>super().__init__(...)</strong>?</p>
-      <div class="opcion"><input type="radio" name="p7" value="a"><label>Elimina los atributos heredados del padre</label></div>
-      <div class="opcion"><input type="radio" name="p7" value="b"><label>Crea una nueva clase base</label></div>
-      <div class="opcion"><input type="radio" name="p7" value="c"><label>Llama al constructor de la clase padre para inicializar sus atributos</label></div>
-      <div class="opcion"><input type="radio" name="p7" value="d"><label>Retorna True si la herencia es correcta</label></div>
-    </div>
-
-    <!-- P8 -->
-    <div class="pregunta" id="p8">
-      <p>8. ¿Qué imprime este código?</p>
-      <pre>class A:
-    def f(self): return "A"
-class B(A):
-    def f(self): return "B"
-print(B().f())</pre>
-      <div class="opcion"><input type="radio" name="p8" value="a"><label>"A"</label></div>
-      <div class="opcion"><input type="radio" name="p8" value="b"><label>"B"</label></div>
-      <div class="opcion"><input type="radio" name="p8" value="c"><label>Error — B no tiene __init__</label></div>
-      <div class="opcion"><input type="radio" name="p8" value="d"><label>None</label></div>
-    </div>
-
-    <button class="qbtn" id="btn-calificar" onclick="calificar()">Calificar</button>
-
-    <div id="score-box">
-      <h2 id="score-num"></h2>
-      <p id="score-msg"></p>
-    </div>
+      <div id="score-box">
+        <h2 id="score-num"></h2>
+        <p id="score-msg"></p>
+      </div>
+    </div><!-- /preguntas-section -->
   </div>
 </div>
 
@@ -1053,34 +1707,247 @@ document.addEventListener('touchend',   e => {
 });
 go(0);
 
-/* ── quiz ─────────────────────────────────────────────────── */
-const RESPUESTAS = {
-  p1: { correcta: 'b', explicacion: 'Una clase es una plantilla/molde. Los objetos son las instancias concretas creadas a partir de ella.' },
-  p2: { correcta: 'c', explicacion: '__init__ es el constructor: se ejecuta automáticamente al crear el objeto e inicializa sus atributos.' },
-  p3: { correcta: 'c', explicacion: 'self hace referencia al objeto que está llamando al método — es la instancia actual.' },
-  p4: { correcta: 'c', explicacion: 'Se llama como función: Persona("Ana", 20). Python pasa self automáticamente.' },
-  p5: { correcta: 'b', explicacion: 'El _ es una convención — indica que el atributo es privado. Python no lo fuerza, pero es un contrato de uso.' },
-  p6: { correcta: 'b', explicacion: 'Encapsulamiento = agrupar datos y métodos en un objeto y proteger su estado interno de accesos externos.' },
-  p7: { correcta: 'c', explicacion: 'super().__init__() llama al constructor de la clase padre, inicializando sus atributos sin repetir código.' },
-  p8: { correcta: 'b', explicacion: 'B sobreescribe el método f(), así que B().f() retorna "B". Esto es polimorfismo por herencia.' },
-};
+/* ── quiz — banco de 30 preguntas ────────────────────────── */
+const N_Q = 10;
 
+const BANCO = [
+  { t:'¿Qué es una <strong>clase</strong> en Python?',
+    o:['Una función que retorna múltiples valores','Una plantilla o molde que define la estructura y comportamiento de los objetos','Un tipo especial de lista con métodos integrados','Un archivo .py con funciones agrupadas'],
+    r:1, e:'La clase es el molde/plantilla. No representa nada concreto — define cómo serán los objetos creados a partir de ella.' },
+  { t:'¿Qué diferencia hay entre una <strong>clase</strong> y un <strong>objeto</strong>?',
+    o:['Son lo mismo, solo cambia el nombre según el contexto','La clase tiene valores reales; el objeto no','La clase es el molde; el objeto es la instancia concreta creada con ese molde','Un objeto puede tener más atributos que su clase'],
+    r:2, e:'La clase define la estructura sin valores. El objeto es una instancia concreta que sí tiene valores reales en sus atributos.' },
+  { t:'¿Para qué sirve el método <strong>__init__</strong>?',
+    o:['Para eliminar el objeto de la memoria al terminar','Para imprimir los atributos automáticamente','Para inicializar los atributos cuando se crea el objeto','Para heredar atributos de otra clase'],
+    r:2, e:'__init__ es el constructor. Se ejecuta automáticamente al crear el objeto e inicializa sus atributos con los valores recibidos.' },
+  { t:'¿Qué representa <strong>self</strong> dentro de un método?',
+    o:['La clase en sí misma','El nombre del método que se está ejecutando','La instancia concreta que está llamando al método','Un parámetro opcional que puede omitirse'],
+    r:2, e:'self es la referencia al objeto actual. Con self.atributo accedemos o guardamos datos en esa instancia específica.' },
+  { t:'Dada <code>class Persona(nombre, edad)</code> — ¿cómo se crea un objeto?',
+    o:['Persona.create("Ana", 20)','new Persona("Ana", 20)','Persona("Ana", 20)','Persona.__init__("Ana", 20)'],
+    r:2, e:'En Python se instancia llamando la clase como función. Python pasa self automáticamente.' },
+  { t:'Un atributo <code>_saldo</code> (guión bajo) en Python significa:',
+    o:['Es un error de sintaxis','Es privado por convención: no debería accederse desde fuera, pero Python no lo impide','Es un atributo de clase compartido por todas las instancias','Python lo elimina automáticamente al terminar __init__'],
+    r:1, e:'El _ es solo convención. Python no impide el acceso — c._saldo funciona sin error. Es un contrato entre programadores.' },
+  { t:'¿Qué hace el método especial <strong>__str__</strong>?',
+    o:['Convierte el objeto en un diccionario','Define cómo se muestra el objeto cuando se usa print() o str()','Elimina el objeto al finalizar el programa','Inicializa solo los atributos de tipo string'],
+    r:1, e:'__str__ retorna una cadena. Se llama automáticamente con print(objeto). Sin él, print muestra algo como &lt;NombreClase object at 0x...&gt;.' },
+  { t:'¿Qué es el <strong>encapsulamiento</strong>?',
+    o:['Crear múltiples objetos de la misma clase','Agrupar datos y métodos en un objeto, controlando el acceso a su estado interno','Heredar atributos y métodos de otra clase','Convertir el objeto en una cadena de texto'],
+    r:1, e:'Encapsulamiento = agrupar estado y comportamiento en un objeto, protegiendo ese estado de modificaciones directas no controladas.' },
+  { t:'¿Qué pasa en Python cuando usás <code>__saldo</code> (doble guión bajo)?',
+    o:['Python impide completamente el acceso desde fuera, igual que Java','El atributo se elimina automáticamente','Python aplica name mangling: renombra el atributo a _NombreClase__saldo','El atributo se vuelve inmutable'],
+    r:2, e:'Python hace name mangling: __saldo dentro de Cuenta → _Cuenta__saldo. Aún es accesible via ese nombre — no es privado real.' },
+  { t:'¿Qué hace el decorador <strong>@property</strong>?',
+    o:['Hace que el método sea estático (sin self)','Permite acceder a un atributo privado como si fuera público, sin paréntesis','Define un atributo de clase compartido por todos','Importa propiedades de un módulo externo'],
+    r:1, e:'@property convierte un método en getter accesible como atributo. obj.saldo en vez de obj.get_saldo() — más limpio y pythónico.' },
+  { t:'¿Qué es la <strong>herencia</strong> en POO?',
+    o:['Copiar y pegar código entre clases manualmente','Cuando un objeto puede tener más de un tipo','Una clase que recibe automáticamente atributos y métodos de otra','La capacidad de crear múltiples objetos de la misma clase'],
+    r:2, e:'Herencia permite que la clase hija reutilice código del padre. Expresa relaciones "es un": un Perro ES un Animal.' },
+  { t:'¿Cómo se define una clase hija en Python?',
+    o:['class Hija(Padre):','class Hija extends Padre:','class Hija inherits Padre:','class Hija < Padre:'],
+    r:0, e:'En Python la herencia se indica poniendo la clase padre entre paréntesis: class Perro(Animal):' },
+  { t:'¿Qué hace <strong>super().__init__()</strong> en la clase hija?',
+    o:['Elimina los atributos heredados del padre','Crea un nuevo objeto de la clase padre','Llama al constructor del padre para inicializar sus atributos sin repetir código','Retorna True si la herencia es válida'],
+    r:2, e:'super().__init__() delega al padre la inicialización de sus atributos. Evita repetir self.nombre = nombre, etc., en la hija.' },
+  { t:'¿En qué consiste el <strong>polimorfismo</strong>?',
+    o:['Que una clase pueda tener múltiples constructores','Que la clase hija reescriba un método del padre y cada objeto responda diferente al mismo método','Que un objeto pueda cambiar de clase en ejecución','Que todos los métodos tengan el mismo nombre'],
+    r:1, e:'Polimorfismo = override. La hija reescribe el método y Python ejecuta la versión correcta según el tipo real del objeto.' },
+  { t:'¿Qué hace <strong>isinstance(obj, Clase)</strong>?',
+    o:['Crea un nuevo objeto del tipo Clase','Verifica si obj es instancia de Clase o de cualquier subclase','Compara dos objetos por el valor de sus atributos','Retorna la clase de la que hereda obj'],
+    r:1, e:'isinstance retorna True si el objeto es de esa clase O de una subclase. No está relacionado con polimorfismo — es verificación de tipos.' },
+  { t:'¿Qué imprime este código?',
+    c:'class Animal:\n    def __init__(self, n): self.nombre = n\n    def __str__(self): return f"Animal: {self.nombre}"\na = Animal("Rex")\nprint(a)',
+    o:['<Animal object at 0x...>','Animal("Rex")','Animal: Rex','Rex'],
+    r:2, e:'Como __str__ está definido, print(a) usa ese método. Retorna f"Animal: {self.nombre}" → "Animal: Rex".' },
+  { t:'¿Qué imprime este código?',
+    c:'class A:\n    def hablar(self): return "Soy A"\nclass B(A):\n    def hablar(self): return "Soy B"\nx = B()\nprint(x.hablar())',
+    o:['Soy A','Soy B','Error: B no define __init__','Soy A y Soy B'],
+    r:1, e:'B reescribe hablar(). Python usa la versión de la clase real del objeto (B). Esto es polimorfismo por override.' },
+  { t:'En Python, si definís <code>self._saldo = 1000</code>, ¿qué pasa si hacés <code>c._saldo = -999</code>?',
+    o:['Python lanza AttributeError — _saldo es privado','Funciona sin error — Python no impide el acceso a atributos con _','Python lanza ValueError automáticamente','El atributo queda protegido y el valor no cambia'],
+    r:1, e:'El _ es solo convención. Python no impide nada. c._saldo = -999 funciona perfectamente. Es responsabilidad del programador respetarlo.' },
+  { t:'¿Cómo se importa la clase <code>Persona</code> desde el archivo <code>persona.py</code>?',
+    o:['import Persona from persona','include persona.Persona','from persona import Persona','require("persona").Persona'],
+    r:2, e:'La sintaxis correcta es from archivo import Clase. Importa solo la clase específica del módulo.' },
+  { t:'En <strong>Java</strong>, un atributo declarado como <code>private</code>...',
+    o:['Solo puede accederse desde la misma clase — el compilador impide el acceso desde fuera','Es lo mismo que _ en Python: una convención que se puede ignorar','Solo funciona dentro del mismo paquete','Puede accederse con un cast explícito'],
+    r:0, e:'En Java private es real: el compilador falla con error si intentás acceder desde fuera. Completamente distinto al _ de Python.' },
+  { t:'¿Qué es la <strong>abstracción</strong> en POO?',
+    o:['Tener múltiples clases en el mismo archivo','Hacer que todos los atributos sean privados con __','Exponer solo la interfaz necesaria al exterior, ocultando los detalles de implementación','Crear objetos sin necesidad de definir una clase'],
+    r:2, e:'Abstracción = mostrar qué hace el objeto, no cómo lo hace. Como cuando usás lista.append() sin saber cómo Python maneja la memoria.' },
+  { t:'¿Qué imprime este código?',
+    c:'class Empleado:\n    def __init__(self, nombre, sueldo):\n        self.nombre = nombre\n        self.sueldo = sueldo\nclass Gerente(Empleado):\n    def __init__(self, nombre, sueldo, depto):\n        super().__init__(nombre, sueldo)\n        self.depto = depto\ng = Gerente("Luis", 5000, "IT")\nprint(g.nombre, g.depto)',
+    o:['Error: Gerente no puede acceder a nombre','Luis None','Luis IT','Gerente IT'],
+    r:2, e:'super().__init__ inicializa nombre y sueldo en el padre. Luego self.depto agrega el atributo propio. g.nombre="Luis", g.depto="IT".' },
+  { t:'¿Cuántos objetos se pueden crear a partir de una sola clase?',
+    o:['Solo uno — la clase no puede instanciarse más de una vez','Máximo dos','El número de atributos que tenga la clase','Tantos como se necesiten — no hay límite'],
+    r:3, e:'De una clase se pueden crear todos los objetos que quieras. Es como un molde: podés hacer infinitas galletitas con el mismo cortador.' },
+  { t:'¿Qué ocurre al ejecutar este código?',
+    c:'class Cuenta:\n    def __init__(self, saldo):\n        self.__saldo = saldo\nc = Cuenta(1000)\nprint(c.__saldo)',
+    o:['Imprime 1000','Imprime None','Lanza AttributeError — __saldo fue renombrado por name mangling','Lanza ValueError'],
+    r:2, e:'Name mangling: __saldo dentro de Cuenta → _Cuenta__saldo. Acceder como c.__saldo falla con AttributeError. Funciona: c._Cuenta__saldo.' },
+  { t:'¿Cuál es la diferencia entre <code>_attr</code> y <code>__attr</code> en Python?',
+    o:['No hay diferencia — son equivalentes','_attr es convención "no accedas desde fuera"; __attr aplica name mangling y dificulta más el acceso','_attr es para instancias; __attr es para la clase','__attr hace el atributo inmutable'],
+    r:1, e:'_attr es pura convención. __attr activa name mangling: Python renombra a _Clase__attr, haciendo el acceso accidental menos probable (pero no imposible).' },
+  { t:'¿Qué imprime este código?',
+    c:'class Animal:\n    def __init__(self, n): self.nombre = n\nclass Perro(Animal): pass\nclass Gato(Animal): pass\np = Perro("Rex")\nprint(isinstance(p, Animal))\nprint(isinstance(p, Gato))',
+    o:['False\nFalse','True\nTrue','True\nFalse','False\nTrue'],
+    r:2, e:'isinstance(p, Animal) es True porque Perro hereda de Animal. isinstance(p, Gato) es False porque Perro no es Gato.' },
+  { t:'Sin definir <strong>__str__</strong>, ¿qué imprime <code>print(objeto)</code>?',
+    o:['El valor de todos sus atributos en formato JSON','None','Algo como &lt;NombreClase object at 0x7f...&gt; con la dirección en memoria','El nombre de la clase únicamente'],
+    r:2, e:'Sin __str__, Python usa la representación por defecto: nombre de clase + dirección de memoria. Por eso conviene definir __str__.' },
+  { t:'¿Para qué sirve el <strong>@property setter</strong>?',
+    o:['Para hacer que el atributo sea de solo lectura','Para validar el valor antes de asignarlo al atributo privado','Para crear una copia del objeto','Para heredar la property del padre automáticamente'],
+    r:1, e:'El setter se ejecuta cuando hacés obj.atributo = valor. Podés validar que el valor sea correcto antes de asignarlo a self._atributo.' },
+  { t:'¿Qué imprime este código?',
+    c:'class Figura:\n    def area(self): return 0\nclass Circulo(Figura):\n    def __init__(self, r): self.r = r\n    def area(self): return 3.14 * self.r ** 2\nclass Cuadrado(Figura):\n    def __init__(self, l): self.l = l\n    def area(self): return self.l ** 2\nfiguras = [Circulo(5), Cuadrado(4)]\nfor f in figuras:\n    print(f.area())',
+    o:['0\n0','78.5\n16','Error: area no definida','3.14\n4'],
+    r:1, e:'Polimorfismo: Circulo.area() retorna 78.5 (3.14×25). Cuadrado.area() retorna 16. Python llama la versión correcta de cada objeto.' },
+  { t:'¿Qué significa que <strong>Gerente</strong> herede de <strong>Empleado</strong>?',
+    o:['Gerente copia los valores actuales de Empleado','Gerente recibe automáticamente la estructura de atributos y métodos de Empleado, pudiendo agregar o modificar lo que necesite','El objeto Empleado se elimina cuando se crea Gerente','Gerente y Empleado comparten la misma dirección de memoria'],
+    r:1, e:'Herencia es estructural: la hija obtiene la definición del padre. No copia valores — hereda la estructura. Puede agregar atributos y reescribir métodos.' },
+];
+
+/* ── quiz — estado ────────────────────────────────────────── */
+let RESP_DIN = {}; // se construye dinámicamente al generar el quiz
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function generarQuiz() {
+  const selec = shuffle(BANCO).slice(0, N_Q);
+  RESP_DIN = {};
+  const cont = document.getElementById('preguntas-dinamicas');
+  cont.innerHTML = '';
+
+  selec.forEach((q, i) => {
+    const id = `dq${i}`;
+    // barajamos las opciones pero rastreamos cuál era la correcta
+    const idx = shuffle([0, 1, 2, 3]);
+    const nuevaCorrecta = String(idx.indexOf(q.r));
+    RESP_DIN[id] = { correcta: nuevaCorrecta, explicacion: q.e };
+
+    const opcs = idx.map((orig, pos) =>
+      `<div class="opcion"><input type="radio" name="${id}" value="${pos}"><label>${q.o[orig]}</label></div>`
+    ).join('');
+
+    const cod = q.c
+      ? `<pre style="font-size:.78rem;padding:10px 14px;margin:.4rem 0 .7rem">${q.c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>`
+      : '';
+
+    cont.insertAdjacentHTML('beforeend',
+      `<div class="pregunta" id="${id}"><p>${i + 1}. ${q.t}</p>${cod}${opcs}</div>`);
+  });
+
+  document.getElementById('score-box').style.display = 'none';
+  document.getElementById('btn-calificar').textContent = 'Calificar';
+}
+
+let examenActivo  = false;
+let nombreEstudiante = '';
+let salidas       = 0;
+const MAX_SALIDAS = 2;
+let tsUltimaSalida = 0;
+
+/* ── abrir / cerrar quiz ──────────────────────────────────── */
+function abrirQuiz() {
+  document.getElementById('nombre-screen').style.display    = 'block';
+  document.getElementById('preguntas-section').style.display = 'none';
+  document.getElementById('btn-cerrar-quiz').style.display  = '';
+  document.getElementById('input-nombre').value = '';
+  document.getElementById('score-box').style.display = 'none';
+  salidas = 0;
+  examenActivo = false;
+  document.getElementById('quiz').classList.remove('examen-activo');
+  document.getElementById('quiz').classList.add('open');
+}
+
+function cerrarQuiz() {
+  examenActivo = false;
+  document.getElementById('quiz').classList.remove('open', 'examen-activo');
+}
+
+/* ── comenzar examen ──────────────────────────────────────── */
+function comenzarExamen() {
+  const nombre = document.getElementById('input-nombre').value.trim();
+  if (!nombre) {
+    document.getElementById('input-nombre').focus();
+    document.getElementById('input-nombre').style.borderColor = '#DC2626';
+    setTimeout(() => document.getElementById('input-nombre').style.borderColor = '', 1500);
+    return;
+  }
+  nombreEstudiante = nombre;
+  generarQuiz();
+  document.getElementById('nombre-screen').style.display     = 'none';
+  document.getElementById('preguntas-section').style.display = 'block';
+  document.getElementById('btn-cerrar-quiz').style.display   = 'none';
+  document.getElementById('quiz').classList.add('examen-activo');
+  salidas = 0;
+  tsUltimaSalida = 0;
+  examenActivo = true;
+}
+
+/* ── detección de salida de pestaña ──────────────────────── */
+function registrarSalida() {
+  if (!examenActivo) return;
+  const ahora = Date.now();
+  if (ahora - tsUltimaSalida < 1500) return; // debounce — evita doble disparo
+  tsUltimaSalida = ahora;
+
+  salidas++;
+  if (salidas >= MAX_SALIDAS) {
+    expulsarEstudiante();
+  } else {
+    setTimeout(() => {
+      alert(`⚠️ Advertencia ${salidas}/${MAX_SALIDAS}\n\nSaliste del examen. Si lo hacés una vez más, el examen se cerrará automáticamente y se registrará tu resultado.`);
+    }, 150);
+  }
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) registrarSalida();
+});
+
+/* ── expulsar estudiante ──────────────────────────────────── */
+function expulsarEstudiante() {
+  examenActivo = false;
+  document.getElementById('quiz').classList.remove('open', 'examen-activo');
+  document.getElementById('exp-nombre-txt').textContent = nombreEstudiante;
+  document.getElementById('expulsado-overlay').style.display = 'flex';
+}
+
+/* ── prevenir copiar / pegar / cortar ────────────────────── */
+['copy', 'cut', 'paste'].forEach(ev =>
+  document.addEventListener(ev, e => { if (examenActivo) e.preventDefault(); })
+);
+document.addEventListener('contextmenu', e => { if (examenActivo) e.preventDefault(); });
+document.addEventListener('keydown', e => {
+  if (!examenActivo) return;
+  const tecla = e.key.toLowerCase();
+  if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'v', 'p'].includes(tecla)) e.preventDefault();
+});
+
+/* ── calificar ────────────────────────────────────────────── */
 function calificar() {
-  let correctas = 0;
+  let correctas    = 0;
   let sinResponder = false;
 
-  Object.entries(RESPUESTAS).forEach(([id, { correcta, explicacion }]) => {
-    const pregunta = document.getElementById(id);
+  Object.entries(RESP_DIN).forEach(([id, { correcta, explicacion }]) => {
+    const pregunta  = document.getElementById(id);
     const seleccion = document.querySelector(`input[name="${id}"]:checked`);
 
     if (!seleccion) { sinResponder = true; return; }
 
-    // limpiar estado anterior
     pregunta.classList.remove('correcta', 'incorrecta');
-    const tagAnterior = pregunta.querySelector('.resultado-tag');
-    const expAnterior = pregunta.querySelector('.explicacion');
-    if (tagAnterior) tagAnterior.remove();
-    if (expAnterior) expAnterior.remove();
+    pregunta.querySelector('.resultado-tag')?.remove();
+    pregunta.querySelector('.explicacion')?.remove();
 
     if (seleccion.value === correcta) {
       correctas++;
@@ -1096,17 +1963,21 @@ function calificar() {
   });
 
   if (sinResponder) {
-    alert('Responde todas las preguntas antes de calificar.');
+    alert('Respondé todas las preguntas antes de calificar.');
     return;
   }
 
-  const total = Object.keys(RESPUESTAS).length;
+  examenActivo = false;
+  document.getElementById('quiz').classList.remove('examen-activo');
+  document.getElementById('btn-cerrar-quiz').style.display = '';
+
+  const total = Object.keys(RESP_DIN).length;
   const pct   = Math.round((correctas / total) * 100);
   const msgs  = [
-    [100, '¡Perfecto! Dominas todos los conceptos.'],
-    [87,  '¡Excelente! Casi todo correcto.'],
-    [62,  'Bien. Repasa las marcadas en rojo.'],
-    [0,   'Necesitas repasar la clase. ¡Tú puedes!'],
+    [100, '¡Perfecto! Dominás todos los conceptos.'],
+    [80,  '¡Excelente! Casi todo correcto.'],
+    [60,  'Bien. Repasá las marcadas en rojo.'],
+    [0,   'Necesitás repasar la clase. ¡Vos podés!'],
   ];
   const msg = msgs.find(([min]) => pct >= min)[1];
 
@@ -1115,8 +1986,7 @@ function calificar() {
   document.getElementById('score-msg').textContent = `${pct}% — ${msg}`;
   box.style.display = 'block';
   box.scrollIntoView({ behavior: 'smooth' });
-
-  document.getElementById('btn-calificar').textContent  = 'Recalificar';
+  document.getElementById('btn-calificar').textContent = 'Recalificar';
 }
 </script>
 </body>
