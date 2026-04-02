@@ -1284,7 +1284,7 @@ rex = <span class="cl">Perro</span>(<span class="str">"Rex"</span>)
   </div>
 </div>
 
-<!-- ─── COMPOSICIÓN — CONCATENAR MÉTODOS ENTRE OBJETOS ───── -->
+<!-- ─── COMPOSICIÓN — CONCATENAR MÉTODOS (1/2) ──────────── -->
 <div class="slide s-c">
   <div class="tag">Composición</div>
   <h2>Concatenar métodos entre <span style="color:var(--blue)">objetos</span></h2>
@@ -1329,25 +1329,58 @@ fmt  = <span class="cl">Formateador</span>()
 total = calc.<span class="fn">sumar</span>(<span class="num">3.141</span>, <span class="num">2.718</span>)   <span class="cm"># 5.859</span>
 texto = fmt.<span class="fn">redondear</span>(total)        <span class="cm"># "Resultado: 5.86"</span>
 <span class="fn">print</span>(texto)</pre>
-      <div class="card pu" style="margin-top:11px">
-        <h3>Ejemplo con herencia</h3>
-<pre style="background:#1E293B;color:#E2E8F0;padding:10px 14px;border-radius:10px;font-size:.78em;margin-top:6px"><span class="kw">class</span> <span class="cl">Producto</span>:
-    <span class="kw">def</span> <span class="fn">__init__</span>(self, precio: <span class="num">float</span>):
+    </div>
+  </div>
+</div>
+
+<!-- ─── COMPOSICIÓN — EJEMPLO PRÁCTICO (2/2) ───────────── -->
+<div class="slide s-c">
+  <div class="tag">Composición</div>
+  <h2>Ejemplo práctico — <span style="color:var(--green)">Producto + Carrito</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>El patrón</h3>
+        <p class="t" style="margin-top:8px">Cada clase tiene su responsabilidad. <strong>Producto</strong> sabe calcular su precio con IVA. <strong>Carrito</strong> sabe aplicar descuentos. Ninguna necesita saber cómo funciona la otra — solo usa su resultado.</p>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>Paso a paso</h3>
+        <ol class="s" style="margin-top:8px">
+          <li><code>p.con_iva()</code> retorna <strong>115.0</strong></li>
+          <li>Ese <strong>115.0</strong> entra como argumento de <code>c.aplicar_descuento(115.0, 0.10)</code></li>
+          <li>Resultado final: <strong>103.5</strong></li>
+        </ol>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Clave</h3>
+        <p class="t" style="margin-top:8px">Lo importante es que el método interno <strong>retorne un valor</strong>. Si no hay <code>return</code>, no hay nada que pasar al método externo.</p>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">Producto</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nombre: <span class="num">str</span>, precio: <span class="num">float</span>):
+        self.nombre = nombre
         self.precio = precio
+
     <span class="kw">def</span> <span class="fn">con_iva</span>(self) -> <span class="num">float</span>:
         <span class="kw">return</span> self.precio * <span class="num">1.15</span>
 
 <span class="kw">class</span> <span class="cl">Carrito</span>:
-    <span class="kw">def</span> <span class="fn">aplicar_descuento</span>(self, total: <span class="num">float</span>, pct: <span class="num">float</span>) -> <span class="num">float</span>:
+    <span class="kw">def</span> <span class="fn">aplicar_descuento</span>(self, total: <span class="num">float</span>,
+                         pct: <span class="num">float</span>) -> <span class="num">float</span>:
         <span class="kw">return</span> total * (<span class="num">1</span> - pct)
 
-p = <span class="cl">Producto</span>(<span class="num">100</span>)
+p = <span class="cl">Producto</span>(<span class="str">"Laptop"</span>, <span class="num">100</span>)
 c = <span class="cl">Carrito</span>()
 
 <span class="cm"># Concatenado:</span>
 final = c.<span class="fn">aplicar_descuento</span>( p.<span class="fn">con_iva</span>(), <span class="num">0.10</span> )
+<span class="fn">print</span>(final)  <span class="cm"># 103.5</span>
+
+<span class="cm"># Equivalente en dos pasos:</span>
+precio_iva = p.<span class="fn">con_iva</span>()              <span class="cm"># 115.0</span>
+final = c.<span class="fn">aplicar_descuento</span>(precio_iva, <span class="num">0.10</span>)
 <span class="fn">print</span>(final)  <span class="cm"># 103.5</span></pre>
-      </div>
     </div>
   </div>
 </div>
@@ -1735,7 +1768,7 @@ e2.<span class="fn">agregar_nota</span>(<span class="num">3</span>)
 <div id="prog"></div>
 <div id="nav">
   <button class="nb" id="bp">&#8592;</button>
-  <span id="cnt">1 / 25</span>
+  <span id="cnt">1 / 26</span>
   <button class="nb" id="bn">&#8594;</button>
 </div>
 
