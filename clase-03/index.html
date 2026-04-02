@@ -1284,6 +1284,74 @@ rex = <span class="cl">Perro</span>(<span class="str">"Rex"</span>)
   </div>
 </div>
 
+<!-- ─── COMPOSICIÓN — CONCATENAR MÉTODOS ENTRE OBJETOS ───── -->
+<div class="slide s-c">
+  <div class="tag">Composición</div>
+  <h2>Concatenar métodos entre <span style="color:var(--blue)">objetos</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3>¿Qué es esto?</h3>
+        <p class="t" style="margin-top:8px">Un objeto puede <strong>usar el resultado</strong> de otro objeto como argumento. No es magia — es simplemente que un método retorna un valor y ese valor se pasa a otro método.</p>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>¿Cómo leerlo?</h3>
+        <p class="t" style="margin-top:8px;font-family:'Fira Code',monospace;font-size:.85em">obj1.metodo( obj2.metodo(x, y) )</p>
+        <ol class="s" style="margin-top:8px">
+          <li>Primero se ejecuta <strong>lo de adentro</strong>: <code>obj2.metodo(x, y)</code></li>
+          <li>Ese resultado se usa como argumento de <code>obj1.metodo(...)</code></li>
+        </ol>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Es lo mismo que hacer</h3>
+<pre style="background:#1E293B;color:#E2E8F0;padding:10px 14px;border-radius:10px;font-size:.8em;margin-top:6px">resultado = obj2.metodo(x, y)
+obj1.metodo(resultado)</pre>
+        <p class="t" style="margin-top:6px;color:var(--muted);font-size:.85em">La versión concatenada es un atajo — pero hacen exactamente lo mismo.</p>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="kw">class</span> <span class="cl">Calculadora</span>:
+    <span class="kw">def</span> <span class="fn">sumar</span>(self, a: <span class="num">float</span>, b: <span class="num">float</span>) -> <span class="num">float</span>:
+        <span class="kw">return</span> a + b
+
+<span class="kw">class</span> <span class="cl">Formateador</span>:
+    <span class="kw">def</span> <span class="fn">redondear</span>(self, valor: <span class="num">float</span>) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"Resultado: {round(valor, 2)}"</span>
+
+calc = <span class="cl">Calculadora</span>()
+fmt  = <span class="cl">Formateador</span>()
+
+<span class="cm"># Concatenado — un objeto usa el resultado del otro</span>
+<span class="fn">print</span>(fmt.<span class="fn">redondear</span>( calc.<span class="fn">sumar</span>(<span class="num">3.141</span>, <span class="num">2.718</span>) ))
+<span class="cm"># Resultado: 5.86</span>
+
+<span class="cm"># Es equivalente a hacerlo en dos pasos:</span>
+total = calc.<span class="fn">sumar</span>(<span class="num">3.141</span>, <span class="num">2.718</span>)   <span class="cm"># 5.859</span>
+texto = fmt.<span class="fn">redondear</span>(total)        <span class="cm"># "Resultado: 5.86"</span>
+<span class="fn">print</span>(texto)</pre>
+      <div class="card pu" style="margin-top:11px">
+        <h3>Ejemplo con herencia</h3>
+<pre style="background:#1E293B;color:#E2E8F0;padding:10px 14px;border-radius:10px;font-size:.78em;margin-top:6px"><span class="kw">class</span> <span class="cl">Producto</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, precio: <span class="num">float</span>):
+        self.precio = precio
+    <span class="kw">def</span> <span class="fn">con_iva</span>(self) -> <span class="num">float</span>:
+        <span class="kw">return</span> self.precio * <span class="num">1.15</span>
+
+<span class="kw">class</span> <span class="cl">Carrito</span>:
+    <span class="kw">def</span> <span class="fn">aplicar_descuento</span>(self, total: <span class="num">float</span>, pct: <span class="num">float</span>) -> <span class="num">float</span>:
+        <span class="kw">return</span> total * (<span class="num">1</span> - pct)
+
+p = <span class="cl">Producto</span>(<span class="num">100</span>)
+c = <span class="cl">Carrito</span>()
+
+<span class="cm"># Concatenado:</span>
+final = c.<span class="fn">aplicar_descuento</span>( p.<span class="fn">con_iva</span>(), <span class="num">0.10</span> )
+<span class="fn">print</span>(final)  <span class="cm"># 103.5</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ─── 16. SEC EJERCICIOS ────────────────────────────────── -->
 <div class="slide s-sec dk" id="s16">
   <div class="tag">Práctica</div>
@@ -1667,7 +1735,7 @@ e2.<span class="fn">agregar_nota</span>(<span class="num">3</span>)
 <div id="prog"></div>
 <div id="nav">
   <button class="nb" id="bp">&#8592;</button>
-  <span id="cnt">1 / 24</span>
+  <span id="cnt">1 / 25</span>
   <button class="nb" id="bn">&#8594;</button>
 </div>
 
