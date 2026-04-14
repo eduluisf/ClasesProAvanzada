@@ -236,7 +236,7 @@ code{font-family:'Fira Code',monospace;background:#FEF3C7;padding:2px 6px;border
           <li>Ambos funcionan exactamente igual</li>
         </ul>
       </div>
-      <div class="card" style="margin-top:11px;border-left:4px solid var(--ac)">
+      <div class="card" style="margin-top:11px">
         <h3>Importante</h3>
         <p class="t" style="margin-top:6px">La carpeta <code>venv/</code> <strong>no se sube al repositorio</strong>. Se agrega al <code>.gitignore</code>. Solo contiene binarios — no es codigo fuente.</p>
       </div>
@@ -262,6 +262,16 @@ code{font-family:'Fira Code',monospace;background:#FEF3C7;padding:2px 6px;border
 
 <span class="cm"># Windows (PowerShell)</span>
 <span class="fn">$</span> venv\Scripts\Activate.ps1</pre>
+      <div class="card" style="margin-top:11px">
+        <h3 style="color:#DC2626">Error comun en Windows (PowerShell)</h3>
+        <p class="t" style="margin-top:6px">Si al activar te sale este error:</p>
+<pre style="margin-top:8px;font-size:clamp(11px,1.1vw,14px)"><span class="num">venv\Scripts\Activate.ps1 no se puede</span>
+<span class="num">cargar porque la ejecucion de scripts</span>
+<span class="num">esta deshabilitada en este sistema.</span></pre>
+        <p class="t" style="margin-top:8px">Solucion: abre PowerShell <strong>como administrador</strong> y ejecuta:</p>
+<pre style="margin-top:8px"><span class="fn">$</span> Set-ExecutionPolicy RemoteSigned <span class="flag">-Scope CurrentUser</span></pre>
+        <p class="t" style="margin-top:6px;color:var(--muted)">Esto permite ejecutar scripts locales. Solo hay que hacerlo <strong>una vez</strong>.</p>
+      </div>
       <div class="card sl" style="margin-top:11px">
         <h3>¿Como se que esta activo?</h3>
         <p class="t" style="margin-top:6px">Aparece el nombre del venv en la terminal:</p>
@@ -394,7 +404,7 @@ code{font-family:'Fira Code',monospace;background:#FEF3C7;padding:2px 6px;border
 
 <span class="cm"># Listo — tiene exactamente las mismas</span>
 <span class="cm"># versiones que el proyecto original</span></pre>
-      <div class="card" style="margin-top:11px;border-left:4px solid var(--ac)">
+      <div class="card" style="margin-top:11px">
         <h3>Flujo completo</h3>
         <ol class="s">
           <li>Crear venv</li>
@@ -497,7 +507,7 @@ area = math.pi * radio ** <span class="num">2</span>
           <li>Aun asi, no instales paquetes globalmente</li>
         </ul>
       </div>
-      <div class="card" style="margin-top:11px;border-left:4px solid #DC2626">
+      <div class="card" style="margin-top:11px">
         <h3 style="color:#DC2626">Ojo: no es excusa</h3>
         <p class="t" style="margin-top:6px">Que un script sea "pequeno" no significa que no necesite venv. Si usas <code>pip install</code>, usa venv. El tamano del proyecto no importa — importa si tienes dependencias externas.</p>
       </div>
@@ -569,7 +579,7 @@ area = math.pi * radio ** <span class="num">2</span>
           <li>Archivos de configuracion del proyecto</li>
         </ul>
       </div>
-      <div class="card" style="margin-top:11px;border-left:4px solid var(--ac)">
+      <div class="card" style="margin-top:11px">
         <h3>Estructura tipica de un proyecto</h3>
 <pre style="margin-top:8px;background:transparent;padding:0;color:var(--text);font-size:clamp(13px,1.3vw,16px)">mi-proyecto/
 ├── venv/              <span style="color:var(--muted)">← NO se sube</span>
@@ -653,7 +663,7 @@ app = Flask(__name__)
   <h2>Errores que <span style="color:#DC2626">todos</span> cometen</h2>
   <div class="g2">
     <div class="col">
-      <div class="card" style="border-left:4px solid #DC2626">
+      <div class="card" style="">
         <h3 style="color:#DC2626">1. Olvidar activar el venv</h3>
         <p class="t" style="margin-top:8px">Instalas paquetes pensando que estas en el venv, pero en realidad van al Python global.</p>
 <pre style="margin-top:8px"><span class="cm"># MAL — sin (venv) al inicio</span>
@@ -664,17 +674,17 @@ app = Flask(__name__)
 <span class="str">(venv)</span> <span class="fn">$</span> pip install flask
 <span class="cm"># Se instala en el venv</span></pre>
       </div>
-      <div class="card" style="margin-top:11px;border-left:4px solid #DC2626">
+      <div class="card" style="margin-top:11px">
         <h3 style="color:#DC2626">2. Subir venv/ al repositorio</h3>
         <p class="t" style="margin-top:8px">Hace que el repo pese cientos de MB y no sirve en otra computadora. Siempre usa <code>.gitignore</code>.</p>
       </div>
     </div>
     <div class="col">
-      <div class="card" style="border-left:4px solid #DC2626">
+      <div class="card" style="">
         <h3 style="color:#DC2626">3. No generar requirements.txt</h3>
         <p class="t" style="margin-top:8px">Tu proyecto funciona en tu PC pero nadie mas puede instalarlo porque no saben que paquetes necesita.</p>
       </div>
-      <div class="card" style="margin-top:11px;border-left:4px solid #DC2626">
+      <div class="card" style="margin-top:11px">
         <h3 style="color:#DC2626">4. Editar archivos dentro de venv/</h3>
         <p class="t" style="margin-top:8px">La carpeta venv es generada automaticamente. <strong>Nunca edites nada ahi.</strong> Si algo se rompe, borrala y creala de nuevo.</p>
 <pre style="margin-top:8px"><span class="cm"># Si el venv se corrompe:</span>
