@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python — Entornos Virtuales (venv)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ac:#D97706;--ac2:#B45309;--blue:#2563EB;--purple:#7C3AED;--green:#059669;--orange:#D97706;--text:#0F172A;--muted:#64748B}
+body{font-family:'Inter',sans-serif;background:#fff;color:var(--text);overflow:hidden;height:100vh;width:100vw}
+#deck{position:relative;width:100vw;height:100vh}
+
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:42px 70px;opacity:0;transform:translateX(56px);transition:opacity .3s ease,transform .3s ease;pointer-events:none;overflow:hidden}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-56px)}
+
+.s-hero{background:#fff;align-items:center;text-align:center}
+.s-sec{background:var(--ac);color:#fff}
+.s-sec.bl{background:var(--blue)}
+.s-sec.gr{background:var(--green)}
+.s-sec.pu{background:var(--purple)}
+.s-sec.dk{background:#0F172A}
+.s-c{background:#fff}
+.s-e{background:#F8FAFC}
+.s-sol{background:#fff}
+
+.tag{font-size:13px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--ac);margin-bottom:10px}
+.s-sec .tag,.s-sec.dk .tag{color:rgba(255,255,255,.75)}
+
+h1{font-size:clamp(58px,8vw,96px);font-weight:900;letter-spacing:-.03em;line-height:1;color:var(--text)}
+h2{font-size:clamp(38px,5vw,62px);font-weight:900;letter-spacing:-.02em;line-height:1.06;margin-bottom:18px}
+.s-sec h2{color:#fff}
+h3{font-size:clamp(18px,2.1vw,24px);font-weight:700;margin-bottom:8px}
+.sub{font-size:clamp(20px,2.4vw,28px);color:var(--muted);line-height:1.45;margin-top:12px}
+.s-sec .sub{color:rgba(255,255,255,.8)}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%}
+.col{display:flex;flex-direction:column;gap:11px}
+.mt{margin-top:14px}
+.w100{width:100%}
+
+.card{background:#FFF7ED;border-radius:14px;padding:16px 20px}
+.card.bl{background:#EFF6FF}
+.card.pu{background:#F5F3FF}
+.card.gr{background:#ECFDF5}
+.card.sl{background:#F1F5F9}
+.card.dk{background:#0F172A;color:#E2E8F0}
+
+li,p.t{font-size:clamp(16px,1.8vw,21px);line-height:1.55}
+li strong{font-weight:700}
+ul.s,ol.s{list-style:none;display:flex;flex-direction:column;gap:5px}
+ul.s li::before{content:'▸';color:var(--ac);font-weight:700;margin-right:8px}
+ol.s{counter-reset:ci}
+ol.s li{counter-increment:ci}
+ol.s li::before{content:counter(ci)'.';color:var(--ac);font-weight:700;margin-right:8px}
+
+pre{background:#1E293B;color:#E2E8F0;font-family:'Fira Code',monospace;font-size:clamp(13px,1.3vw,16px);line-height:1.65;border-radius:14px;padding:16px 20px;overflow:hidden;width:100%}
+.lbl{font-size:11px;font-weight:700;letter-spacing:.08em;display:inline-block;padding:2px 10px;border-radius:999px;margin-bottom:5px}
+.lbl.py{background:var(--ac);color:#fff}
+.lbl.sh{background:#059669;color:#fff}
+
+.kw{color:#93C5FD;font-weight:600}
+.fn{color:#6EE7B7}
+.str{color:#FDE68A}
+.num{color:#FCA5A5}
+.cm{color:#64748B;font-style:italic}
+.cl{color:#FDBA74;font-weight:700}
+.flag{color:#C4B5FD}
+
+.bdg{display:inline-block;padding:3px 13px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:8px}
+.bdg.gr{background:var(--green);color:#fff}
+.bdg.or{background:#FEF3C7;color:#92400E;border:1px solid #FCD34D}
+.bdg.bl{background:var(--blue);color:#fff}
+.bdg.pu{background:var(--purple);color:#fff}
+.bdg.rd{background:#DC2626;color:#fff}
+
+table{width:100%;border-collapse:collapse}
+th{background:var(--ac);color:#fff;padding:10px 14px;text-align:left;font-size:15px;font-weight:700}
+td{padding:9px 14px;font-size:15px;border-bottom:1px solid #E2E8F0}
+tr:nth-child(even) td{background:#FFF7ED}
+code{font-family:'Fira Code',monospace;background:#FEF3C7;padding:2px 6px;border-radius:4px;font-size:.9em;color:#92400E}
+
+.hero-deco{position:absolute;top:16px;right:44px;font-size:120px;font-weight:900;opacity:.05;color:var(--ac);line-height:1;user-select:none}
+.hero-pill{display:inline-block;background:var(--ac);color:#fff;padding:7px 22px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px}
+
+#prog{position:fixed;bottom:0;left:0;height:4px;background:var(--ac);transition:width .3s;z-index:100}
+#nav{position:fixed;bottom:20px;right:32px;display:flex;align-items:center;gap:9px;z-index:100}
+.nb{width:40px;height:40px;border-radius:50%;border:2px solid var(--ac);background:#fff;color:var(--ac);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;transition:background .2s,color .2s;box-shadow:0 2px 10px rgba(217,119,6,.15)}
+.nb:hover{background:var(--ac);color:#fff}
+#cnt{font-size:12px;font-weight:700;color:var(--muted);min-width:44px;text-align:center}
+#home{position:fixed;top:18px;left:24px;z-index:100;text-decoration:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#64748B;background:#fff;border:1px solid #e2e8f0;border-radius:999px;padding:5px 14px;box-shadow:0 1px 4px rgba(0,0,0,.08);transition:border-color .2s,color .2s}
+#home:hover{color:#0F172A;border-color:#0F172A}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- ─── 1. HERO ─────────────────────────────────────────────── -->
+<div class="slide s-hero active" id="s1">
+  <div class="hero-deco">venv</div>
+  <div class="hero-pill">Clase 04</div>
+  <h1><span style="color:var(--ac)">Entornos</span><br>Virtuales</h1>
+  <p class="sub">venv · pip · dependencias<br>Aislamiento de proyectos</p>
+</div>
+
+<!-- ─── 2. SEC — EL PROBLEMA ────────────────────────────────── -->
+<div class="slide s-sec" id="s2">
+  <div class="tag">Modulo 01</div>
+  <h2>El problema</h2>
+  <p class="sub">¿Por qué no podemos simplemente hacer <code style="background:rgba(255,255,255,.2);color:#fff">pip install</code> y ya?</p>
+</div>
+
+<!-- ─── 3. EL PROBLEMA REAL ─────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">El problema</div>
+  <h2>¿Qué pasa sin entornos virtuales?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card sl">
+        <h3>Escenario real</h3>
+        <p class="t" style="margin-top:8px">Imagina que tienes dos proyectos en tu computadora:</p>
+        <ul class="s" style="margin-top:8px">
+          <li><strong>Proyecto A</strong> usa <code>requests==2.25.0</code></li>
+          <li><strong>Proyecto B</strong> usa <code>requests==2.31.0</code></li>
+          <li>Ambos usan la misma libreria pero <strong>versiones diferentes</strong></li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>Sin venv: conflicto garantizado</h3>
+        <ul class="s">
+          <li>Python tiene <strong>una sola carpeta</strong> global para paquetes</li>
+          <li>Si instalas <code>requests 2.31</code>, sobreescribes la <code>2.25</code></li>
+          <li>El Proyecto A se rompe silenciosamente</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+<pre><span class="cm"># Sin venv — todo se instala globalmente</span>
+
+<span class="fn">$</span> pip install requests==2.25.0
+<span class="cm"># Proyecto A funciona bien</span>
+
+<span class="fn">$</span> pip install requests==2.31.0
+<span class="cm"># Proyecto B funciona bien</span>
+<span class="cm"># Proyecto A ahora esta ROTO</span>
+<span class="cm"># porque requests 2.25 ya no existe</span>
+
+<span class="fn">$</span> pip list
+<span class="str">requests   2.31.0</span>  <span class="cm"># solo una version</span></pre>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#FCA5A5">El problema de fondo</h3>
+        <p class="t" style="margin-top:6px;color:#CBD5E1">Sin aislamiento, todos tus proyectos comparten las mismas dependencias. Cambiar una libreria en un proyecto puede romper otro.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 4. ANALOGIA ─────────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Analogia</div>
+  <h2>Entorno virtual = <span style="color:var(--ac)">caja independiente</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Sin venv: un solo escritorio</h3>
+        <p class="t" style="margin-top:8px">Todos tus proyectos comparten las mismas herramientas. Si cambias una, afectas a todos.</p>
+        <p class="t" style="margin-top:8px;color:var(--muted)">Es como tener una sola caja de herramientas para toda la casa: si prestas el martillo, nadie mas lo puede usar.</p>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Con venv: cada proyecto tiene su caja</h3>
+        <p class="t" style="margin-top:8px">Cada proyecto tiene sus propias dependencias, su propia version de Python, y sus propias librerias. <strong>Nada se mezcla.</strong></p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Comparacion visual</h3>
+        <table style="margin-top:8px">
+          <tr><th>Sin venv</th><th>Con venv</th></tr>
+          <tr><td>1 carpeta global de paquetes</td><td>1 carpeta por proyecto</td></tr>
+          <tr><td>Conflictos entre versiones</td><td>Versiones independientes</td></tr>
+          <tr><td>Instalas algo y afectas todo</td><td>Solo afecta ese proyecto</td></tr>
+          <tr><td>Dificil de reproducir</td><td>Facil de compartir y replicar</td></tr>
+        </table>
+      </div>
+      <div class="card bl" style="margin-top:11px">
+        <h3>Regla de oro</h3>
+        <p class="t" style="margin-top:6px"><strong>Nunca instales paquetes en el Python global.</strong> Siempre usa un entorno virtual. Es la primera cosa que haces al empezar un proyecto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 5. SEC — COMO CREAR UNO ─────────────────────────────── -->
+<div class="slide s-sec bl" id="s5">
+  <div class="tag">Modulo 02</div>
+  <h2>Crear y usar un venv</h2>
+  <p class="sub">Paso a paso desde la terminal</p>
+</div>
+
+<!-- ─── 6. CREAR EL VENV ────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Paso 1</div>
+  <h2>Crear el entorno virtual</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>El comando</h3>
+        <p class="t" style="margin-top:8px"><code>python -m venv</code> crea una carpeta con una copia aislada de Python y pip. El nombre mas comun es <code>venv</code> o <code>.venv</code>.</p>
+      </div>
+<pre style="margin-top:11px"><span class="cm"># Crear el entorno virtual</span>
+<span class="fn">$</span> python <span class="flag">-m</span> venv venv
+
+<span class="cm"># Esto crea una carpeta llamada "venv" con:</span>
+<span class="cm">#   venv/</span>
+<span class="cm">#   ├── bin/          (Scripts: python, pip)</span>
+<span class="cm">#   ├── include/      (Headers de C)</span>
+<span class="cm">#   ├── lib/          (Paquetes instalados)</span>
+<span class="cm">#   └── pyvenv.cfg   (Configuracion)</span></pre>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>¿Que es <code>-m venv</code>?</h3>
+        <ul class="s" style="margin-top:8px">
+          <li><code>-m</code> significa "ejecutar este modulo"</li>
+          <li><code>venv</code> es un modulo que viene con Python 3</li>
+          <li>No necesitas instalar nada extra</li>
+        </ul>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Nombres comunes</h3>
+        <ul class="s">
+          <li><code>venv</code> — el mas clasico y simple</li>
+          <li><code>.venv</code> — con punto, queda oculto en Linux/Mac</li>
+          <li>Ambos funcionan exactamente igual</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:11px;border-left:4px solid var(--ac)">
+        <h3>Importante</h3>
+        <p class="t" style="margin-top:6px">La carpeta <code>venv/</code> <strong>no se sube al repositorio</strong>. Se agrega al <code>.gitignore</code>. Solo contiene binarios — no es codigo fuente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 7. ACTIVAR EL VENV ──────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Paso 2</div>
+  <h2>Activar el entorno virtual</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>¿Por que hay que activarlo?</h3>
+        <p class="t" style="margin-top:8px">Crear el venv no lo activa automaticamente. <strong>Activarlo</strong> le dice a tu terminal: "usa el Python y pip de esta carpeta, no el global".</p>
+      </div>
+<pre style="margin-top:11px"><span class="cm"># macOS / Linux</span>
+<span class="fn">$</span> source venv/bin/activate
+
+<span class="cm"># Windows (CMD)</span>
+<span class="fn">$</span> venv\Scripts\activate
+
+<span class="cm"># Windows (PowerShell)</span>
+<span class="fn">$</span> venv\Scripts\Activate.ps1</pre>
+      <div class="card sl" style="margin-top:11px">
+        <h3>¿Como se que esta activo?</h3>
+        <p class="t" style="margin-top:6px">Aparece el nombre del venv en la terminal:</p>
+<pre style="margin-top:8px"><span class="str">(venv)</span> <span class="fn">$</span> _
+<span class="cm"># Este prefijo indica que estas</span>
+<span class="cm"># trabajando dentro del entorno virtual</span></pre>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card bl">
+        <h3>¿Que cambia al activar?</h3>
+        <ul class="s" style="margin-top:8px">
+          <li><code>python</code> apunta al Python del venv, no al global</li>
+          <li><code>pip</code> instala paquetes dentro del venv</li>
+          <li>Los paquetes globales <strong>no se ven</strong> desde el venv</li>
+        </ul>
+      </div>
+<pre style="margin-top:11px"><span class="cm"># Verificar que estas usando el correcto</span>
+<span class="fn">$</span> which python
+<span class="str">/mi-proyecto/venv/bin/python</span>
+
+<span class="fn">$</span> which pip
+<span class="str">/mi-proyecto/venv/bin/pip</span>
+
+<span class="cm"># Si NO tienes venv activo:</span>
+<span class="fn">$</span> which python
+<span class="str">/usr/bin/python3</span>  <span class="cm"># global</span></pre>
+      <div class="card" style="margin-top:11px">
+        <h3>Desactivar</h3>
+        <p class="t" style="margin-top:6px">Simplemente escribe <code>deactivate</code> en la terminal. Vuelves al Python global.</p>
+<pre style="margin-top:8px"><span class="str">(venv)</span> <span class="fn">$</span> deactivate
+<span class="fn">$</span> _  <span class="cm"># ya no hay prefijo</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 8. INSTALAR PAQUETES ────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Paso 3</div>
+  <h2>Instalar paquetes con <span style="color:var(--ac)">pip</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>pip — el gestor de paquetes de Python</h3>
+        <p class="t" style="margin-top:8px"><code>pip install</code> descarga e instala librerias desde <strong>PyPI</strong> (Python Package Index). Con el venv activo, todo se instala dentro de la carpeta del entorno.</p>
+      </div>
+<pre style="margin-top:11px"><span class="cm"># Asegurate de tener el venv activo</span>
+<span class="str">(venv)</span> <span class="fn">$</span> pip install requests
+<span class="str">(venv)</span> <span class="fn">$</span> pip install flask
+<span class="str">(venv)</span> <span class="fn">$</span> pip install pandas==2.1.0
+
+<span class="cm"># Ver que hay instalado</span>
+<span class="str">(venv)</span> <span class="fn">$</span> pip list
+<span class="str">Package    Version</span>
+<span class="str">---------- -------</span>
+<span class="str">flask      3.0.0</span>
+<span class="str">pandas     2.1.0</span>
+<span class="str">requests   2.31.0</span>
+<span class="str">pip        23.3.1</span></pre>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>Comandos utiles de pip</h3>
+        <table style="margin-top:8px">
+          <tr><th>Comando</th><th>¿Que hace?</th></tr>
+          <tr><td><code>pip install paquete</code></td><td>Instala la ultima version</td></tr>
+          <tr><td><code>pip install paquete==1.2</code></td><td>Instala version especifica</td></tr>
+          <tr><td><code>pip uninstall paquete</code></td><td>Desinstala un paquete</td></tr>
+          <tr><td><code>pip list</code></td><td>Lista paquetes instalados</td></tr>
+          <tr><td><code>pip show paquete</code></td><td>Detalles de un paquete</td></tr>
+        </table>
+      </div>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#FDE68A">Clave</h3>
+        <p class="t" style="margin-top:6px;color:#CBD5E1">Si haces <code style="background:#334155;color:#E2E8F0">pip install</code> sin el venv activo, el paquete se instala <strong>globalmente</strong> y afecta a todos tus proyectos. Siempre verifica el prefijo <code style="background:#334155;color:#E2E8F0">(venv)</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 9. SEC — REQUIREMENTS ───────────────────────────────── -->
+<div class="slide s-sec gr" id="s9">
+  <div class="tag">Modulo 03</div>
+  <h2>requirements.txt</h2>
+  <p class="sub">Compartir dependencias con tu equipo</p>
+</div>
+
+<!-- ─── 10. REQUIREMENTS.TXT ────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">requirements.txt</div>
+  <h2>Guardar y restaurar dependencias</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>¿Que es requirements.txt?</h3>
+        <p class="t" style="margin-top:8px">Es un archivo de texto que lista <strong>todos los paquetes y sus versiones</strong> que tu proyecto necesita. Es la forma estandar de compartir dependencias.</p>
+      </div>
+<pre style="margin-top:11px"><span class="cm"># Generar el archivo con las dependencias actuales</span>
+<span class="str">(venv)</span> <span class="fn">$</span> pip freeze > requirements.txt
+
+<span class="cm"># Contenido de requirements.txt:</span>
+<span class="str">flask==3.0.0</span>
+<span class="str">pandas==2.1.0</span>
+<span class="str">requests==2.31.0</span>
+<span class="str">numpy==1.26.2</span>
+<span class="str">Jinja2==3.1.2</span></pre>
+      <div class="card bl" style="margin-top:11px">
+        <h3>Este archivo SI se sube al repositorio</h3>
+        <p class="t" style="margin-top:6px">A diferencia de la carpeta <code>venv/</code>, el <code>requirements.txt</code> es parte del codigo fuente. Permite que cualquier persona recree el entorno.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>Restaurar dependencias (otro dev o servidor)</h3>
+        <p class="t" style="margin-top:8px">Cuando alguien clona tu proyecto, recrea el entorno asi:</p>
+      </div>
+<pre style="margin-top:11px"><span class="cm"># 1. Clonar el proyecto</span>
+<span class="fn">$</span> git clone mi-proyecto
+<span class="fn">$</span> cd mi-proyecto
+
+<span class="cm"># 2. Crear un venv nuevo</span>
+<span class="fn">$</span> python <span class="flag">-m</span> venv venv
+
+<span class="cm"># 3. Activarlo</span>
+<span class="fn">$</span> source venv/bin/activate
+
+<span class="cm"># 4. Instalar TODAS las dependencias</span>
+<span class="str">(venv)</span> <span class="fn">$</span> pip install <span class="flag">-r</span> requirements.txt
+
+<span class="cm"># Listo — tiene exactamente las mismas</span>
+<span class="cm"># versiones que el proyecto original</span></pre>
+      <div class="card" style="margin-top:11px;border-left:4px solid var(--ac)">
+        <h3>Flujo completo</h3>
+        <ol class="s">
+          <li>Crear venv</li>
+          <li>Activar venv</li>
+          <li>Instalar paquetes con pip</li>
+          <li><code>pip freeze > requirements.txt</code></li>
+          <li>Subir requirements.txt al repo</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 11. SEC — POR QUE SI, POR QUE NO ───────────────────── -->
+<div class="slide s-sec pu" id="s11">
+  <div class="tag">Modulo 04</div>
+  <h2>¿Cuando usar venv?</h2>
+  <p class="sub">Casos donde SI conviene y donde NO es necesario</p>
+</div>
+
+<!-- ─── 12. CUANDO SI ───────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Cuando SI usar venv</div>
+  <h2>Escenarios donde es <span style="color:var(--green)">obligatorio</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>Proyectos con dependencias externas</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Usas <code>pip install</code> para instalar algo</li>
+          <li>Tu proyecto depende de <code>flask</code>, <code>django</code>, <code>pandas</code>, etc.</li>
+          <li>Necesitas una version especifica de una libreria</li>
+        </ul>
+      </div>
+      <div class="card bl" style="margin-top:11px">
+        <h3>Trabajo en equipo</h3>
+        <ul class="s">
+          <li>Otro desarrollador va a clonar tu proyecto</li>
+          <li>Necesitan las <strong>mismas versiones exactas</strong></li>
+          <li><code>requirements.txt</code> + venv lo resuelve</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>Multiples proyectos en la misma PC</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Proyecto A usa Django 4.2</li>
+          <li>Proyecto B usa Django 5.0</li>
+          <li>Sin venv, uno de los dos se rompe</li>
+        </ul>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>Deploy a produccion</h3>
+        <ul class="s">
+          <li>El servidor necesita saber que instalar</li>
+          <li><code>requirements.txt</code> lo documenta</li>
+          <li>Garantiza que produccion tiene las mismas versiones que desarrollo</li>
+        </ul>
+      </div>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#6EE7B7">En resumen</h3>
+        <p class="t" style="color:#CBD5E1">Si tu proyecto usa <strong>cualquier paquete externo</strong>, usa venv. Punto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 13. CUANDO NO ───────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Cuando NO se necesita</div>
+  <h2>Escenarios donde <span style="color:var(--muted)">no es necesario</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card sl">
+        <h3>Scripts simples sin dependencias</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Tu script solo usa la <strong>libreria estandar</strong> de Python</li>
+          <li>Modulos como <code>os</code>, <code>sys</code>, <code>math</code>, <code>json</code>, <code>datetime</code></li>
+          <li>No necesitas <code>pip install</code> para nada</li>
+        </ul>
+      </div>
+<pre style="margin-top:11px"><span class="cm"># Este script NO necesita venv</span>
+<span class="kw">import</span> os
+<span class="kw">import</span> json
+<span class="kw">import</span> math
+
+<span class="cm"># Todo viene con Python, no hay</span>
+<span class="cm"># dependencias externas</span>
+radio = <span class="num">5</span>
+area = math.pi * radio ** <span class="num">2</span>
+<span class="fn">print</span>(<span class="kw">f</span><span class="str">"Area: {area}"</span>)</pre>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>Experimentacion rapida en REPL</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Estas probando algo rapido en el interprete</li>
+          <li>No es un proyecto formal, solo explorar</li>
+          <li>Aun asi, no instales paquetes globalmente</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:11px;border-left:4px solid #DC2626">
+        <h3 style="color:#DC2626">Ojo: no es excusa</h3>
+        <p class="t" style="margin-top:6px">Que un script sea "pequeno" no significa que no necesite venv. Si usas <code>pip install</code>, usa venv. El tamano del proyecto no importa — importa si tienes dependencias externas.</p>
+      </div>
+      <div class="card pu" style="margin-top:11px">
+        <h3>Resumen rapido</h3>
+        <table style="margin-top:8px">
+          <tr><th>Situacion</th><th>¿venv?</th></tr>
+          <tr><td>Usa <code>pip install</code></td><td><strong>SI</strong></td></tr>
+          <tr><td>Solo libreria estandar</td><td>No necesario</td></tr>
+          <tr><td>Proyecto en equipo</td><td><strong>SI</strong></td></tr>
+          <tr><td>Script de una vez</td><td>Depende</td></tr>
+          <tr><td>Deploy a servidor</td><td><strong>SI</strong></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 14. SEC — GITIGNORE ─────────────────────────────────── -->
+<div class="slide s-sec dk" id="s14">
+  <div class="tag">Modulo 05</div>
+  <h2>.gitignore</h2>
+  <p class="sub">Que subir y que NO subir al repositorio</p>
+</div>
+
+<!-- ─── 15. GITIGNORE ───────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">.gitignore</div>
+  <h2>Configurar el <span style="color:var(--ac)">.gitignore</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>¿Que es .gitignore?</h3>
+        <p class="t" style="margin-top:8px">Un archivo que le dice a Git <strong>que archivos o carpetas ignorar</strong>. Todo lo que este ahi no se sube al repositorio.</p>
+      </div>
+<pre style="margin-top:11px"><span class="cm"># .gitignore para proyectos Python</span>
+
+<span class="cm"># Entorno virtual</span>
+<span class="str">venv/</span>
+<span class="str">.venv/</span>
+
+<span class="cm"># Cache de Python</span>
+<span class="str">__pycache__/</span>
+<span class="str">*.pyc</span>
+
+<span class="cm"># Variables de entorno</span>
+<span class="str">.env</span>
+
+<span class="cm"># IDE</span>
+<span class="str">.vscode/</span>
+<span class="str">.idea/</span></pre>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>¿Por que NO subir venv/?</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Pesa mucho (cientos de MB con paquetes)</li>
+          <li>Contiene binarios compilados para TU sistema</li>
+          <li>Otro dev en Windows no puede usar tu venv de Mac</li>
+          <li><code>requirements.txt</code> es suficiente para recrearlo</li>
+        </ul>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>¿Que SI subir?</h3>
+        <ul class="s">
+          <li><code>requirements.txt</code> — lista de dependencias</li>
+          <li><code>.gitignore</code> — para que todos lo respeten</li>
+          <li>Tu codigo fuente (<code>.py</code>)</li>
+          <li>Archivos de configuracion del proyecto</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:11px;border-left:4px solid var(--ac)">
+        <h3>Estructura tipica de un proyecto</h3>
+<pre style="margin-top:8px;background:transparent;padding:0;color:var(--text);font-size:clamp(13px,1.3vw,16px)">mi-proyecto/
+├── venv/              <span style="color:var(--muted)">← NO se sube</span>
+├── __pycache__/       <span style="color:var(--muted)">← NO se sube</span>
+├── .gitignore         <span style="color:var(--green)">← SI se sube</span>
+├── requirements.txt   <span style="color:var(--green)">← SI se sube</span>
+├── main.py            <span style="color:var(--green)">← SI se sube</span>
+└── app/               <span style="color:var(--green)">← SI se sube</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 16. SEC — EJEMPLO COMPLETO ──────────────────────────── -->
+<div class="slide s-sec" id="s16">
+  <div class="tag">Modulo 06</div>
+  <h2>Ejemplo completo</h2>
+  <p class="sub">Crear un proyecto desde cero con venv</p>
+</div>
+
+<!-- ─── 17. EJEMPLO PASO A PASO ─────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Ejemplo completo</div>
+  <h2>Proyecto desde cero</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card sl">
+        <h3>Paso 1: Crear la estructura</h3>
+      </div>
+<pre style="margin-top:8px"><span class="cm"># Crear carpeta del proyecto</span>
+<span class="fn">$</span> mkdir mi-api
+<span class="fn">$</span> cd mi-api
+
+<span class="cm"># Crear el entorno virtual</span>
+<span class="fn">$</span> python <span class="flag">-m</span> venv venv
+
+<span class="cm"># Activarlo</span>
+<span class="fn">$</span> source venv/bin/activate
+<span class="str">(venv)</span> <span class="fn">$</span></pre>
+      <div class="card" style="margin-top:11px">
+        <h3>Paso 2: Instalar dependencias</h3>
+      </div>
+<pre style="margin-top:8px"><span class="str">(venv)</span> <span class="fn">$</span> pip install flask requests
+
+<span class="cm"># Guardar dependencias</span>
+<span class="str">(venv)</span> <span class="fn">$</span> pip freeze > requirements.txt</pre>
+    </div>
+    <div class="col">
+      <div class="card bl">
+        <h3>Paso 3: Crear el .gitignore</h3>
+      </div>
+<pre style="margin-top:8px"><span class="cm"># Crear .gitignore</span>
+<span class="fn">$</span> echo <span class="str">"venv/"</span> > .gitignore
+<span class="fn">$</span> echo <span class="str">"__pycache__/"</span> >> .gitignore</pre>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Paso 4: Escribir codigo</h3>
+      </div>
+<pre style="margin-top:8px"><span class="cm"># main.py</span>
+<span class="kw">from</span> flask <span class="kw">import</span> Flask
+
+app = Flask(__name__)
+
+<span class="kw">@</span>app.route(<span class="str">"/"</span>)
+<span class="kw">def</span> <span class="fn">hola</span>():
+    <span class="kw">return</span> <span class="str">"Hola desde mi API!"</span>
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    app.run(debug=<span class="kw">True</span>)</pre>
+      <div class="card" style="margin-top:11px">
+        <h3>Paso 5: Ejecutar</h3>
+<pre style="margin-top:8px"><span class="str">(venv)</span> <span class="fn">$</span> python main.py
+<span class="cm"># Running on http://127.0.0.1:5000</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 18. ERRORES COMUNES ─────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Errores comunes</div>
+  <h2>Errores que <span style="color:#DC2626">todos</span> cometen</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card" style="border-left:4px solid #DC2626">
+        <h3 style="color:#DC2626">1. Olvidar activar el venv</h3>
+        <p class="t" style="margin-top:8px">Instalas paquetes pensando que estas en el venv, pero en realidad van al Python global.</p>
+<pre style="margin-top:8px"><span class="cm"># MAL — sin (venv) al inicio</span>
+<span class="fn">$</span> pip install flask
+<span class="cm"># Se instala GLOBALMENTE</span>
+
+<span class="cm"># BIEN — con el venv activo</span>
+<span class="str">(venv)</span> <span class="fn">$</span> pip install flask
+<span class="cm"># Se instala en el venv</span></pre>
+      </div>
+      <div class="card" style="margin-top:11px;border-left:4px solid #DC2626">
+        <h3 style="color:#DC2626">2. Subir venv/ al repositorio</h3>
+        <p class="t" style="margin-top:8px">Hace que el repo pese cientos de MB y no sirve en otra computadora. Siempre usa <code>.gitignore</code>.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card" style="border-left:4px solid #DC2626">
+        <h3 style="color:#DC2626">3. No generar requirements.txt</h3>
+        <p class="t" style="margin-top:8px">Tu proyecto funciona en tu PC pero nadie mas puede instalarlo porque no saben que paquetes necesita.</p>
+      </div>
+      <div class="card" style="margin-top:11px;border-left:4px solid #DC2626">
+        <h3 style="color:#DC2626">4. Editar archivos dentro de venv/</h3>
+        <p class="t" style="margin-top:8px">La carpeta venv es generada automaticamente. <strong>Nunca edites nada ahi.</strong> Si algo se rompe, borrala y creala de nuevo.</p>
+<pre style="margin-top:8px"><span class="cm"># Si el venv se corrompe:</span>
+<span class="fn">$</span> rm <span class="flag">-rf</span> venv
+<span class="fn">$</span> python <span class="flag">-m</span> venv venv
+<span class="fn">$</span> source venv/bin/activate
+<span class="str">(venv)</span> <span class="fn">$</span> pip install <span class="flag">-r</span> requirements.txt
+<span class="cm"># Como nuevo</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 19. SEC — EJERCICIOS ────────────────────────────────── -->
+<div class="slide s-sec bl" id="s19">
+  <div class="tag">Practica</div>
+  <h2>Ejercicios</h2>
+  <p class="sub">Manos a la terminal</p>
+</div>
+
+<!-- ─── 20. EJERCICIO 1 ─────────────────────────────────────── -->
+<div class="slide s-e">
+  <div class="tag">Ejercicio 1</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Crear un proyecto con venv</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Instrucciones</h3>
+        <ol class="s" style="margin-top:8px">
+          <li>Crea una carpeta llamada <code>practica-venv</code></li>
+          <li>Dentro, crea un entorno virtual llamado <code>venv</code></li>
+          <li>Activalo</li>
+          <li>Instala el paquete <code>cowsay</code></li>
+          <li>Crea un archivo <code>main.py</code> que use cowsay</li>
+          <li>Genera el <code>requirements.txt</code></li>
+          <li>Ejecuta el programa</li>
+        </ol>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Resultado esperado</h3>
+<pre style="margin-top:8px;background:transparent;padding:0;color:var(--text);font-size:clamp(13px,1.3vw,16px)">practica-venv/
+├── venv/
+├── .gitignore
+├── requirements.txt
+└── main.py</pre>
+      </div>
+      <div class="card bl" style="margin-top:11px">
+        <h3>Pista</h3>
+<pre style="margin-top:8px"><span class="kw">import</span> cowsay
+cowsay.cow(<span class="str">"Hola desde mi venv!"</span>)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 21. SOLUCION 1 ──────────────────────────────────────── -->
+<div class="slide s-sol">
+  <div class="tag">Ejercicio 1</div>
+  <div class="bdg gr">Solucion</div>
+  <h2>Paso a paso</h2>
+  <div class="g2">
+    <div class="col">
+<pre><span class="cm"># Terminal</span>
+<span class="fn">$</span> mkdir practica-venv
+<span class="fn">$</span> cd practica-venv
+<span class="fn">$</span> python <span class="flag">-m</span> venv venv
+<span class="fn">$</span> source venv/bin/activate
+
+<span class="str">(venv)</span> <span class="fn">$</span> pip install cowsay
+<span class="str">(venv)</span> <span class="fn">$</span> pip freeze > requirements.txt
+
+<span class="cm"># Crear .gitignore</span>
+<span class="str">(venv)</span> <span class="fn">$</span> echo <span class="str">"venv/"</span> > .gitignore
+<span class="str">(venv)</span> <span class="fn">$</span> echo <span class="str">"__pycache__/"</span> >> .gitignore</pre>
+    </div>
+    <div class="col">
+      <div class="lbl py">main.py</div>
+<pre><span class="kw">import</span> cowsay
+
+cowsay.cow(<span class="str">"Hola desde mi venv!"</span>)</pre>
+<pre style="margin-top:11px"><span class="cm"># Ejecutar</span>
+<span class="str">(venv)</span> <span class="fn">$</span> python main.py
+
+  ____________________
+| Hola desde mi venv! |
+  ====================
+                    \
+                     \
+                       ^__^
+                       (oo)\_______
+                       (__)\       )\/\
+                           ||----w |
+                           ||     ||</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 22. EJERCICIO 2 ─────────────────────────────────────── -->
+<div class="slide s-e">
+  <div class="tag">Ejercicio 2</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Simular trabajo en equipo</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Instrucciones</h3>
+        <ol class="s" style="margin-top:8px">
+          <li>Usa el proyecto del Ejercicio 1</li>
+          <li><strong>Borra</strong> la carpeta <code>venv/</code> (simula ser otro dev)</li>
+          <li>Crea un venv nuevo</li>
+          <li>Activalo</li>
+          <li>Instala las dependencias desde <code>requirements.txt</code></li>
+          <li>Ejecuta <code>main.py</code> y verifica que funciona</li>
+        </ol>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card bl">
+        <h3>¿Que aprendes?</h3>
+        <p class="t" style="margin-top:8px">Que no necesitas la carpeta <code>venv/</code> original. Con <code>requirements.txt</code> podes recrear el entorno en cualquier computadora.</p>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>Comandos clave</h3>
+<pre style="margin-top:8px"><span class="fn">$</span> rm <span class="flag">-rf</span> venv
+<span class="fn">$</span> python <span class="flag">-m</span> venv venv
+<span class="fn">$</span> source venv/bin/activate
+<span class="str">(venv)</span> <span class="fn">$</span> pip install <span class="flag">-r</span> requirements.txt
+<span class="str">(venv)</span> <span class="fn">$</span> python main.py</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 23. RESUMEN ─────────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Resumen</div>
+  <h2>Cheat sheet de <span style="color:var(--ac)">venv</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>Comandos esenciales</h3>
+        <table style="margin-top:8px">
+          <tr><th>Accion</th><th>Comando</th></tr>
+          <tr><td>Crear venv</td><td><code>python -m venv venv</code></td></tr>
+          <tr><td>Activar (Mac/Linux)</td><td><code>source venv/bin/activate</code></td></tr>
+          <tr><td>Activar (Windows)</td><td><code>venv\Scripts\activate</code></td></tr>
+          <tr><td>Desactivar</td><td><code>deactivate</code></td></tr>
+          <tr><td>Instalar paquete</td><td><code>pip install paquete</code></td></tr>
+          <tr><td>Guardar deps</td><td><code>pip freeze > requirements.txt</code></td></tr>
+          <tr><td>Restaurar deps</td><td><code>pip install -r requirements.txt</code></td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card gr">
+        <h3>Reglas de oro</h3>
+        <ol class="s" style="margin-top:8px">
+          <li><strong>Siempre</strong> usa venv si tu proyecto tiene dependencias</li>
+          <li><strong>Nunca</strong> subas <code>venv/</code> al repositorio</li>
+          <li><strong>Siempre</strong> genera <code>requirements.txt</code></li>
+          <li><strong>Verifica</strong> el prefijo <code>(venv)</code> antes de instalar</li>
+          <li>Si el venv se rompe, <strong>borralo y crealo de nuevo</strong></li>
+        </ol>
+      </div>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#FDE68A">Flujo profesional</h3>
+        <p class="t" style="color:#CBD5E1;margin-top:6px"><code style="background:#334155;color:#E2E8F0">mkdir proyecto</code> &rarr; <code style="background:#334155;color:#E2E8F0">cd proyecto</code> &rarr; <code style="background:#334155;color:#E2E8F0">python -m venv venv</code> &rarr; <code style="background:#334155;color:#E2E8F0">source venv/bin/activate</code> &rarr; <code style="background:#334155;color:#E2E8F0">pip install ...</code> &rarr; <code style="background:#334155;color:#E2E8F0">pip freeze > requirements.txt</code></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 24. CIERRE ──────────────────────────────────────────── -->
+<div class="slide s-sec dk">
+  <div class="tag">Clase 04</div>
+  <h2>Fin de la clase</h2>
+  <p class="sub">Ahora cada proyecto vive en su propia caja.<br>No mas conflictos de dependencias.</p>
+</div>
+
+</div><!-- /deck -->
+
+<a id="home" href="../">&#8592; Inicio</a>
+<div id="prog"></div>
+<div id="nav">
+  <button class="nb" id="bp">&#8592;</button>
+  <span id="cnt">1 / 24</span>
+  <button class="nb" id="bn">&#8594;</button>
+</div>
+
+<script>
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total  = slides.length;
+let cur = 0;
+const cnt  = document.getElementById('cnt');
+const prog = document.getElementById('prog');
+
+function go(n) {
+  if (n < 0 || n >= total) return;
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exit');
+  const prev = cur;
+  setTimeout(() => slides[prev].classList.remove('exit'), 340);
+  cur = n;
+  slides[cur].classList.add('active');
+  cnt.textContent = `${cur + 1} / ${total}`;
+  prog.style.width = `${((cur + 1) / total) * 100}%`;
+}
+
+document.getElementById('bn').addEventListener('click', () => go(cur + 1));
+document.getElementById('bp').addEventListener('click', () => go(cur - 1));
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') go(cur + 1);
+  if (e.key === 'ArrowLeft')                    go(cur - 1);
+});
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+document.addEventListener('touchend',   e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 40) go(cur + (dx > 0 ? 1 : -1));
+});
+go(0);
+</script>
+</body>
+</html>
