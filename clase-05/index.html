@@ -80,6 +80,8 @@ table{width:100%;border-collapse:collapse}
 th{background:var(--ac);color:#fff;padding:10px 14px;text-align:left;font-size:15px;font-weight:700}
 td{padding:9px 14px;font-size:15px;border-bottom:1px solid #E2E8F0}
 tr:nth-child(even) td{background:#FFF7ED}
+.card.dk tr:nth-child(even) td{background:#1E293B}
+.card.dk td{border-bottom-color:#334155}
 code{font-family:'Fira Code',monospace;background:#FEF3C7;padding:2px 6px;border-radius:4px;font-size:.9em;color:#92400E}
 
 .hero-deco{position:absolute;top:16px;right:44px;font-size:120px;font-weight:900;opacity:.05;color:var(--ac);line-height:1;user-select:none}
@@ -622,6 +624,236 @@ Descarga C terminada.
   </div>
 </div>
 
+<!-- ─── 17a. QUE ES UNA API ─────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">APIs</div>
+  <h2>¿Que es una <span style="color:var(--ac)">API</span> y para que sirve?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>API = Application Programming Interface</h3>
+        <p class="t" style="margin-top:8px">Una forma estandar para que <strong>dos programas hablen entre si</strong>. Tu codigo pregunta, un servidor responde. Normalmente por internet, usando HTTP y devolviendo datos en formato <code>JSON</code>.</p>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>Analogia: el mesero del restaurante</h3>
+        <p class="t" style="margin-top:8px">Tu no entras a la cocina. Le dices al mesero lo que quieres, el lo pide y te trae el plato. <strong>La API es el mesero</strong>: la interfaz entre tu y el servidor, con reglas claras de como pedir.</p>
+      </div>
+      <div class="card gr" style="margin-top:11px">
+        <h3>Lo bueno</h3>
+        <p class="t" style="margin-top:6px">No te importa <strong>como</strong> funciona por dentro el otro sistema. Solo necesitas saber <strong>que pedir</strong> y <strong>que vas a recibir</strong>.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card bl">
+        <h3>¿Para que las usamos?</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Obtener <strong>datos externos</strong>: clima, dolar, noticias</li>
+          <li>Integrar <strong>servicios</strong>: pagos, login con Google, mapas</li>
+          <li>Automatizar: publicar en redes, enviar emails, crear reportes</li>
+          <li>Conectar tu app con <strong>bases de datos remotas</strong></li>
+          <li>Consumir <strong>modelos de IA</strong> (OpenAI, Anthropic)</li>
+        </ul>
+      </div>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#FDE68A">APIs que seguro has usado sin saberlo</h3>
+        <table style="margin-top:6px">
+          <tr><th>API</th><th>¿Que da?</th></tr>
+          <tr><td style="color:#E2E8F0">Google Maps</td><td style="color:#93C5FD">Ubicaciones, rutas</td></tr>
+          <tr><td style="color:#E2E8F0">Stripe / PayPal</td><td style="color:#6EE7B7">Cobros y pagos</td></tr>
+          <tr><td style="color:#E2E8F0">OpenAI</td><td style="color:#C4B5FD">Respuestas de IA</td></tr>
+          <tr><td style="color:#E2E8F0">Spotify</td><td style="color:#FDBA74">Canciones, playlists</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 17b. QUE ES JSON ────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Formato de datos</div>
+  <h2>¿Que es <span style="color:var(--ac)">JSON</span>?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>JSON = JavaScript Object Notation</h3>
+        <p class="t" style="margin-top:8px">Un formato de <strong>texto plano</strong> para representar datos como pares <strong>clave: valor</strong>. Es el lenguaje comun de casi todas las APIs modernas: lo que pides y lo que recibes suele venir en JSON.</p>
+      </div>
+      <div class="card sl" style="margin-top:14px">
+        <h3>Tipos que soporta</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Texto → <code>"hola"</code></li>
+          <li>Numeros → <code>42</code>, <code>3.14</code></li>
+          <li>Booleanos → <code>true</code> / <code>false</code></li>
+          <li>Nulo → <code>null</code></li>
+          <li>Listas → <code>[1, 2, 3]</code></li>
+          <li>Objetos anidados → <code>{ ... }</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="lbl py">respuesta_api.json</div>
+<pre>{
+  <span class="str">"id"</span>: <span class="num">1</span>,
+  <span class="str">"title"</span>: <span class="str">"Hola mundo"</span>,
+  <span class="str">"published"</span>: <span class="kw">true</span>,
+  <span class="str">"tags"</span>: [<span class="str">"python"</span>, <span class="str">"apis"</span>],
+  <span class="str">"author"</span>: {
+    <span class="str">"id"</span>: <span class="num">42</span>,
+    <span class="str">"name"</span>: <span class="str">"Ana"</span>
+  }
+}</pre>
+      <div class="card gr" style="margin-top:14px">
+        <h3>En Python es casi un <code>dict</code></h3>
+        <p class="t" style="margin-top:6px"><code>requests</code> lo convierte automatico con <code>.json()</code>. Despues lo usas igual que un diccionario:</p>
+<pre style="margin-top:8px">data = r.<span class="fn">json</span>()
+data[<span class="str">"title"</span>]       <span class="cm"># "Hola mundo"</span>
+data[<span class="str">"author"</span>][<span class="str">"name"</span>]  <span class="cm"># "Ana"</span>
+data[<span class="str">"tags"</span>][<span class="num">0</span>]      <span class="cm"># "python"</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 17c. METODOS HTTP — OVERVIEW ────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Peticiones HTTP</div>
+  <h2>Los 5 <span style="color:var(--ac)">metodos HTTP</span> principales</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>¿Que es un metodo HTTP?</h3>
+        <p class="t" style="margin-top:8px">Cuando tu programa habla con una API, le dice al servidor <strong>que accion quiere hacer</strong> mediante un "verbo". Cada metodo tiene un proposito claro.</p>
+      </div>
+      <div class="card gr" style="margin-top:14px">
+        <h3>Codigos de estado mas comunes</h3>
+        <table style="margin-top:6px">
+          <tr><th>Codigo</th><th>Significado</th></tr>
+          <tr><td><code>200</code></td><td>OK — todo bien</td></tr>
+          <tr><td><code>201</code></td><td>Created — se creo un recurso</td></tr>
+          <tr><td><code>400</code></td><td>Bad Request — mandaste mal los datos</td></tr>
+          <tr><td><code>404</code></td><td>Not Found — el recurso no existe</td></tr>
+          <tr><td><code>500</code></td><td>Server Error — fallo el servidor</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Los verbos y su proposito</h3>
+        <table style="margin-top:8px">
+          <tr><th>Metodo</th><th>¿Que hace?</th><th>Ejemplo</th></tr>
+          <tr><td><code>GET</code></td><td>Leer / consultar datos</td><td>Ver un post</td></tr>
+          <tr><td><code>POST</code></td><td>Crear un recurso nuevo</td><td>Publicar un post</td></tr>
+          <tr><td><code>PUT</code></td><td>Reemplazar un recurso</td><td>Editar todo un post</td></tr>
+          <tr><td><code>PATCH</code></td><td>Modificar parte de un recurso</td><td>Cambiar el titulo</td></tr>
+          <tr><td><code>DELETE</code></td><td>Eliminar un recurso</td><td>Borrar un post</td></tr>
+        </table>
+      </div>
+      <div class="card bl" style="margin-top:14px">
+        <h3>Idea clave</h3>
+        <p class="t" style="margin-top:6px">La <strong>URL</strong> dice <em>sobre que</em> (el recurso: <code>/posts/1</code>). El <strong>metodo</strong> dice <em>que hacer</em> con el (GET, POST, etc.).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 17d. GET EN DETALLE ─────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Metodo GET</div>
+  <h2><span style="color:var(--ac)">GET</span> — leer datos de una API</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <h3>¿Cuando usarlo?</h3>
+        <p class="t" style="margin-top:8px">Siempre que quieras <strong>consultar informacion</strong> sin modificar nada: traer un post, listar usuarios, buscar productos, ver el clima, obtener tweets…</p>
+      </div>
+      <div class="card sl" style="margin-top:14px">
+        <h3>Caracteristicas</h3>
+        <ul class="s" style="margin-top:8px">
+          <li><strong>Seguro</strong>: no cambia nada en el servidor</li>
+          <li><strong>Idempotente</strong>: llamarlo 10 veces da el mismo resultado</li>
+          <li>Los parametros van en la <strong>URL</strong> (query string)</li>
+          <li>Es el metodo mas <strong>cacheable</strong></li>
+        </ul>
+      </div>
+      <div class="card bl" style="margin-top:14px">
+        <h3>En esta clase</h3>
+        <p class="t" style="margin-top:6px">Es el metodo <strong>I/O bound</strong> clasico: pedir, esperar respuesta, repetir. Perfecto para aplicar concurrencia.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="lbl py">ejemplos_get.py</div>
+<pre><span class="kw">import</span> requests
+
+base = <span class="str">"https://jsonplaceholder.typicode.com"</span>
+
+<span class="cm"># 1. Traer UN post por su id</span>
+r = requests.<span class="fn">get</span>(<span class="kw">f</span><span class="str">"{base}/posts/1"</span>)
+<span class="fn">print</span>(r.status_code)   <span class="cm"># 200</span>
+<span class="fn">print</span>(r.<span class="fn">json</span>()[<span class="str">"title"</span>])
+
+<span class="cm"># 2. Traer TODOS los posts (lista)</span>
+r = requests.<span class="fn">get</span>(<span class="kw">f</span><span class="str">"{base}/posts"</span>)
+<span class="fn">print</span>(<span class="fn">len</span>(r.<span class="fn">json</span>()))     <span class="cm"># 100</span>
+
+<span class="cm"># 3. Filtrar con query params (?userId=1)</span>
+r = requests.<span class="fn">get</span>(<span class="kw">f</span><span class="str">"{base}/posts"</span>,
+                 params={<span class="str">"userId"</span>: <span class="num">1</span>})
+
+<span class="cm"># 4. Con headers (ej: autenticacion)</span>
+r = requests.<span class="fn">get</span>(<span class="str">"https://api.github.com/user"</span>,
+    headers={<span class="str">"Authorization"</span>: <span class="str">"token XXX"</span>})</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 17e. POST / PUT / PATCH / DELETE ────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Metodos de escritura</div>
+  <h2><span style="color:var(--blue)">POST</span>, PUT, PATCH, DELETE — modificar datos</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3><code>POST</code> — crear un recurso nuevo</h3>
+        <p class="t" style="margin-top:6px">El servidor suele devolver el recurso creado con su <code>id</code> y estado <code>201 Created</code>.</p>
+      </div>
+<pre style="margin-top:14px"><span class="cm"># Crear un post nuevo</span>
+nuevo = {
+    <span class="str">"title"</span>: <span class="str">"Mi primer post"</span>,
+    <span class="str">"body"</span>: <span class="str">"Hola mundo"</span>,
+    <span class="str">"userId"</span>: <span class="num">1</span>,
+}
+r = requests.<span class="fn">post</span>(<span class="kw">f</span><span class="str">"{base}/posts"</span>, json=nuevo)
+<span class="fn">print</span>(r.status_code)   <span class="cm"># 201</span>
+<span class="fn">print</span>(r.<span class="fn">json</span>()[<span class="str">"id"</span>])  <span class="cm"># id asignado</span></pre>
+      <div class="card" style="margin-top:14px">
+        <h3><code>PUT</code> — reemplazar el recurso completo</h3>
+<pre style="margin-top:8px">r = requests.<span class="fn">put</span>(<span class="kw">f</span><span class="str">"{base}/posts/1"</span>,
+    json={<span class="str">"title"</span>: <span class="str">"Nuevo"</span>,
+          <span class="str">"body"</span>: <span class="str">"Texto completo"</span>,
+          <span class="str">"userId"</span>: <span class="num">1</span>})</pre>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card pu">
+        <h3><code>PATCH</code> — modificar solo algunos campos</h3>
+<pre style="margin-top:8px"><span class="cm"># Cambiar solo el titulo</span>
+r = requests.<span class="fn">patch</span>(<span class="kw">f</span><span class="str">"{base}/posts/1"</span>,
+    json={<span class="str">"title"</span>: <span class="str">"Titulo editado"</span>})
+<span class="fn">print</span>(r.status_code)   <span class="cm"># 200</span></pre>
+      </div>
+      <div class="card gr" style="margin-top:14px">
+        <h3><code>DELETE</code> — borrar un recurso</h3>
+<pre style="margin-top:8px">r = requests.<span class="fn">delete</span>(<span class="kw">f</span><span class="str">"{base}/posts/1"</span>)
+<span class="fn">print</span>(r.status_code)   <span class="cm"># 200</span></pre>
+      </div>
+      <div class="card sl" style="margin-top:14px">
+        <h3>Tip: enviar datos con <code>json=</code></h3>
+        <p class="t" style="margin-top:6px"><code>requests</code> convierte el <code>dict</code> a JSON y pone el header <code>Content-Type</code> por ti. No tienes que serializar a mano.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ─── 18. EJEMPLO SECUENCIAL CON API REAL ─────────────────── -->
 <div class="slide s-c">
   <div class="tag">Ejemplo — Secuencial</div>
@@ -757,16 +989,12 @@ fin = time.<span class="fn">time</span>()
     </div>
     <div class="col">
       <div class="card sl">
-        <h3>as_completed(futuros)</h3>
-        <p class="t" style="margin-top:8px">Itera sobre los futures <strong>en orden de finalizacion</strong>. El primero que termina se devuelve primero, sin importar en que orden se envio.</p>
+        <h3>as_completed(futuros) + future.result()</h3>
+        <p class="t" style="margin-top:8px"><code>as_completed</code> itera sobre los futures <strong>en orden de finalizacion</strong> (el primero que termina, primero). <code>.result()</code> te da el valor retornado; si la funcion lanzo una excepcion, la vuelve a lanzar.</p>
       </div>
-      <div class="card gr" style="margin-top:11px">
-        <h3>future.result()</h3>
-        <p class="t" style="margin-top:6px">Obtiene el valor que retorno la funcion. Si la funcion lanzo una excepcion, <code>.result()</code> la vuelve a lanzar.</p>
-      </div>
-      <div class="card pu" style="margin-top:11px">
+      <div class="card pu" style="margin-top:14px">
         <h3>with ... as pool:</h3>
-        <p class="t" style="margin-top:6px">El <code>with</code> asegura que al salir del bloque, el pool <strong>espere a que todas las tareas terminen</strong> y luego cierre los hilos limpiamente. No necesitas cerrar nada manualmente.</p>
+        <p class="t" style="margin-top:6px">Al salir del bloque, el pool <strong>espera a que todas las tareas terminen</strong> y cierra los hilos limpiamente. No tienes que cerrar nada manualmente.</p>
       </div>
     </div>
   </div>
@@ -782,32 +1010,20 @@ fin = time.<span class="fn">time</span>()
         <h3>Cuando quieres mantener el orden</h3>
         <p class="t" style="margin-top:8px"><code>pool.map()</code> funciona como el <code>map()</code> normal de Python, pero ejecuta la funcion en <strong>multiples hilos</strong>. Los resultados <strong>mantienen el orden original</strong>.</p>
       </div>
-      <div class="lbl py" style="margin-top:11px">con_map.py</div>
+      <div class="lbl py" style="margin-top:14px">con_map.py</div>
 <pre><span class="kw">import</span> requests
-<span class="kw">import</span> time
 <span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
 
-urls = [
-    <span class="str">"https://jsonplaceholder.typicode.com/posts/1"</span>,
-    <span class="str">"https://jsonplaceholder.typicode.com/posts/2"</span>,
-    <span class="str">"https://jsonplaceholder.typicode.com/posts/3"</span>,
-    <span class="str">"https://jsonplaceholder.typicode.com/posts/4"</span>,
-    <span class="str">"https://jsonplaceholder.typicode.com/posts/5"</span>,
-]
+base = <span class="str">"https://jsonplaceholder.typicode.com"</span>
+urls = [<span class="kw">f</span><span class="str">"{base}/posts/{i}"</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">6</span>)]
 
 <span class="kw">def</span> <span class="fn">descargar</span>(url):
-    resp = requests.<span class="fn">get</span>(url)
-    <span class="kw">return</span> resp.json()[<span class="str">"title"</span>]
-
-inicio = time.<span class="fn">time</span>()
+    <span class="kw">return</span> requests.<span class="fn">get</span>(url).<span class="fn">json</span>()[<span class="str">"title"</span>]
 
 <span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">5</span>) <span class="kw">as</span> pool:
-    titulos = pool.<span class="fn">map</span>(<span class="fn">descargar</span>, urls)
-    <span class="kw">for</span> t <span class="kw">in</span> titulos:
-        <span class="fn">print</span>(t)
-
-fin = time.<span class="fn">time</span>()
-<span class="fn">print</span>(<span class="kw">f</span><span class="str">"Tiempo: {fin - inicio:.2f}s"</span>)</pre>
+    <span class="cm"># map mantiene el orden de la lista original</span>
+    <span class="kw">for</span> titulo <span class="kw">in</span> pool.<span class="fn">map</span>(<span class="fn">descargar</span>, urls):
+        <span class="fn">print</span>(titulo)</pre>
     </div>
     <div class="col">
       <div class="card gr">
@@ -819,16 +1035,13 @@ fin = time.<span class="fn">time</span>()
           <tr><td>Puedes enviar funciones con distinta firma</td><td>Misma funcion para todos</td></tr>
         </table>
       </div>
-      <div class="card sl" style="margin-top:11px">
+      <div class="card sl" style="margin-top:14px">
         <h3>¿Cual usar?</h3>
         <ul class="s" style="margin-top:8px">
-          <li><strong>map()</strong> cuando aplicas la misma funcion a una lista de datos y quieres orden</li>
+          <li><strong>map()</strong> cuando aplicas la misma funcion a una lista y quieres orden</li>
           <li><strong>submit()</strong> cuando necesitas mas control o las tareas son diferentes</li>
         </ul>
-      </div>
-      <div class="card" style="margin-top:11px">
-        <h3>Importante</h3>
-        <p class="t" style="margin-top:6px">Ambas son igual de rapidas. La diferencia es solo en como recibes los resultados, no en velocidad.</p>
+        <p class="t" style="margin-top:8px">Ambas son <strong>igual de rapidas</strong>: solo cambia como recibes los resultados.</p>
       </div>
     </div>
   </div>
