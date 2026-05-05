@@ -40,7 +40,7 @@ h3{font-size:clamp(15px,1.8vw,20px);font-weight:700;margin-bottom:7px;color:var(
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%}
 .col{display:flex;flex-direction:column;gap:10px}
 
-/* cards — todos con texto oscuro sobre fondo claro */
+/* cards */
 .card{background:#FFF5F5;border-radius:12px;padding:14px 18px}
 .card h3{color:var(--text)}
 .card.bl{background:#EFF6FF}
@@ -49,7 +49,7 @@ h3{font-size:clamp(15px,1.8vw,20px);font-weight:700;margin-bottom:7px;color:var(
 .card.or{background:#FFF7ED}
 .card.sl{background:#F1F5F9}
 .card.y{background:#FEFCE8}
-/* dark card — todo explícito para que siempre lea bien */
+/* dark card — todo explícito */
 .card.dk{background:#1E293B;color:#E2E8F0}
 .card.dk h3{color:#F1F5F9}
 .card.dk p.t{color:#CBD5E1}
@@ -67,14 +67,14 @@ ol.s{counter-reset:ci}
 ol.s li{counter-increment:ci}
 ol.s li::before{content:counter(ci)'.';color:var(--ac);font-weight:700;margin-right:7px}
 
-/* terminal — siempre fondo oscuro, texto explícito */
+/* terminal */
 pre{background:#0F172A;color:#E2E8F0;font-family:'Fira Code',monospace;font-size:clamp(11px,1.15vw,14px);line-height:1.7;border-radius:10px;padding:12px 16px;overflow:hidden;width:100%}
 .lbl{font-size:10px;font-weight:700;letter-spacing:.08em;display:inline-block;padding:2px 9px;border-radius:999px;margin-bottom:4px}
 .lbl.sh{background:var(--ac);color:#fff}
 .lbl.py{background:var(--orange);color:#fff}
 .lbl.out{background:#334155;color:#94A3B8}
 
-/* syntax colors */
+/* syntax */
 .kw{color:#93C5FD;font-weight:600}
 .fn{color:#6EE7B7}
 .str{color:#FDE68A}
@@ -97,12 +97,11 @@ tr:nth-child(even) td{background:rgba(0,0,0,.03)}
 code{font-family:'Fira Code',monospace;background:#FFE4E1;padding:2px 5px;border-radius:4px;font-size:.87em;color:#9F1239}
 .card.dk code{background:#334155;color:#93C5FD}
 
-/* step numbers */
 .step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--ac);color:#fff;font-weight:900;font-size:13px;flex-shrink:0}
 .steprow{display:flex;align-items:flex-start;gap:11px;margin-bottom:9px}
 .steprow p.t{margin-top:3px}
 
-/* line annotation for git output explanations */
+/* line annotations */
 .ann{display:flex;align-items:baseline;gap:10px;padding:5px 0}
 .ann-line{font-family:'Fira Code',monospace;font-size:clamp(11px,1.1vw,13px);color:#E2E8F0;flex-shrink:0}
 .ann-arrow{color:#F05033;font-weight:700;flex-shrink:0}
@@ -128,7 +127,7 @@ code{font-family:'Fira Code',monospace;background:#FFE4E1;padding:2px 5px;border
   <div class="hero-deco">git</div>
   <div class="hero-pill">Clase 07</div>
   <h1><span style="color:var(--ac)">Git</span> y<br>GitHub</h1>
-  <p class="sub">Arrancamos en GitHub — lo que hace la industria<br>y entendemos Git mientras lo usamos</p>
+  <p class="sub">Arrancamos desde cero en tu compu<br>y conectamos GitHub cuando ya entendemos qué está pasando</p>
 </div>
 
 <!-- ─── 2. EL PROBLEMA ───────────────────────────────────────── -->
@@ -165,7 +164,7 @@ code{font-family:'Fira Code',monospace;background:#FFE4E1;padding:2px 5px;border
       </div>
       <div class="card sl" style="margin-top:0">
         <h3>Git ≠ GitHub — son dos cosas distintas</h3>
-        <p class="t" style="margin-top:6px"><strong>Git</strong> es la herramienta que corre en tu computadora y lleva el historial. <strong>GitHub</strong> es el sitio web donde guardás ese historial en la nube. Hoy usamos los dos — pero arrancamos en GitHub.</p>
+        <p class="t" style="margin-top:6px"><strong>Git</strong> es la herramienta que corre en tu computadora y lleva el historial. <strong>GitHub</strong> es el sitio web donde guardás ese historial en la nube. Primero entendemos Git, después conectamos GitHub.</p>
       </div>
     </div>
   </div>
@@ -178,12 +177,12 @@ code{font-family:'Fira Code',monospace;background:#FFE4E1;padding:2px 5px;border
   <div class="g2">
     <div class="col">
       <div class="card sl">
-        <h3>Git — la herramienta</h3>
+        <h3>Git — la herramienta local</h3>
         <ul class="s" style="margin-top:8px">
           <li>Software que corre <strong>en tu compu</strong></li>
           <li>Guarda el historial <strong>localmente</strong></li>
           <li>No necesita internet</li>
-          <li>Creado por Linus Torvalds (creador de Linux) en 2005</li>
+          <li>Creado por Linus Torvalds en 2005</li>
           <li>Completamente gratuito y open source</li>
         </ul>
         <p class="t" style="margin-top:10px;color:var(--muted)">Podés usar Git sin GitHub. Al revés no.</p>
@@ -191,135 +190,92 @@ code{font-family:'Fira Code',monospace;background:#FFE4E1;padding:2px 5px;border
     </div>
     <div class="col">
       <div class="card bl">
-        <h3>GitHub — la plataforma</h3>
+        <h3>GitHub — la plataforma en la nube</h3>
         <ul class="s" style="margin-top:8px">
           <li>Sitio web para <strong>alojar repos Git</strong> en la nube</li>
           <li>Permite colaborar con otras personas</li>
           <li>Agrega features: Issues, Pull Requests, Actions</li>
           <li>Sirve como portfolio de tu código</li>
-          <li>Propiedad de Microsoft desde 2018</li>
+          <li>Estándar de la industria — el 95% de proyectos vive acá</li>
         </ul>
         <p class="t" style="margin-top:10px;color:var(--muted)">Alternativas: GitLab, Bitbucket — misma idea.</p>
       </div>
     </div>
   </div>
   <div class="card y" style="margin-top:16px">
-    <h3 style="color:#92400E">¿Por qué arrancamos en GitHub y no en Git?</h3>
-    <p class="t" style="margin-top:6px;color:#78350F">Porque es el estándar de la industria. El 95% de los proyectos profesionales viven en GitHub. Vas a entender Git <strong>mejor</strong> si lo ves en acción desde la plataforma que lo rodea — en vez de aprenderlo en abstracto.</p>
+    <h3 style="color:#92400E">Plan de la clase</h3>
+    <p class="t" style="margin-top:6px;color:#78350F">Primero aprendemos Git en tu compu (<code>init → add → commit</code>). Cuando entendemos qué pasa, conectamos GitHub (<code>remote add → push</code>). Así cada comando tiene sentido antes de agregarlo.</p>
   </div>
 </div>
 
-<!-- ─── 4. SEC — EMPEZAMOS EN GITHUB ─────────────────────────── -->
+<!-- ─── 4. SEC — PRIMER REPO LOCAL ───────────────────────────── -->
 <div class="slide s-sec gr">
-  <div class="tag">Paso 1</div>
-  <h2>Arrancamos en GitHub</h2>
-  <p class="sub">Crear el repositorio en la nube — de ahí lo bajamos a la compu</p>
+  <div class="tag">Parte 1</div>
+  <h2>Git en tu compu</h2>
+  <p class="sub">init → add → commit<br>sin internet todavía</p>
 </div>
 
-<!-- ─── 5. CREAR REPO EN GITHUB ──────────────────────────────── -->
+<!-- ─── 5. GIT INIT ──────────────────────────────────────────── -->
 <div class="slide s-c">
-  <div class="tag">En github.com</div>
-  <h2>Crear un repositorio nuevo</h2>
+  <div class="tag">Paso 1 — entender cada línea</div>
+  <h2><span style="color:var(--ac)">git init</span> — crear el repositorio</h2>
   <div class="g2">
     <div class="col">
-      <div class="card gr">
-        <h3>Paso a paso en el sitio</h3>
-        <div style="margin-top:10px">
-          <div class="steprow"><div class="step" style="background:var(--green)">1</div><p class="t">Ir a <strong>github.com</strong> e iniciar sesión</p></div>
-          <div class="steprow"><div class="step" style="background:var(--green)">2</div><p class="t">Clic en el <strong>"+"</strong> arriba a la derecha → <em>New repository</em></p></div>
-          <div class="steprow"><div class="step" style="background:var(--green)">3</div><p class="t">Nombre: <code>calculadora</code></p></div>
-          <div class="steprow"><div class="step" style="background:var(--green)">4</div><p class="t">Descripción (opcional): <em>Mi primera calculadora</em></p></div>
-          <div class="steprow"><div class="step" style="background:var(--green)">5</div><p class="t">Público o privado — tu elección</p></div>
-          <div class="steprow"><div class="step" style="background:var(--green)">6</div><p class="t">✅ Tildar <strong>"Add a README file"</strong></p></div>
-          <div class="steprow"><div class="step" style="background:var(--green)">7</div><p class="t">Clic en <strong>"Create repository"</strong></p></div>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card y">
-        <h3 style="color:#92400E">¿Por qué tildar el README?</h3>
-        <p class="t" style="margin-top:6px;color:#78350F">Si creás el repo con un README, GitHub ya hace el primer commit por vos. Así el repo no está vacío y el <code>git clone</code> funciona de una.</p>
-        <p class="t" style="margin-top:10px;color:#78350F">Cuando el repo es completamente nuevo y todavía no tenés ningún archivo local, esta es la forma más limpia de empezar.</p>
-      </div>
-      <div class="card sl" style="margin-top:0">
-        <h3>Lo que ves después de crear</h3>
-<pre style="margin-top:8px;background:#F1F5F9;color:#0F172A;padding:10px;font-size:clamp(11px,1.1vw,13px)">github.com / TU_USUARIO / calculadora
+      <div class="lbl sh">terminal</div>
+<pre><span class="cm"># Crear la carpeta del proyecto y entrar</span>
+mkdir calculadora
+cd calculadora
 
-📄 README.md    ← GitHub lo creó solo
-<span style="color:var(--muted)">1 commit · 1 branch · main</span></pre>
-        <p class="t" style="margin-top:8px">El repositorio ya existe en la nube. Ahora lo bajamos a nuestra compu.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── 6. GIT CLONE ─────────────────────────────────────────── -->
-<div class="slide s-c">
-  <div class="tag">Paso 2</div>
-  <h2><span style="color:var(--ac)">git clone</span> — bajar el repo a tu compu</h2>
-  <div class="g2">
-    <div class="col">
-      <div class="card sl">
-        <h3>En GitHub: copiar la URL</h3>
-        <p class="t" style="margin-top:6px">En tu repo → botón verde <strong>"Code"</strong> → copiás la URL HTTPS:</p>
-<pre style="margin-top:8px;background:#F1F5F9;color:#0F172A;font-size:clamp(11px,1.1vw,12px)">https://github.com/TU_USUARIO/calculadora.git</pre>
-      </div>
-      <div class="lbl sh" style="margin-top:10px">terminal</div>
-<pre>git clone https://github.com/TU_USUARIO/calculadora.git
-
-cd calculadora</pre>
-      <div class="card" style="margin-top:10px">
-        <h3>Git responde algo así</h3>
-<pre style="background:#F1F5F9;color:#0F172A;padding:10px;font-size:clamp(11px,1.1vw,12px)">Cloning into 'calculadora'...
-remote: Enumerating objects: 3, done.
-Receiving objects: 100% (3/3)
-<span style="color:var(--green)">done.</span></pre>
+<span class="cm"># Inicializar el repo</span>
+git init</pre>
+      <div class="lbl out" style="margin-top:8px">output</div>
+<pre>Initialized empty Git repository in
+/tu/ruta/calculadora/.git/</pre>
+      <div class="card gr" style="margin-top:10px">
+        <h3>Verificar que funcionó</h3>
+<pre style="margin-top:8px;background:#ECFDF5;color:#065F46;padding:10px;font-size:clamp(11px,1.1vw,13px)">$ ls -a
+.    ..    .git</pre>
+        <p class="t" style="margin-top:8px">La carpeta <code>.git/</code> es la base de datos de Git. Todo el historial vive ahí. No la toques nunca a mano.</p>
       </div>
     </div>
     <div class="col">
       <div class="card dk">
-        <h3>¿Qué hizo git clone?</h3>
+        <h3>¿Qué hizo git init?</h3>
         <div style="margin-top:12px">
           <div class="ann">
-            <span class="ann-line">📁 calculadora/</span>
+            <span class="ann-line" style="white-space:nowrap">Initialized empty</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text" style="color:#CBD5E1">Carpeta creada automáticamente con el nombre del repo</span>
+            <span class="ann-text">Repo vacío — sin commits todavía. Es normal.</span>
           </div>
+          <div style="height:8px"></div>
           <div class="ann">
-            <span class="ann-line">  📄 README.md</span>
+            <span class="ann-line" style="white-space:nowrap">Git repository in</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text" style="color:#CBD5E1">El archivo que creó GitHub, ya está acá</span>
+            <span class="ann-text">La ruta completa donde creó el repo</span>
           </div>
+          <div style="height:8px"></div>
           <div class="ann">
-            <span class="ann-line">  📁 .git/</span>
+            <span class="ann-line" style="white-space:nowrap">calculadora/.git/</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text" style="color:#CBD5E1">La "base de datos" local de Git — toda la historia vive acá</span>
+            <span class="ann-text">Esta carpeta oculta ES el repo — ahí guarda todo el historial</span>
           </div>
         </div>
-        <p class="t" style="margin-top:12px;color:#94A3B8;font-size:13px">El repo ya sabe de dónde vino. <code>git push</code> va a saber automáticamente a qué URL subir.</p>
-      </div>
-      <div class="card gr" style="margin-top:0">
-        <h3>init vs clone</h3>
-        <p class="t" style="margin-top:6px"><strong>clone</strong> → cuando el repo ya existe en GitHub (el caso más común). <strong>init</strong> → cuando arrancás desde cero en tu compu y después conectás a GitHub a mano. Con el flujo de hoy, siempre vas a usar <strong>clone</strong>.</p>
+        <div style="background:#0F172A;border-radius:8px;padding:12px;margin-top:14px">
+          <p style="color:#94A3B8;font-size:12px;margin-bottom:8px">Una sola vez por proyecto. Después nunca más.</p>
+          <div style="font-family:'Fira Code',monospace;font-size:12px;color:#86EFAC">git init  ←  solo al principio</div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 7. SEC — PRIMER ARCHIVO ──────────────────────────────── -->
-<div class="slide s-sec dk">
-  <div class="tag">Ahora en tu compu</div>
-  <h2>Crear el primer archivo</h2>
-  <p class="sub">El repo está clonado — es hora de escribir código</p>
-</div>
-
-<!-- ─── 8. CALCULADORA.PY ────────────────────────────────────── -->
+<!-- ─── 6. CREAR ARCHIVOS ─────────────────────────────────────── -->
 <div class="slide s-c">
-  <div class="tag">Paso 3</div>
-  <h2>Crear <span style="color:var(--ac)">calculadora.py</span></h2>
+  <div class="tag">Paso 2</div>
+  <h2>Crear <span style="color:var(--ac)">calculadora.py</span> y <code>.gitignore</code></h2>
   <div class="g2">
     <div class="col">
-      <div class="lbl py">calculadora.py — crealo en tu carpeta</div>
+      <div class="lbl py">calculadora.py</div>
 <pre><span class="kw">def</span> <span class="fn">sumar</span>(a, b):
     <span class="kw">return</span> a + b
 
@@ -341,7 +297,7 @@ Receiving objects: 100% (3/3)
     <div class="col">
       <div class="card or">
         <h3>También creá el .gitignore</h3>
-        <p class="t" style="margin-top:6px">Archivo que le dice a Git qué <strong>ignorar</strong> — lo que no queremos versionar nunca:</p>
+        <p class="t" style="margin-top:6px">Le dice a Git qué <strong>nunca versionar</strong>:</p>
 <pre style="margin-top:8px;background:#FFF7ED;color:#92400E;padding:10px;font-size:clamp(11px,1.1vw,13px)"><span style="color:#B45309"># .gitignore</span>
 __pycache__/
 *.pyc
@@ -350,20 +306,20 @@ venv/
 .DS_Store</pre>
       </div>
       <div class="card sl" style="margin-top:0">
-        <h3>Carpeta en este momento</h3>
+        <h3>Carpeta ahora</h3>
 <pre style="background:#F1F5F9;color:#0F172A;padding:10px;font-size:clamp(12px,1.2vw,14px)">📁 calculadora/
-   📄 .gitignore    ← nuevo
-   📄 calculadora.py ← nuevo
-   📄 README.md     ← vino con el clone</pre>
-        <p class="t" style="margin-top:8px">Ahora le decimos a Git que queremos guardar estos cambios.</p>
+   📁 .git/          ← la base de datos de Git
+   📄 .gitignore     ← nuevo
+   📄 calculadora.py ← nuevo</pre>
+        <p class="t" style="margin-top:8px">Git ve los archivos nuevos pero todavía no los rastrea. Veamos qué dice.</p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 9. GIT STATUS — LÍNEA A LÍNEA ────────────────────────── -->
+<!-- ─── 7. GIT STATUS — LÍNEA A LÍNEA ────────────────────────── -->
 <div class="slide s-c">
-  <div class="tag">Paso 4 — entender cada línea</div>
+  <div class="tag">Paso 3 — entender cada línea</div>
   <h2><span style="color:var(--ac)">git status</span> — ¿qué está pasando?</h2>
   <div class="g2">
     <div class="col">
@@ -371,7 +327,8 @@ venv/
 <pre>git status</pre>
       <div class="lbl out" style="margin-top:8px">output</div>
 <pre>On branch main
-Your branch is up to date with 'origin/main'.
+
+No commits yet
 
 Untracked files:
   (use "git add &lt;file&gt;..." to include)
@@ -391,9 +348,9 @@ nothing added to commit but untracked files present</pre>
           </div>
           <div style="height:8px"></div>
           <div class="ann">
-            <span class="ann-line" style="white-space:nowrap">up to date with 'origin/main'</span>
+            <span class="ann-line" style="white-space:nowrap">No commits yet</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text">Tu versión local está igual a GitHub (<em>origin</em>)</span>
+            <span class="ann-text">El historial está vacío — nunca guardaste nada todavía</span>
           </div>
           <div style="height:8px"></div>
           <div class="ann">
@@ -405,7 +362,7 @@ nothing added to commit but untracked files present</pre>
           <div class="ann">
             <span class="ann-line" style="white-space:nowrap;color:#FCA5A5">.gitignore / calculadora.py</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text">Los dos archivos nuevos que acabás de crear</span>
+            <span class="ann-text">Los dos archivos que recién creaste</span>
           </div>
           <div style="height:8px"></div>
           <div class="ann">
@@ -419,23 +376,24 @@ nothing added to commit but untracked files present</pre>
   </div>
 </div>
 
-<!-- ─── 10. GIT ADD — LÍNEA A LÍNEA ──────────────────────────── -->
+<!-- ─── 8. GIT ADD — LÍNEA A LÍNEA ──────────────────────────── -->
 <div class="slide s-c">
-  <div class="tag">Paso 5 — entender cada línea</div>
+  <div class="tag">Paso 4 — entender cada línea</div>
   <h2><span style="color:var(--ac)">git add</span> — preparar los archivos</h2>
   <div class="g2">
     <div class="col">
       <div class="lbl sh">terminal</div>
 <pre>git add calculadora.py .gitignore</pre>
-      <p class="t" style="margin-top:8px;color:var(--muted)">Este comando no imprime nada. Eso es normal. Corremos status de nuevo para ver qué cambió:</p>
+      <p class="t" style="margin-top:8px;color:var(--muted)">No imprime nada. Eso es normal. Corremos status para ver qué cambió:</p>
       <div class="lbl sh" style="margin-top:8px">terminal</div>
 <pre>git status</pre>
       <div class="lbl out" style="margin-top:6px">output</div>
 <pre>On branch main
-Your branch is up to date with 'origin/main'.
+
+No commits yet
 
 Changes to be committed:
-  (use "git restore --staged ..." to unstage)
+  (use "git rm --cached ..." to unstage)
         new file: .gitignore
         new file: calculadora.py</pre>
     </div>
@@ -446,7 +404,7 @@ Changes to be committed:
           <div class="ann">
             <span class="ann-line" style="white-space:nowrap;color:#86EFAC">Changes to be committed:</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text">Antes decía "Untracked". Ahora pasó a <strong style="color:#86EFAC">verde</strong> — están listos para el commit</span>
+            <span class="ann-text">Antes decía "Untracked". Ahora están <strong style="color:#86EFAC">listos para el commit</strong></span>
           </div>
           <div style="height:8px"></div>
           <div class="ann">
@@ -456,13 +414,13 @@ Changes to be committed:
           </div>
         </div>
         <div style="background:#0F172A;border-radius:8px;padding:12px;margin-top:14px">
-          <p style="color:#94A3B8;font-size:13px;font-weight:700;margin-bottom:8px">Las 3 zonas:</p>
+          <p style="color:#94A3B8;font-size:13px;font-weight:700;margin-bottom:8px">Las 3 zonas de Git:</p>
           <div style="display:flex;flex-direction:column;gap:4px;font-family:'Fira Code',monospace;font-size:12px">
             <div style="background:#1E293B;padding:7px 10px;border-radius:6px;color:#FCA5A5">📝 Working Dir — editás acá</div>
             <div style="text-align:center;color:#475569;font-size:10px">git add ↓</div>
             <div style="background:#1E3A2F;padding:7px 10px;border-radius:6px;color:#86EFAC">📋 Staging — preparás acá</div>
             <div style="text-align:center;color:#475569;font-size:10px">git commit ↓</div>
-            <div style="background:#1E1B4B;padding:7px 10px;border-radius:6px;color:#A5B4FC">💾 Repo — se guarda acá</div>
+            <div style="background:#1E1B4B;padding:7px 10px;border-radius:6px;color:#A5B4FC">💾 Repo local — se guarda acá</div>
           </div>
         </div>
       </div>
@@ -470,34 +428,46 @@ Changes to be committed:
   </div>
 </div>
 
-<!-- ─── 11. GIT COMMIT — LÍNEA A LÍNEA ───────────────────────── -->
+<!-- ─── 9. GIT COMMIT — LÍNEA A LÍNEA ───────────────────────── -->
 <div class="slide s-c">
-  <div class="tag">Paso 6 — entender cada línea</div>
+  <div class="tag">Paso 5 — entender cada línea</div>
   <h2><span style="color:var(--ac)">git commit</span> — guardar la foto</h2>
   <div class="g2">
     <div class="col">
       <div class="lbl sh">terminal</div>
 <pre>git commit -m <span class="str">"Agrega calculadora con las 4 operaciones"</span></pre>
       <div class="lbl out" style="margin-top:8px">output</div>
-<pre>[main 7b2e441] Agrega calculadora con las 4 operaciones
+<pre>[main (root-commit) 7b2e441] Agrega calculadora...
  2 files changed, 22 insertions(+)
  create mode 100644 .gitignore
  create mode 100644 calculadora.py</pre>
+      <div class="card gr" style="margin-top:10px">
+        <h3>¿Qué pasó?</h3>
+        <p class="t" style="margin-top:6px">Los archivos ahora viven en el historial de Git. Podés verificarlo:</p>
+<pre style="margin-top:8px;background:#ECFDF5;color:#065F46;padding:10px">$ git log --oneline
+7b2e441 (HEAD -> main) Agrega calculadora...</pre>
+      </div>
     </div>
     <div class="col">
       <div class="card dk">
         <h3>Línea por línea</h3>
         <div style="margin-top:12px">
           <div class="ann">
-            <span class="ann-line" style="white-space:nowrap;color:#FDBA74">[main 7b2e441]</span>
+            <span class="ann-line" style="white-space:nowrap;color:#FDBA74">[main</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text"><strong style="color:#FDBA74">main</strong> = rama donde se guardó. <strong style="color:#FDBA74">7b2e441</strong> = ID único del commit (huella digital)</span>
+            <span class="ann-text">La rama donde se guardó el commit</span>
           </div>
           <div style="height:8px"></div>
           <div class="ann">
-            <span class="ann-line" style="white-space:nowrap">Agrega calculadora...</span>
+            <span class="ann-line" style="white-space:nowrap;color:#FDBA74">(root-commit)</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text">El mensaje que escribiste — queda en la historia para siempre</span>
+            <span class="ann-text">Significa que es el <strong style="color:#FDBA74">primer commit del repo</strong> — solo aparece la primera vez</span>
+          </div>
+          <div style="height:8px"></div>
+          <div class="ann">
+            <span class="ann-line" style="white-space:nowrap;color:#FDBA74">7b2e441]</span>
+            <span class="ann-arrow">←</span>
+            <span class="ann-text">ID único del commit — la "huella digital" de este cambio</span>
           </div>
           <div style="height:8px"></div>
           <div class="ann">
@@ -507,15 +477,9 @@ Changes to be committed:
           </div>
           <div style="height:8px"></div>
           <div class="ann">
-            <span class="ann-line" style="white-space:nowrap">22 insertions(+)</span>
-            <span class="ann-arrow">←</span>
-            <span class="ann-text">22 líneas nuevas agregadas en total</span>
-          </div>
-          <div style="height:8px"></div>
-          <div class="ann">
             <span class="ann-line" style="white-space:nowrap">create mode 100644</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text">Archivos nuevos. Si fuera una modificación diría "modified"</span>
+            <span class="ann-text">Archivos nuevos — si fuera una modificación diría "modified"</span>
           </div>
         </div>
       </div>
@@ -523,56 +487,145 @@ Changes to be committed:
   </div>
 </div>
 
-<!-- ─── 12. GIT PUSH — LÍNEA A LÍNEA ─────────────────────────── -->
+<!-- ─── 10. SEC — CONECTAR GITHUB ────────────────────────────── -->
+<div class="slide s-sec bl">
+  <div class="tag">Parte 2</div>
+  <h2>Conectar a GitHub</h2>
+  <p class="sub">Ya entendés Git local — ahora subimos el historial a la nube</p>
+</div>
+
+<!-- ─── 11. CREAR REPO EN GITHUB ─────────────────────────────── -->
 <div class="slide s-c">
-  <div class="tag">Paso 7 — entender cada línea</div>
-  <h2><span style="color:var(--green)">git push</span> — subir a GitHub</h2>
+  <div class="tag">En github.com</div>
+  <h2>Crear el repo en GitHub — <span style="color:var(--ac)">vacío</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3>Paso a paso en el sitio</h3>
+        <div style="margin-top:10px">
+          <div class="steprow"><div class="step" style="background:var(--blue)">1</div><p class="t">Ir a <strong>github.com</strong> e iniciar sesión</p></div>
+          <div class="steprow"><div class="step" style="background:var(--blue)">2</div><p class="t">Clic en el <strong>"+"</strong> arriba a la derecha → <em>New repository</em></p></div>
+          <div class="steprow"><div class="step" style="background:var(--blue)">3</div><p class="t">Nombre: <code>calculadora</code></p></div>
+          <div class="steprow"><div class="step" style="background:var(--blue)">4</div><p class="t">Público o privado — tu elección</p></div>
+          <div class="steprow"><div class="step" style="background:var(--blue)">5</div><p class="t"><strong>NO tildar</strong> "Add a README file" — lo dejamos vacío</p></div>
+          <div class="steprow"><div class="step" style="background:var(--blue)">6</div><p class="t">Clic en <strong>"Create repository"</strong></p></div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card y">
+        <h3 style="color:#92400E">¿Por qué NO agregar el README?</h3>
+        <p class="t" style="margin-top:6px;color:#78350F">Porque ya tenemos un repo local con commits. Si GitHub crea un commit propio (el del README), los historiales chocan y no podés hacer push fácil.</p>
+        <p class="t" style="margin-top:8px;color:#78350F">Cuando arrancás desde GitHub y todavía no tenés nada local → tildar README. Cuando ya tenés repo local → dejarlo vacío.</p>
+      </div>
+      <div class="card sl" style="margin-top:0">
+        <h3>Después de crear verás esto en GitHub</h3>
+<pre style="background:#F1F5F9;color:#0F172A;padding:10px;font-size:clamp(11px,1.1vw,12px)">…or push an existing repository:
+
+git remote add origin
+  https://github.com/TU_USUARIO/calculadora.git
+git branch -M main
+git push -u origin main</pre>
+        <p class="t" style="margin-top:8px">GitHub mismo te dice los comandos. Vamos uno por uno.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 12. GIT REMOTE ADD ───────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Paso 6 — entender cada parte</div>
+  <h2><span style="color:var(--ac)">git remote add</span> — conectar los repos</h2>
   <div class="g2">
     <div class="col">
       <div class="lbl sh">terminal</div>
-<pre>git push</pre>
+<pre>git remote add origin https://github.com/TU_USUARIO/calculadora.git</pre>
+      <div class="card sl" style="margin-top:10px">
+        <h3>Verificar que quedó</h3>
+<pre style="background:#F1F5F9;color:#0F172A;padding:10px;font-size:clamp(11px,1.1vw,13px)">$ git remote -v
+origin  https://github.com/TU_USUARIO/calculadora.git (fetch)
+origin  https://github.com/TU_USUARIO/calculadora.git (push)</pre>
+        <p class="t" style="margin-top:8px">Dos líneas: una para bajar (fetch) y otra para subir (push). Ambas apuntan a la misma URL.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card dk">
+        <h3>Palabra por palabra</h3>
+        <div style="margin-top:12px">
+          <div class="ann">
+            <span class="ann-line" style="white-space:nowrap">git remote</span>
+            <span class="ann-arrow">←</span>
+            <span class="ann-text">Gestionar las "conexiones remotas" del repo</span>
+          </div>
+          <div style="height:8px"></div>
+          <div class="ann">
+            <span class="ann-line" style="white-space:nowrap">add</span>
+            <span class="ann-arrow">←</span>
+            <span class="ann-text">Agregar una nueva conexión</span>
+          </div>
+          <div style="height:8px"></div>
+          <div class="ann">
+            <span class="ann-line" style="white-space:nowrap;color:#FDBA74">origin</span>
+            <span class="ann-arrow">←</span>
+            <span class="ann-text">El <strong style="color:#FDBA74">alias</strong> que le damos a esa URL — podría llamarse cualquier cosa, pero "origin" es la convención universal</span>
+          </div>
+          <div style="height:8px"></div>
+          <div class="ann">
+            <span class="ann-line" style="white-space:nowrap">https://github.com/...</span>
+            <span class="ann-arrow">←</span>
+            <span class="ann-text">La URL real del repo que creaste en GitHub</span>
+          </div>
+        </div>
+        <p class="t" style="margin-top:12px;color:#94A3B8;font-size:13px">Una sola vez por repo. Después <code>git push</code> sabe a dónde ir porque ya tiene el alias.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 13. GIT PUSH -u ───────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Paso 7 — entender cada línea</div>
+  <h2><span style="color:var(--green)">git push -u origin main</span> — primer push</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl sh">terminal</div>
+<pre><span class="cm"># Primera vez — le decimos a qué rama subir</span>
+git push -u origin main</pre>
       <div class="lbl out" style="margin-top:8px">output</div>
 <pre>Enumerating objects: 4, done.
 Counting objects: 100% (4/4), done.
-Delta compression using up to 8 threads
-Compressing objects: 100% (3/3), done.
-Writing objects: 100% (3/3), 724 bytes, done.
-Total 3 (delta 0), reused 0 (delta 0)
+Writing objects: 100% (4/4), 724 bytes, done.
+Total 4 (delta 0)
 To https://github.com/TU_USUARIO/calculadora.git
-   1a4f882..7b2e441  main -> main</pre>
+ * [new branch]  main -> main
+Branch 'main' set up to track 'origin/main'</pre>
     </div>
     <div class="col">
       <div class="card dk">
         <h3>Línea por línea</h3>
-        <div style="margin-top:12px">
-          <div class="ann">
-            <span class="ann-line" style="white-space:nowrap">Enumerating objects: 4</span>
-            <span class="ann-arrow">←</span>
-            <span class="ann-text">Git cuenta los "objetos" internos que tiene que enviar</span>
-          </div>
-          <div style="height:7px"></div>
+        <div style="margin-top:10px">
           <div class="ann">
             <span class="ann-line" style="white-space:nowrap">Writing objects: 100%</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text">Sube los datos a GitHub — cuando llega al 100% terminó</span>
-          </div>
-          <div style="height:7px"></div>
-          <div class="ann">
-            <span class="ann-line" style="white-space:nowrap">724 bytes</span>
-            <span class="ann-arrow">←</span>
-            <span class="ann-text">Tamaño de lo que subió — muy poco porque son archivos chicos</span>
+            <span class="ann-text">Subió todo — cuando llega al 100% terminó</span>
           </div>
           <div style="height:7px"></div>
           <div class="ann">
             <span class="ann-line" style="white-space:nowrap">To https://github.com/...</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text">A dónde fue — la URL de tu repo en GitHub</span>
+            <span class="ann-text">A dónde fue — el alias <code style="color:#93C5FD">origin</code> que configuramos antes</span>
           </div>
           <div style="height:7px"></div>
           <div class="ann">
-            <span class="ann-line" style="white-space:nowrap;color:#86EFAC">1a4f882..7b2e441  main → main</span>
+            <span class="ann-line" style="white-space:nowrap;color:#86EFAC">* [new branch]</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text"><strong style="color:#86EFAC">De</strong> ese commit <strong style="color:#86EFAC">al</strong> nuevo. GitHub pasó del commit viejo al tuyo.</span>
+            <span class="ann-text">GitHub no tenía la rama <strong style="color:#86EFAC">main</strong> — la creó ahora</span>
+          </div>
+          <div style="height:7px"></div>
+          <div class="ann">
+            <span class="ann-line" style="white-space:nowrap">set up to track</span>
+            <span class="ann-arrow">←</span>
+            <span class="ann-text">El <code style="color:#93C5FD">-u</code> hizo esto: vinculó tu <code>main</code> local con <code>origin/main</code>. De ahora en adelante solo escribís <code>git push</code> sin más argumentos.</span>
           </div>
         </div>
       </div>
@@ -580,7 +633,7 @@ To https://github.com/TU_USUARIO/calculadora.git
   </div>
 </div>
 
-<!-- ─── 13. VER EN GITHUB ────────────────────────────────────── -->
+<!-- ─── 14. VER EN GITHUB ────────────────────────────────────── -->
 <div class="slide s-c">
   <div class="tag">Resultado</div>
   <h2>Andá a GitHub y refrescá la página</h2>
@@ -591,34 +644,36 @@ To https://github.com/TU_USUARIO/calculadora.git
 <pre style="background:#F1F5F9;color:#0F172A;padding:12px;font-size:clamp(11px,1.1vw,13px)">github.com / TU_USUARIO / calculadora
 
 📄 .gitignore        Agrega calculadora con...
-📄 README.md         Initial commit
 📄 calculadora.py    Agrega calculadora con...
 
-<span style="color:var(--muted)">2 commits · 1 branch · main</span></pre>
+<span style="color:var(--muted)">1 commit · 1 branch · main</span></pre>
         <p class="t" style="margin-top:10px">Tus archivos subieron. El mensaje del commit aparece al lado de cada archivo.</p>
+      </div>
+      <div class="card or" style="margin-top:0">
+        <h3>De ahora en adelante — el ciclo diario</h3>
+<pre style="margin-top:8px;background:#FFF7ED;color:#92400E;padding:10px;font-size:clamp(11px,1.1vw,13px)">git pull              ← al arrancar el día
+<span style="color:#B45309">... editás código ...</span>
+git add archivo
+git commit -m "..."
+git push              ← ya sin -u origin main</pre>
       </div>
     </div>
     <div class="col">
       <div class="card gr">
-        <h3>El ciclo que vas a repetir siempre</h3>
+        <h3>El ciclo completo que repetís siempre</h3>
         <div style="margin-top:10px">
           <div class="steprow"><div class="step" style="background:var(--green)">1</div><p class="t"><strong>Editás</strong> el código en tu compu</p></div>
-          <div class="steprow"><div class="step" style="background:var(--green)">2</div><p class="t"><code>git add archivo</code> — preparás</p></div>
-          <div class="steprow"><div class="step" style="background:var(--green)">3</div><p class="t"><code>git commit -m "..."</code> — guardás la foto</p></div>
+          <div class="steprow"><div class="step" style="background:var(--green)">2</div><p class="t"><code>git add archivo</code> — preparás para el commit</p></div>
+          <div class="steprow"><div class="step" style="background:var(--green)">3</div><p class="t"><code>git commit -m "..."</code> — guardás la foto local</p></div>
           <div class="steprow"><div class="step" style="background:var(--green)">4</div><p class="t"><code>git push</code> — subís a GitHub</p></div>
         </div>
         <p class="t" style="margin-top:10px;color:var(--muted)">Tan simple como eso. De acá en adelante todo lo que hagás sigue este ciclo.</p>
-      </div>
-      <div class="card or" style="margin-top:0">
-        <h3>¿Y para bajar cambios del equipo?</h3>
-<pre style="margin-top:8px">git pull  <span class="cm"># baja + aplica en un paso</span></pre>
-        <p class="t" style="margin-top:8px">Antes de arrancar a trabajar cada día, siempre hacé <code>git pull</code> para tener los últimos cambios de tus compañeros.</p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 14. SEGUNDO COMMIT — git diff ────────────────────────── -->
+<!-- ─── 15. SEGUNDO COMMIT — git diff ────────────────────────── -->
 <div class="slide s-c">
   <div class="tag">Segunda vuelta del ciclo</div>
   <h2>Modificar y volver a commitear</h2>
@@ -641,7 +696,7 @@ To https://github.com/TU_USUARIO/calculadora.git
     </div>
     <div class="col">
       <div class="card dk">
-        <h3>Output de git diff — línea por línea</h3>
+        <h3>Output de git diff</h3>
         <div style="margin-top:10px">
 <pre style="background:#0F172A;padding:10px;font-size:clamp(10px,1vw,12px)"><span style="color:#86EFAC">+historial = []
 +
@@ -670,7 +725,7 @@ git push</pre>
   </div>
 </div>
 
-<!-- ─── 15. GIT LOG ──────────────────────────────────────────── -->
+<!-- ─── 16. GIT LOG ──────────────────────────────────────────── -->
 <div class="slide s-c">
   <div class="tag">Ver la historia</div>
   <h2><span style="color:var(--ac)">git log</span> — el historial de commits</h2>
@@ -680,8 +735,7 @@ git push</pre>
 <pre>git log --oneline</pre>
       <div class="lbl out" style="margin-top:8px">output</div>
 <pre><span class="warn">c44b1f3</span> <span class="flag">(HEAD → main, origin/main)</span> Agrega historial
-<span class="warn">7b2e441</span> Agrega calculadora con las 4 operaciones
-<span class="warn">1a4f882</span> Initial commit</pre>
+<span class="warn">7b2e441</span> Agrega calculadora con las 4 operaciones</pre>
     </div>
     <div class="col">
       <div class="card dk">
@@ -690,7 +744,7 @@ git push</pre>
           <div class="ann">
             <span class="ann-line" style="white-space:nowrap;color:#FDBA74">c44b1f3</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text">ID corto del commit — son los primeros 7 caracteres del hash completo</span>
+            <span class="ann-text">ID corto del commit — 7 caracteres del hash completo</span>
           </div>
           <div style="height:8px"></div>
           <div class="ann">
@@ -702,7 +756,7 @@ git push</pre>
           <div class="ann">
             <span class="ann-line" style="white-space:nowrap;color:#C4B5FD">main</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text">La rama local está en este commit</span>
+            <span class="ann-text">Tu rama local está en este commit</span>
           </div>
           <div style="height:8px"></div>
           <div class="ann">
@@ -710,26 +764,20 @@ git push</pre>
             <span class="ann-arrow">←</span>
             <span class="ann-text">GitHub también está en este commit — están sincronizados</span>
           </div>
-          <div style="height:8px"></div>
-          <div class="ann">
-            <span class="ann-line" style="white-space:nowrap">Initial commit</span>
-            <span class="ann-arrow">←</span>
-            <span class="ann-text">El primer commit que hizo GitHub cuando creaste el repo</span>
-          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 16. SEC — RAMAS ──────────────────────────────────────── -->
+<!-- ─── 17. SEC — RAMAS ──────────────────────────────────────── -->
 <div class="slide s-sec bl">
   <div class="tag">Siguiente nivel</div>
   <h2>Ramas (Branches)</h2>
   <p class="sub">Trabajar en una feature sin tocar lo que ya funciona</p>
 </div>
 
-<!-- ─── 17. POR QUÉ RAMAS ────────────────────────────────────── -->
+<!-- ─── 18. POR QUÉ RAMAS ────────────────────────────────────── -->
 <div class="slide s-c">
   <div class="tag">El problema sin ramas</div>
   <h2>¿Por qué no trabajar directo en main?</h2>
@@ -747,7 +795,7 @@ git push</pre>
     </div>
     <div class="col">
       <div class="card dk">
-        <h3>Cómo se ve</h3>
+        <h3>Cómo se ve en el historial</h3>
 <pre style="background:#0F172A;padding:12px;margin-top:8px;font-size:clamp(12px,1.2vw,14px)">main:         A ── B ────────── E
                          \       /
 feature/x:                C ── D</pre>
@@ -767,7 +815,7 @@ feature/x:                C ── D</pre>
           <div class="ann">
             <span class="ann-line" style="white-space:nowrap;color:#C4B5FD">E</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text">El merge — une todo, ahora main tiene C y D también</span>
+            <span class="ann-text">El merge — une todo. Ahora main tiene C y D también.</span>
           </div>
         </div>
       </div>
@@ -775,7 +823,7 @@ feature/x:                C ── D</pre>
   </div>
 </div>
 
-<!-- ─── 18. CREAR RAMA Y TRABAJAR ────────────────────────────── -->
+<!-- ─── 19. CREAR RAMA Y TRABAJAR ────────────────────────────── -->
 <div class="slide s-c">
   <div class="tag">Paso 8</div>
   <h2>Crear la rama y trabajar en ella</h2>
@@ -816,7 +864,7 @@ git commit -m <span class="str">"Agrega validacion de tipos"</span></pre>
   </div>
 </div>
 
-<!-- ─── 19. MERGE ────────────────────────────────────────────── -->
+<!-- ─── 20. MERGE ────────────────────────────────────────────── -->
 <div class="slide s-c">
   <div class="tag">Paso 9</div>
   <h2>Merge — unir la feature a main</h2>
@@ -868,14 +916,14 @@ git push</pre>
   </div>
 </div>
 
-<!-- ─── 20. SEC — GITFLOW ────────────────────────────────────── -->
+<!-- ─── 21. SEC — GITFLOW ────────────────────────────────────── -->
 <div class="slide s-sec pu">
   <div class="tag">Trabajo en equipo</div>
   <h2>Gitflow — cómo lo hacen los equipos</h2>
   <p class="sub">Una convención de ramas para no pisarse entre todos</p>
 </div>
 
-<!-- ─── 21. LAS 5 RAMAS ──────────────────────────────────────── -->
+<!-- ─── 22. LAS 5 RAMAS ──────────────────────────────────────── -->
 <div class="slide s-c">
   <div class="tag">Gitflow</div>
   <h2>Cada rama tiene un rol específico</h2>
@@ -905,7 +953,7 @@ feature:    D ──/   D2 ──/     hotfix ─/</pre>
           <div class="ann">
             <span class="ann-line" style="white-space:nowrap;color:#FCA5A5">A, F, H — main</span>
             <span class="ann-arrow">←</span>
-            <span class="ann-text">Sólo recibe releases y hotfixes — nunca features directas</span>
+            <span class="ann-text">Solo recibe releases y hotfixes — nunca features directas</span>
           </div>
           <div style="height:6px"></div>
           <div class="ann">
@@ -923,7 +971,7 @@ feature:    D ──/   D2 ──/     hotfix ─/</pre>
   </div>
 </div>
 
-<!-- ─── 22. PULL REQUESTS ────────────────────────────────────── -->
+<!-- ─── 23. PULL REQUESTS ────────────────────────────────────── -->
 <div class="slide s-c">
   <div class="tag">GitHub — la killer feature</div>
   <h2>Pull Requests — revisión de código</h2>
@@ -934,7 +982,7 @@ feature:    D ──/   D2 ──/     hotfix ─/</pre>
         <p class="t" style="margin-top:8px">En vez de mergear directo, abrís una solicitud formal en GitHub para que alguien revise tu código antes de que entre a <code>develop</code> o <code>main</code>.</p>
         <div style="margin-top:12px">
           <div class="steprow"><div class="step" style="background:var(--purple)">1</div><p class="t"><code>git push origin feature/mi-feature</code></p></div>
-          <div class="steprow"><div class="step" style="background:var(--purple)">2</div><p class="t">GitHub te muestra "Compare & pull request" — lo abrís</p></div>
+          <div class="steprow"><div class="step" style="background:var(--purple)">2</div><p class="t">GitHub te muestra "Compare &amp; pull request" — lo abrís</p></div>
           <div class="steprow"><div class="step" style="background:var(--purple)">3</div><p class="t">Escribís título y descripción: qué hace y por qué</p></div>
           <div class="steprow"><div class="step" style="background:var(--purple)">4</div><p class="t">Un compañero revisa, comenta, pide cambios o aprueba</p></div>
           <div class="steprow"><div class="step" style="background:var(--purple)">5</div><p class="t">Se mergea — aparece en <code>develop</code> o <code>main</code></p></div>
@@ -959,7 +1007,7 @@ feature:    D ──/   D2 ──/     hotfix ─/</pre>
   </div>
 </div>
 
-<!-- ─── 23. DESHACER SIN PÁNICO ──────────────────────────────── -->
+<!-- ─── 24. DESHACER SIN PÁNICO ──────────────────────────────── -->
 <div class="slide s-c">
   <div class="tag">Cuando algo sale mal</div>
   <h2>Deshacer sin entrar en pánico</h2>
@@ -1009,29 +1057,30 @@ git revert 7b2e441
   </div>
 </div>
 
-<!-- ─── 24. SEC — EJERCICIOS ────────────────────────────────── -->
+<!-- ─── 25. SEC — EJERCICIOS ────────────────────────────────── -->
 <div class="slide s-sec">
   <div class="tag">Práctica</div>
   <h2>Ejercicios</h2>
-  <p class="sub">Hacer el flujo completo desde GitHub</p>
+  <p class="sub">Hacer el flujo completo desde cero</p>
 </div>
 
-<!-- ─── 25. EJERCICIO 1 ─────────────────────────────────────── -->
+<!-- ─── 26. EJERCICIO 1 ─────────────────────────────────────── -->
 <div class="slide s-e">
   <div class="tag">Ejercicio 1</div>
   <div class="bdg or">Enunciado</div>
-  <h2>Crear el repo en GitHub y subir código</h2>
+  <h2>Crear un repo local y conectarlo a GitHub</h2>
   <div class="g2">
     <div class="col">
       <div class="card or">
         <h3>Instrucciones</h3>
         <ol class="s" style="margin-top:8px">
-          <li>Creá un repo en GitHub llamado <code>mi-lista-tareas</code> con README</li>
-          <li>Cloná el repo a tu compu con <code>git clone</code></li>
+          <li>Creá una carpeta <code>mi-lista-tareas</code> y hacé <code>git init</code></li>
           <li>Creá <code>tareas.py</code> con las funciones <code>agregar(tarea)</code> y <code>listar()</code></li>
           <li>Creá <code>.gitignore</code> para Python</li>
-          <li>Hacé <code>git add</code>, <code>git commit</code> y <code>git push</code></li>
-          <li>Verificá en GitHub que se ven los archivos y el commit</li>
+          <li>Hacé <code>git add</code> y <code>git commit</code></li>
+          <li>Creá un repo vacío en GitHub llamado <code>mi-lista-tareas</code></li>
+          <li>Conectá con <code>git remote add origin URL</code></li>
+          <li>Hacé <code>git push -u origin main</code> y verificá en GitHub</li>
           <li>Agregá la función <code>eliminar(indice)</code> y hacé un segundo commit + push</li>
         </ol>
       </div>
@@ -1057,34 +1106,36 @@ git revert 7b2e441
         <h3>Al terminar deberías ver</h3>
 <pre style="background:#0F172A;padding:10px;font-size:clamp(11px,1.1vw,13px)">$ git log --oneline
 <span class="warn">c44b</span> Agrega funcion eliminar
-<span class="warn">7b2e</span> Agrega tareas.py y gitignore
-<span class="warn">1a4f</span> Initial commit</pre>
+<span class="warn">7b2e</span> Agrega tareas.py y gitignore</pre>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 26. SOLUCION 1 ──────────────────────────────────────── -->
+<!-- ─── 27. SOLUCION 1 ──────────────────────────────────────── -->
 <div class="slide s-sol">
   <div class="tag">Ejercicio 1</div>
   <div class="bdg gr">Solución</div>
-  <h2>Crear el repo en GitHub y subir código</h2>
+  <h2>Crear un repo local y conectarlo a GitHub</h2>
   <div class="g2">
     <div class="col">
       <div class="lbl sh">terminal</div>
-<pre style="font-size:clamp(10px,1vw,13px)"><span class="cm"># Clonar el repo que creaste en GitHub</span>
-git clone https://github.com/TU_USUARIO/mi-lista-tareas.git
+<pre style="font-size:clamp(10px,1vw,13px)"><span class="cm"># 1. Crear e inicializar</span>
+mkdir mi-lista-tareas
 cd mi-lista-tareas
+git init
 
-<span class="cm"># Crear los archivos</span>
-<span class="cm"># (escribís tareas.py y .gitignore)</span>
+<span class="cm"># 2. Crear los archivos (escribís tareas.py y .gitignore)</span>
 
-<span class="cm"># Primer commit</span>
+<span class="cm"># 3. Primer commit</span>
 git add tareas.py .gitignore
 git commit -m <span class="str">"Agrega tareas.py y gitignore"</span>
-git push
 
-<span class="cm"># Segundo commit (agregás eliminar)</span>
+<span class="cm"># 4. Conectar a GitHub (repo vacío creado antes)</span>
+git remote add origin https://github.com/TU_USUARIO/mi-lista-tareas.git
+git push -u origin main
+
+<span class="cm"># 5. Segundo commit</span>
 git add tareas.py
 git commit -m <span class="str">"Agrega funcion eliminar"</span>
 git push</pre>
@@ -1114,7 +1165,7 @@ git push</pre>
   </div>
 </div>
 
-<!-- ─── 27. EJERCICIO 2 ─────────────────────────────────────── -->
+<!-- ─── 28. EJERCICIO 2 ─────────────────────────────────────── -->
 <div class="slide s-e">
   <div class="tag">Ejercicio 2</div>
   <div class="bdg or">Enunciado</div>
@@ -1129,7 +1180,7 @@ git push</pre>
           <li>Modificá <code>listar()</code> para que muestre <code>✅</code> en las tareas completadas y <code>⬜</code> en las pendientes</li>
           <li>Hacé dos commits — uno por cada cambio</li>
           <li>Volvé a <code>main</code>, hacé el merge y subí</li>
-          <li>Verificá el historial con <code>git log --oneline --graph</code></li>
+          <li>Verificá el historial con <code>git log --oneline</code></li>
         </ol>
       </div>
     </div>
@@ -1153,14 +1204,13 @@ git push</pre>
 <span class="warn">d9e2a</span> Muestra estado en listar
 <span class="warn">f1b3c</span> Agrega funcion completar
 <span class="warn">c44b1</span> Agrega funcion eliminar
-<span class="warn">7b2e4</span> Agrega tareas.py y gitignore
-<span class="warn">1a4f8</span> Initial commit</pre>
+<span class="warn">7b2e4</span> Agrega tareas.py y gitignore</pre>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 28. CHEATSHEET ───────────────────────────────────────── -->
+<!-- ─── 29. CHEATSHEET ───────────────────────────────────────── -->
 <div class="slide s-c">
   <div class="tag">Referencia rápida</div>
   <h2>El ciclo completo en un slide</h2>
@@ -1170,14 +1220,14 @@ git push</pre>
         <h3>Día a día</h3>
         <table style="margin-top:8px">
           <tr><th>Comando</th><th>¿Cuándo?</th></tr>
-          <tr><td><code>git clone URL</code></td><td>Arrancar desde GitHub</td></tr>
+          <tr><td><code>git init</code></td><td>Una vez, al arrancar el proyecto</td></tr>
+          <tr><td><code>git remote add origin URL</code></td><td>Una vez, para conectar GitHub</td></tr>
           <tr><td><code>git pull</code></td><td>Al arrancar el día</td></tr>
           <tr><td><code>git status</code></td><td>Siempre, antes de add</td></tr>
           <tr><td><code>git diff</code></td><td>Ver qué cambió</td></tr>
           <tr><td><code>git add archivo</code></td><td>Preparar el commit</td></tr>
           <tr><td><code>git commit -m "..."</code></td><td>Guardar la foto</td></tr>
           <tr><td><code>git push</code></td><td>Subir a GitHub</td></tr>
-          <tr><td><code>git log --oneline</code></td><td>Ver la historia</td></tr>
         </table>
       </div>
     </div>
@@ -1204,11 +1254,11 @@ git push</pre>
   </div>
 </div>
 
-<!-- ─── 29. CIERRE ──────────────────────────────────────────── -->
+<!-- ─── 30. CIERRE ──────────────────────────────────────────── -->
 <div class="slide s-sec dk">
   <div class="tag">Clase 07</div>
   <h2>Fin de la clase</h2>
-  <p class="sub">GitHub → clone → add → commit → push<br>Una rama por feature. Un PR por feature. main siempre verde.</p>
+  <p class="sub">init → add → commit → remote add → push<br>Una rama por feature. Un PR por feature. main siempre verde.</p>
 </div>
 
 </div><!-- /deck -->
@@ -1217,7 +1267,7 @@ git push</pre>
 <div id="prog"></div>
 <div id="nav">
   <button class="nb" id="bp">&#8592;</button>
-  <span id="cnt">1 / 29</span>
+  <span id="cnt">1 / 30</span>
   <button class="nb" id="bn">&#8594;</button>
 </div>
 
