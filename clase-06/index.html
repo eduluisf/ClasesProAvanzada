@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python — Paralelismo Real</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ac:#059669;--ac2:#047857;--blue:#2563EB;--purple:#7C3AED;--green:#059669;--orange:#D97706;--red:#DC2626;--text:#0F172A;--muted:#64748B}
+body{font-family:'Inter',sans-serif;background:#fff;color:var(--text);overflow:hidden;height:100vh;width:100vw}
+#deck{position:relative;width:100vw;height:100vh}
+
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:42px 70px;opacity:0;transform:translateX(56px);transition:opacity .3s ease,transform .3s ease;pointer-events:none;overflow:hidden}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-56px)}
+
+.s-hero{background:#fff;align-items:center;text-align:center}
+.s-sec{background:var(--ac);color:#fff}
+.s-sec.bl{background:var(--blue)}
+.s-sec.gr{background:var(--green)}
+.s-sec.pu{background:var(--purple)}
+.s-sec.or{background:var(--orange)}
+.s-sec.dk{background:#0F172A}
+.s-c{background:#fff}
+.s-e{background:#F8FAFC}
+.s-sol{background:#fff}
+
+.tag{font-size:13px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--ac);margin-bottom:10px}
+.s-sec .tag,.s-sec.dk .tag{color:rgba(255,255,255,.75)}
+
+h1{font-size:clamp(58px,8vw,96px);font-weight:900;letter-spacing:-.03em;line-height:1;color:var(--text)}
+h2{font-size:clamp(38px,5vw,62px);font-weight:900;letter-spacing:-.02em;line-height:1.06;margin-bottom:18px}
+.s-sec h2{color:#fff}
+h3{font-size:clamp(18px,2.1vw,24px);font-weight:700;margin-bottom:8px}
+.sub{font-size:clamp(20px,2.4vw,28px);color:var(--muted);line-height:1.45;margin-top:12px}
+.s-sec .sub{color:rgba(255,255,255,.8)}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%}
+.col{display:flex;flex-direction:column;gap:11px}
+.mt{margin-top:14px}
+.w100{width:100%}
+
+.card{background:#ECFDF5;border-radius:14px;padding:16px 20px}
+.card.bl{background:#EFF6FF}
+.card.pu{background:#F5F3FF}
+.card.or{background:#FFF7ED}
+.card.sl{background:#F1F5F9}
+.card.re{background:#FEF2F2}
+.card.dk{background:#0F172A;color:#E2E8F0}
+
+li,p.t{font-size:clamp(16px,1.8vw,21px);line-height:1.55}
+li strong{font-weight:700}
+ul.s,ol.s{list-style:none;display:flex;flex-direction:column;gap:5px}
+ul.s li::before{content:'▸';color:var(--ac);font-weight:700;margin-right:8px}
+ol.s{counter-reset:ci}
+ol.s li{counter-increment:ci}
+ol.s li::before{content:counter(ci)'.';color:var(--ac);font-weight:700;margin-right:8px}
+
+pre{background:#1E293B;color:#E2E8F0;font-family:'Fira Code',monospace;font-size:clamp(13px,1.3vw,16px);line-height:1.65;border-radius:14px;padding:16px 20px;overflow:hidden;width:100%}
+.lbl{font-size:11px;font-weight:700;letter-spacing:.08em;display:inline-block;padding:2px 10px;border-radius:999px;margin-bottom:5px}
+.lbl.py{background:var(--ac);color:#fff}
+.lbl.sh{background:#059669;color:#fff}
+
+.kw{color:#93C5FD;font-weight:600}
+.fn{color:#6EE7B7}
+.str{color:#FDE68A}
+.num{color:#FCA5A5}
+.cm{color:#64748B;font-style:italic}
+.cl{color:#FDBA74;font-weight:700}
+.flag{color:#C4B5FD}
+.dec{color:#F9A8D4}
+
+.bdg{display:inline-block;padding:3px 13px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:8px}
+.bdg.gr{background:var(--green);color:#fff}
+.bdg.or{background:#FEF3C7;color:#92400E;border:1px solid #FCD34D}
+.bdg.bl{background:var(--blue);color:#fff}
+.bdg.pu{background:var(--purple);color:#fff}
+
+table{width:100%;border-collapse:collapse}
+th{background:var(--ac);color:#fff;padding:10px 14px;text-align:left;font-size:15px;font-weight:700}
+td{padding:9px 14px;font-size:15px;border-bottom:1px solid #E2E8F0}
+tr:nth-child(even) td{background:#ECFDF5}
+.card.dk tr:nth-child(even) td{background:#1E293B}
+.card.dk td{border-bottom-color:#334155}
+code{font-family:'Fira Code',monospace;background:#D1FAE5;padding:2px 6px;border-radius:4px;font-size:.9em;color:#065F46}
+
+.hero-deco{position:absolute;top:16px;right:44px;font-size:120px;font-weight:900;opacity:.05;color:var(--ac);line-height:1;user-select:none}
+.hero-pill{display:inline-block;background:var(--ac);color:#fff;padding:7px 22px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px}
+
+#prog{position:fixed;bottom:0;left:0;height:4px;background:var(--ac);transition:width .3s;z-index:100}
+#nav{position:fixed;bottom:20px;right:32px;display:flex;align-items:center;gap:9px;z-index:100}
+.nb{width:40px;height:40px;border-radius:50%;border:2px solid var(--ac);background:#fff;color:var(--ac);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;transition:background .2s,color .2s;box-shadow:0 2px 10px rgba(5,150,105,.15)}
+.nb:hover{background:var(--ac);color:#fff}
+#cnt{font-size:12px;font-weight:700;color:var(--muted);min-width:44px;text-align:center}
+#home{position:fixed;top:18px;left:24px;z-index:100;text-decoration:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#64748B;background:#fff;border:1px solid #e2e8f0;border-radius:999px;padding:5px 14px;box-shadow:0 1px 4px rgba(0,0,0,.08);transition:border-color .2s,color .2s}
+#home:hover{color:#0F172A;border-color:#0F172A}
+
+.timeline{display:flex;flex-direction:column;gap:0;width:100%}
+.tblock{display:flex;align-items:center;gap:10px;font-size:clamp(13px,1.3vw,16px);font-family:'Fira Code',monospace}
+.tbar{height:32px;border-radius:6px;display:flex;align-items:center;padding:0 12px;color:#fff;font-weight:700;font-size:clamp(11px,1.1vw,14px);white-space:nowrap}
+.tbar.run{background:var(--blue)}
+.tbar.wait{background:#94A3B8;opacity:.5}
+.tbar.run2{background:var(--green)}
+.tbar.run3{background:var(--purple)}
+.tbar.run4{background:var(--orange)}
+.tlbl{min-width:100px;color:var(--muted);font-size:clamp(12px,1.2vw,15px);text-align:right}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- ─── 1. HERO ─────────────────────────────────────────────── -->
+<div class="slide s-hero active">
+  <div class="hero-deco">⚙⚙⚙</div>
+  <div class="hero-pill">Clase 06</div>
+  <h1><span style="color:var(--ac)">Paralelismo</span><br>Real</h1>
+  <p class="sub">multiprocessing · ProcessPoolExecutor · asyncio<br>Usar todos los nucleos de tu CPU</p>
+</div>
+
+<!-- ─── 2. SEC — REPASO ──────────────────────────────────────── -->
+<div class="slide s-sec dk">
+  <div class="tag">Repaso</div>
+  <h2>¿Donde quedamos?</h2>
+  <p class="sub">Threading resuelve I/O bound — pero hay un limite</p>
+</div>
+
+<!-- ─── 3. EL PROBLEMA CON THREADS ──────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">El GIL — el candado de Python</div>
+  <h2>¿Por que threading no escala para CPU?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card or">
+        <h3>El GIL (Global Interpreter Lock)</h3>
+        <p class="t" style="margin-top:8px">Python tiene un candado global que permite que <strong>solo un hilo ejecute bytecode Python a la vez</strong>, aunque haya 8 nucleos disponibles.</p>
+        <ul class="s" style="margin-top:8px">
+          <li>Protege la integridad interna del interprete</li>
+          <li>Es transparente para codigo I/O (la espera libera el GIL)</li>
+          <li>Para calculos puros, <strong>los hilos no ayudan</strong> — compiten por el mismo candado</li>
+        </ul>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>Demostracion: mas hilos, mismo tiempo</h3>
+<pre style="margin-top:8px;font-size:clamp(11px,1.1vw,13px)"><span class="cm"># tarea CPU-intensiva</span>
+<span class="kw">def</span> <span class="fn">calcular</span>(n):
+    <span class="kw">return</span> <span class="fn">sum</span>(i*i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n))
+
+<span class="cm"># Con threads: NO mejora</span>
+<span class="cm"># Todos compiten por el GIL</span>
+<span class="cm"># 4 threads ≈ 1 thread en CPU-bound</span></pre>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card dk">
+        <h3 style="color:#FDE68A">Threads con GIL — CPU-bound</h3>
+        <div class="timeline" style="margin-top:12px">
+          <div class="tblock"><span class="tlbl" style="color:#94A3B8">Hilo 1</span><div class="tbar run" style="width:35%">CPU</div><div class="tbar wait" style="width:20%">GIL</div><div class="tbar run" style="width:25%">CPU</div><div class="tbar wait" style="width:20%">GIL</div></div>
+          <div class="tblock"><span class="tlbl" style="color:#94A3B8">Hilo 2</span><div class="tbar wait" style="width:35%">GIL</div><div class="tbar run" style="width:20%">CPU</div><div class="tbar wait" style="width:25%">GIL</div><div class="tbar run" style="width:20%">CPU</div></div>
+          <div class="tblock"><span class="tlbl" style="color:#94A3B8">Hilo 3</span><div class="tbar wait" style="width:55%">GIL</div><div class="tbar run" style="width:25%">CPU</div><div class="tbar wait" style="width:20%">GIL</div></div>
+        </div>
+        <p class="t" style="margin-top:12px;color:#94A3B8">Solo uno corre a la vez. El total sigue siendo el mismo.</p>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>La solucion: procesos separados</h3>
+        <p class="t" style="margin-top:6px">Cada proceso tiene <strong>su propio interprete Python y su propio GIL</strong>. No compiten entre si. Pueden usar nucleos diferentes realmente al mismo tiempo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 4. THREADING VS MULTIPROCESSING ─────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Comparativa</div>
+  <h2>Threading vs Multiprocessing</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3>threading / ThreadPoolExecutor</h3>
+        <table style="margin-top:8px">
+          <tr><th>Caracteristica</th><th>Valor</th></tr>
+          <tr><td>Memoria</td><td>Compartida entre hilos</td></tr>
+          <tr><td>Creacion</td><td>Rapida (~1ms)</td></tr>
+          <tr><td>GIL</td><td>Afectado (un hilo a la vez)</td></tr>
+          <tr><td>Ideal para</td><td>I/O bound (APIs, red, disco)</td></tr>
+          <tr><td>Nucleos</td><td>Un nucleo real</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>multiprocessing / ProcessPoolExecutor</h3>
+        <table style="margin-top:8px">
+          <tr><th>Caracteristica</th><th>Valor</th></tr>
+          <tr><td>Memoria</td><td>Aislada por proceso</td></tr>
+          <tr><td>Creacion</td><td>Mas lenta (~50-100ms)</td></tr>
+          <tr><td>GIL</td><td>Independiente por proceso</td></tr>
+          <tr><td>Ideal para</td><td>CPU bound (calculos, ML)</td></tr>
+          <tr><td>Nucleos</td><td>Uno por proceso — real paralelo</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="card dk" style="margin-top:18px">
+    <h3 style="color:#FDE68A">Regla de oro</h3>
+    <p class="t" style="color:#CBD5E1">¿Tu programa <strong>espera</strong>? (red, archivo, DB) → <strong>threading</strong>. ¿Tu programa <strong>calcula</strong>? (numeros, imagenes, ML) → <strong>multiprocessing</strong>. El costo de arrancar un proceso solo vale la pena si el trabajo tarda lo suficiente.</p>
+  </div>
+</div>
+
+<!-- ─── 5. SEC — MULTIPROCESSING ────────────────────────────── -->
+<div class="slide s-sec">
+  <div class="tag">Modulo 02</div>
+  <h2>multiprocessing — el modulo</h2>
+  <p class="sub">Crear procesos separados que usan nucleos reales</p>
+</div>
+
+<!-- ─── 6. MULTIPROCESSING BASICO ───────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Basico</div>
+  <h2>Crear procesos con <span style="color:var(--ac)">multiprocessing</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">proceso_simple.py</div>
+<pre><span class="kw">import</span> multiprocessing
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">calcular</span>(nombre, n):
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"{nombre}: calculando..."</span>)
+    resultado = <span class="fn">sum</span>(i*i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n))
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"{nombre}: listo! = {resultado}"</span>)
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    p1 = multiprocessing.<span class="cl">Process</span>(
+        target=<span class="fn">calcular</span>,
+        args=(<span class="str">"A"</span>, <span class="num">5_000_000</span>)
+    )
+    p2 = multiprocessing.<span class="cl">Process</span>(
+        target=<span class="fn">calcular</span>,
+        args=(<span class="str">"B"</span>, <span class="num">5_000_000</span>)
+    )
+
+    p1.<span class="fn">start</span>()
+    p2.<span class="fn">start</span>()
+
+    p1.<span class="fn">join</span>()   <span class="cm"># esperar a que termine</span>
+    p2.<span class="fn">join</span>()</pre>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>Partes clave</h3>
+        <ul class="s" style="margin-top:8px">
+          <li><code>Process(target=fn, args=(...))</code> — define el proceso</li>
+          <li><code>.start()</code> — lanza el proceso (no bloquea)</li>
+          <li><code>.join()</code> — espera a que ese proceso termine</li>
+          <li>Cada proceso corre en un <strong>nucleo diferente</strong> de verdad</li>
+        </ul>
+      </div>
+      <div class="card or" style="margin-top:11px">
+        <h3>if __name__ == "__main__" — OBLIGATORIO</h3>
+        <p class="t" style="margin-top:6px">En Windows y Mac, el modulo <code>multiprocessing</code> importa tu script al crear nuevos procesos. Sin esta guarda, el codigo se ejecutaria recursivamente infinitas veces. <strong>Siempre ponlo.</strong></p>
+      </div>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#6EE7B7">Resultado</h3>
+<pre style="background:transparent;padding:0;color:#CBD5E1;font-size:clamp(12px,1.1vw,14px)">A: calculando...
+B: calculando...
+<span class="cm"># Ambos a la vez en nucleos distintos</span>
+B: listo! = ...
+A: listo! = ...</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 7. PARALELO VISUAL ──────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Paralelismo real</div>
+  <h2>¿Que hace la CPU ahora?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card sl">
+        <h3>Secuencial — un nucleo</h3>
+        <div class="timeline" style="margin-top:12px">
+          <div class="tblock"><span class="tlbl">Nucleo 1</span><div class="tbar run" style="width:50%">Tarea A</div><div class="tbar run2" style="width:50%">Tarea B</div></div>
+          <div class="tblock"><span class="tlbl">Nucleo 2</span><div class="tbar wait" style="width:100%">inactivo</div></div>
+          <div class="tblock"><span class="tlbl">Nucleo 3</span><div class="tbar wait" style="width:100%">inactivo</div></div>
+          <div class="tblock"><span class="tlbl">Nucleo 4</span><div class="tbar wait" style="width:100%">inactivo</div></div>
+        </div>
+        <p class="t" style="margin-top:12px;color:var(--muted)">2 tareas de 2s = <strong>4 segundos</strong>. 3 nucleos dormidos.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>Paralelo — multiples nucleos</h3>
+        <div class="timeline" style="margin-top:12px">
+          <div class="tblock"><span class="tlbl">Nucleo 1</span><div class="tbar run" style="width:100%">Tarea A</div></div>
+          <div class="tblock"><span class="tlbl">Nucleo 2</span><div class="tbar run2" style="width:100%">Tarea B</div></div>
+          <div class="tblock"><span class="tlbl">Nucleo 3</span><div class="tbar run3" style="width:100%">Tarea C</div></div>
+          <div class="tblock"><span class="tlbl">Nucleo 4</span><div class="tbar run4" style="width:100%">Tarea D</div></div>
+        </div>
+        <p class="t" style="margin-top:12px;color:var(--ac)">4 tareas de 2s = <strong>2 segundos</strong>. Ganancia: 4x.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card dk" style="margin-top:18px">
+    <h3 style="color:#6EE7B7">La diferencia con threading</h3>
+    <p class="t" style="color:#CBD5E1">Con threads para CPU-bound, los 4 hilos compiten por un nucleo (GIL). Con procesos, cada uno tiene su nucleo. Son <strong>literalmente simultaneos</strong>.</p>
+  </div>
+</div>
+
+<!-- ─── 8. SEC — PROCESSPOOLEXECUTOR ────────────────────────── -->
+<div class="slide s-sec bl">
+  <div class="tag">Modulo 03</div>
+  <h2>ProcessPoolExecutor</h2>
+  <p class="sub">La misma API que ThreadPoolExecutor — pero con procesos</p>
+</div>
+
+<!-- ─── 9. PROCESSPOOLEXECUTOR BASICO ───────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">API de alto nivel</div>
+  <h2><span style="color:var(--blue)">ProcessPoolExecutor</span> — la forma recomendada</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">pool_procesos.py</div>
+<pre><span class="kw">from</span> concurrent.futures <span class="kw">import</span> (
+    ProcessPoolExecutor, as_completed
+)
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">trabajo_pesado</span>(n):
+    <span class="cm"># Simula calculo intensivo</span>
+    <span class="kw">return</span> <span class="fn">sum</span>(i * i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n))
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    numeros = [<span class="num">5_000_000</span>] * <span class="num">4</span>
+
+    t = time.<span class="fn">time</span>()
+    <span class="kw">with</span> ProcessPoolExecutor() <span class="kw">as</span> pool:
+        resultados = <span class="fn">list</span>(
+            pool.<span class="fn">map</span>(<span class="fn">trabajo_pesado</span>, numeros)
+        )
+    total = time.<span class="fn">time</span>() - t
+
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"Resultados: {resultados}"</span>)
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"Tiempo: {total:.2f}s"</span>)</pre>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>Identico a ThreadPoolExecutor</h3>
+        <p class="t" style="margin-top:8px">Solo cambias <code>Thread</code> por <code>Process</code> en la clase. Misma API: <code>map()</code>, <code>submit()</code>, <code>as_completed()</code>, bloque <code>with</code>.</p>
+      </div>
+      <div class="card bl" style="margin-top:11px">
+        <h3>max_workers por defecto</h3>
+        <p class="t" style="margin-top:6px">Si no especificas <code>max_workers</code>, usa <strong>todos los nucleos de tu CPU</strong>. Puedes verlo con:</p>
+<pre style="margin-top:8px"><span class="kw">import</span> os
+<span class="fn">print</span>(os.<span class="fn">cpu_count</span>())  <span class="cm"># ej: 8</span></pre>
+      </div>
+      <div class="card or" style="margin-top:11px">
+        <h3>Ojo: datos serializables</h3>
+        <p class="t" style="margin-top:6px">Los datos viajan entre procesos via <strong>pickle</strong>. Lo que le pases a la funcion (y lo que retorne) debe poder serializarse: numeros, strings, listas, dicts. <strong>Lambdas y closures no funcionan.</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 10. SUBMIT CON PROCESOS ─────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">submit + as_completed</div>
+  <h2>Mas control con <span style="color:var(--blue)">submit()</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">submit_procesos.py</div>
+<pre><span class="kw">from</span> concurrent.futures <span class="kw">import</span> (
+    ProcessPoolExecutor, as_completed
+)
+
+<span class="kw">def</span> <span class="fn">calcular_primo</span>(n):
+    <span class="cm">"""Cuenta primos hasta n (CPU-intensivo)"""</span>
+    <span class="kw">def</span> <span class="fn">es_primo</span>(x):
+        <span class="kw">if</span> x < <span class="num">2</span>: <span class="kw">return</span> <span class="kw">False</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, <span class="fn">int</span>(x**<span class="num">0.5</span>)+<span class="num">1</span>):
+            <span class="kw">if</span> x % i == <span class="num">0</span>: <span class="kw">return</span> <span class="kw">False</span>
+        <span class="kw">return</span> <span class="kw">True</span>
+    <span class="kw">return</span> n, <span class="fn">sum</span>(<span class="num">1</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, n) <span class="kw">if</span> <span class="fn">es_primo</span>(x))
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    limites = [<span class="num">100_000</span>, <span class="num">200_000</span>, <span class="num">300_000</span>, <span class="num">400_000</span>]
+    <span class="kw">with</span> ProcessPoolExecutor() <span class="kw">as</span> pool:
+        futuros = {pool.<span class="fn">submit</span>(<span class="fn">calcular_primo</span>, n): n
+                   <span class="kw">for</span> n <span class="kw">in</span> limites}
+        <span class="kw">for</span> f <span class="kw">in</span> <span class="fn">as_completed</span>(futuros):
+            n, cantidad = f.<span class="fn">result</span>()
+            <span class="fn">print</span>(<span class="kw">f</span><span class="str">"Hasta {n}: {cantidad} primos"</span>)</pre>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Mismo patron que con threads</h3>
+        <ul class="s" style="margin-top:8px">
+          <li><code>submit(fn, arg)</code> lanza el calculo en un proceso</li>
+          <li><code>as_completed()</code> itera segun terminan</li>
+          <li>El resultado viaja de vuelta via pickle</li>
+          <li>El proceso hijo desaparece al terminar</li>
+        </ul>
+      </div>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#FDE68A">Resultado esperado</h3>
+<pre style="background:transparent;padding:0;color:#CBD5E1;font-size:clamp(12px,1.1vw,14px)"><span style="color:#6EE7B7">Hasta 100000: 9592 primos</span>
+<span style="color:#6EE7B7">Hasta 200000: 17984 primos</span>
+<span style="color:#6EE7B7">Hasta 300000: 25445 primos</span>
+<span style="color:#6EE7B7">Hasta 400000: 33860 primos</span>
+<span style="color:#94A3B8"># Orden puede variar (as_completed)</span></pre>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>¿Por que no lambda?</h3>
+        <p class="t" style="margin-top:6px">Las lambdas no son picklables. La funcion pasada a <code>submit()</code> debe ser definida en el nivel top del modulo, no dentro de otra funcion.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 11. THREAD VS PROCESS BENCHMARK ─────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Benchmark real</div>
+  <h2>Threads vs Procesos — midiendo la diferencia</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">benchmark.py</div>
+<pre style="font-size:clamp(11px,1.1vw,13px)"><span class="kw">import</span> time
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> (
+    ThreadPoolExecutor,
+    ProcessPoolExecutor
+)
+
+<span class="kw">def</span> <span class="fn">cpu_trabajo</span>(n):
+    <span class="kw">return</span> <span class="fn">sum</span>(i * i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n))
+
+N = [<span class="num">3_000_000</span>] * <span class="num">4</span>
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    <span class="cm"># Secuencial</span>
+    t1 = time.<span class="fn">time</span>()
+    [<span class="fn">cpu_trabajo</span>(n) <span class="kw">for</span> n <span class="kw">in</span> N]
+    t_sec = time.<span class="fn">time</span>() - t1
+
+    <span class="cm"># Con threads (GIL limita)</span>
+    t2 = time.<span class="fn">time</span>()
+    <span class="kw">with</span> ThreadPoolExecutor(<span class="num">4</span>) <span class="kw">as</span> p:
+        <span class="fn">list</span>(p.<span class="fn">map</span>(<span class="fn">cpu_trabajo</span>, N))
+    t_thr = time.<span class="fn">time</span>() - t2
+
+    <span class="cm"># Con procesos (paralelo real)</span>
+    t3 = time.<span class="fn">time</span>()
+    <span class="kw">with</span> ProcessPoolExecutor(<span class="num">4</span>) <span class="kw">as</span> p:
+        <span class="fn">list</span>(p.<span class="fn">map</span>(<span class="fn">cpu_trabajo</span>, N))
+    t_proc = time.<span class="fn">time</span>() - t3
+
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"Secuencial: {t_sec:.2f}s"</span>)
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"Threads:    {t_thr:.2f}s"</span>)
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"Procesos:   {t_proc:.2f}s"</span>)</pre>
+    </div>
+    <div class="col">
+      <div class="card dk">
+        <h3 style="color:#FDE68A">Resultado tipico (4 nucleos)</h3>
+<pre style="margin-top:8px;background:transparent;padding:0;color:#CBD5E1;font-size:clamp(13px,1.3vw,16px)">Secuencial: 4.20s
+Threads:    4.18s  <span style="color:#FCA5A5">← igual</span>
+Procesos:   1.12s  <span style="color:#6EE7B7">← 3.7x mas rapido</span></pre>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>La conclusion es clara</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Threads no ayudan en CPU-bound — el GIL los bloquea</li>
+          <li>Procesos usan todos los nucleos — mejora real proporcional</li>
+          <li>La mejora es cercana a <code>N × velocidad_1_nucleo / N</code></li>
+        </ul>
+      </div>
+      <div class="card or" style="margin-top:11px">
+        <h3>¿Por que no exactamente 4x?</h3>
+        <p class="t" style="margin-top:6px">Hay <strong>overhead</strong> al crear procesos, serializar datos y comunicar resultados. Para tareas muy cortas, ese costo puede superar el beneficio.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 12. SEC — COMUNICACION ──────────────────────────────── -->
+<div class="slide s-sec pu">
+  <div class="tag">Modulo 04</div>
+  <h2>Comunicacion entre procesos</h2>
+  <p class="sub">Los procesos no comparten memoria — hay que pasarse mensajes</p>
+</div>
+
+<!-- ─── 13. EL PROBLEMA DE LA MEMORIA ───────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Memoria aislada</div>
+  <h2>¿Por que los procesos no comparten variables?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card or">
+        <h3>La trampa clasica</h3>
+        <p class="t" style="margin-top:8px">Esto <strong>no funciona</strong> como esperas:</p>
+<pre style="margin-top:10px;font-size:clamp(11px,1.1vw,13px)"><span class="kw">from</span> multiprocessing <span class="kw">import</span> Process
+
+contador = <span class="num">0</span>
+
+<span class="kw">def</span> <span class="fn">incrementar</span>():
+    <span class="kw">global</span> contador
+    contador += <span class="num">1</span>  <span class="cm"># modifica UNA COPIA</span>
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    p = Process(target=<span class="fn">incrementar</span>)
+    p.<span class="fn">start</span>()
+    p.<span class="fn">join</span>()
+    <span class="fn">print</span>(contador)  <span class="cm"># imprime 0, no 1</span></pre>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>¿Por que?</h3>
+        <p class="t" style="margin-top:6px">Al crear el proceso hijo, Python <strong>copia toda la memoria</strong> del padre. Cada proceso trabaja con su propia copia. Los cambios en el hijo <strong>no se ven en el padre</strong>.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>Memoria de procesos — aislada</h3>
+<pre style="margin-top:8px;background:transparent;padding:0;color:var(--text);font-size:clamp(12px,1.2vw,14px)">Proceso padre:
+┌─────────────────────┐
+│  contador = 0       │ ← no cambia
+└─────────────────────┘
+         |
+         | fork (copia)
+         ↓
+Proceso hijo:
+┌─────────────────────┐
+│  contador = 0       │
+│  contador = 1       │ ← su copia local
+└─────────────────────┘
+         |
+         | (proceso termina, copia desaparece)</pre>
+      </div>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#C4B5FD">La solucion</h3>
+        <p class="t" style="margin-top:6px;color:#CBD5E1">Para compartir datos entre procesos se usan mecanismos explícitos: <strong>Queue</strong> (cola de mensajes), <strong>Pipe</strong> (canal bidireccional) o <strong>Value/Array</strong> (memoria compartida con sincronizacion).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 14. QUEUE ────────────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Queue</div>
+  <h2>Comunicar procesos con <span style="color:var(--purple)">Queue</span></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">queue_ejemplo.py</div>
+<pre style="font-size:clamp(11px,1.1vw,13px)"><span class="kw">from</span> multiprocessing <span class="kw">import</span> Process, Queue
+
+<span class="kw">def</span> <span class="fn">calcular_y_enviar</span>(n, cola):
+    resultado = <span class="fn">sum</span>(i*i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n))
+    cola.<span class="fn">put</span>((n, resultado))  <span class="cm"># envia el resultado</span>
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    cola = Queue()
+
+    procesos = [
+        Process(target=<span class="fn">calcular_y_enviar</span>,
+                args=(n, cola))
+        <span class="kw">for</span> n <span class="kw">in</span> [<span class="num">1_000_000</span>, <span class="num">2_000_000</span>, <span class="num">3_000_000</span>]
+    ]
+
+    <span class="kw">for</span> p <span class="kw">in</span> procesos: p.<span class="fn">start</span>()
+    <span class="kw">for</span> p <span class="kw">in</span> procesos: p.<span class="fn">join</span>()
+
+    <span class="cm"># Recoger resultados de la cola</span>
+    <span class="kw">while not</span> cola.<span class="fn">empty</span>():
+        n, res = cola.<span class="fn">get</span>()
+        <span class="fn">print</span>(<span class="kw">f</span><span class="str">"n={n}: {res}"</span>)</pre>
+    </div>
+    <div class="col">
+      <div class="card pu">
+        <h3>¿Como funciona la Queue?</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Es como un <strong>tubo entre procesos</strong></li>
+          <li><code>cola.put(valor)</code> — el hijo manda un dato</li>
+          <li><code>cola.get()</code> — el padre lo recibe</li>
+          <li>Es <strong>thread-safe y process-safe</strong></li>
+          <li>Los datos se serializan automaticamente</li>
+        </ul>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>Alternativa simple: ProcessPoolExecutor</h3>
+        <p class="t" style="margin-top:6px">Con <code>ProcessPoolExecutor.map()</code> no necesitas Queue — los resultados se recogen automaticamente. Usa Queue solo cuando necesitas <strong>comunicacion mas compleja</strong> entre procesos.</p>
+      </div>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#C4B5FD">Recomendacion practica</h3>
+        <p class="t" style="margin-top:6px;color:#CBD5E1">Para la mayoria de casos usa <code>ProcessPoolExecutor</code>. Recurre a <code>Queue</code> solo si los procesos necesitan comunicarse <strong>durante</strong> su ejecucion, no solo al final.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 15. SEC — ASYNCIO ────────────────────────────────────── -->
+<div class="slide s-sec or">
+  <div class="tag">Modulo 05 — Bonus</div>
+  <h2>asyncio — la tercera via</h2>
+  <p class="sub">Concurrencia cooperativa sin hilos ni procesos</p>
+</div>
+
+<!-- ─── 16. QUE ES ASYNCIO ──────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">asyncio</div>
+  <h2>Concurrencia <span style="color:var(--orange)">cooperativa</span> — un solo hilo</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card or">
+        <h3>La idea</h3>
+        <p class="t" style="margin-top:8px">Con <code>asyncio</code> hay un <strong>bucle de eventos</strong> en un solo hilo. Las tareas se turnan voluntariamente: cuando una dice "voy a esperar", el bucle avanza con otra.</p>
+        <ul class="s" style="margin-top:8px">
+          <li>Sin GIL porque es un solo hilo</li>
+          <li>Sin overhead de crear procesos o hilos</li>
+          <li>Pero requiere que todo el codigo sea <strong>async-aware</strong></li>
+        </ul>
+      </div>
+      <div class="card sl" style="margin-top:11px">
+        <h3>Cuándo usar asyncio</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>I/O bound con <strong>muchisimas conexiones</strong> simultaneas (miles)</li>
+          <li>Servidores web de alto rendimiento</li>
+          <li>Cuando las librerias que usas ya son async (httpx, aiohttp)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="lbl py">asyncio_ejemplo.py</div>
+<pre style="font-size:clamp(11px,1.1vw,13px)"><span class="kw">import</span> asyncio
+<span class="kw">import</span> httpx  <span class="cm"># pip install httpx</span>
+
+<span class="kw">async def</span> <span class="fn">descargar</span>(url):
+    <span class="kw">async with</span> httpx.<span class="cl">AsyncClient</span>() <span class="kw">as</span> c:
+        resp = <span class="kw">await</span> c.<span class="fn">get</span>(url)
+        <span class="kw">return</span> resp.json()[<span class="str">"title"</span>]
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    base = <span class="str">"https://jsonplaceholder.typicode.com"</span>
+    urls = [<span class="kw">f</span><span class="str">"{base}/posts/{i}"</span>
+            <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">6</span>)]
+
+    tareas = [<span class="fn">descargar</span>(u) <span class="kw">for</span> u <span class="kw">in</span> urls]
+    resultados = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*tareas)
+
+    <span class="kw">for</span> r <span class="kw">in</span> resultados:
+        <span class="fn">print</span>(r)
+
+asyncio.<span class="fn">run</span>(<span class="fn">main</span>())</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 17. ASYNC KEYWORDS ──────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">asyncio — vocabulario</div>
+  <h2>Las palabras clave de <span style="color:var(--orange)">asyncio</span></h2>
+  <div class="g3">
+    <div class="col">
+      <div class="card or">
+        <h3><code>async def</code></h3>
+        <p class="t" style="margin-top:8px">Define una <strong>corrutina</strong> — una funcion que puede pausarse y reanudarse. No se ejecuta al llamarla; devuelve un objeto corrutina.</p>
+<pre style="margin-top:8px;font-size:clamp(11px,1.1vw,13px)"><span class="kw">async def</span> <span class="fn">mi_func</span>():
+    <span class="fn">print</span>(<span class="str">"hola"</span>)
+
+<span class="cm"># Esto NO imprime nada:</span>
+<span class="fn">mi_func</span>()
+<span class="cm"># Necesitas await o run()</span></pre>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card bl">
+        <h3><code>await</code></h3>
+        <p class="t" style="margin-top:8px">Pausa la corrutina actual y <strong>le cede el control</strong> al bucle de eventos hasta que la operacion termine.</p>
+<pre style="margin-top:8px;font-size:clamp(11px,1.1vw,13px)"><span class="kw">async def</span> <span class="fn">tarea</span>():
+    <span class="cm"># Pausa y espera</span>
+    <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(<span class="num">1</span>)
+    <span class="cm"># Reanuda despues</span>
+    <span class="fn">print</span>(<span class="str">"listo"</span>)</pre>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3><code>asyncio.gather()</code></h3>
+        <p class="t" style="margin-top:8px">Lanza <strong>multiples corrutinas al mismo tiempo</strong> y espera a que todas terminen. Es el equivalente de <code>pool.map()</code>.</p>
+<pre style="margin-top:8px;font-size:clamp(11px,1.1vw,13px)"><span class="kw">await</span> asyncio.<span class="fn">gather</span>(
+    <span class="fn">tarea1</span>(),
+    <span class="fn">tarea2</span>(),
+    <span class="fn">tarea3</span>(),
+) <span class="cm"># las tres a la vez</span></pre>
+      </div>
+    </div>
+  </div>
+  <div class="card dk" style="margin-top:18px">
+    <h3 style="color:#FDBA74">La gran diferencia</h3>
+    <p class="t" style="color:#CBD5E1">Con threads el SO decide cuando cambiar de tarea (preemptivo). Con asyncio <strong>tu codigo decide</strong> cuando ceder con <code>await</code> (cooperativo). Si una corrutina no hace <code>await</code>, bloquea todo.</p>
+  </div>
+</div>
+
+<!-- ─── 18. LOS TRES MODELOS ─────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Los tres modelos</div>
+  <h2>Threading · Multiprocessing · asyncio</h2>
+  <div class="g3">
+    <div class="col">
+      <div class="card bl">
+        <h3>threading</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>I/O bound</li>
+          <li>Facil de usar</li>
+          <li>Memoria compartida</li>
+          <li>GIL limita CPU-bound</li>
+          <li>Libreria: <code>requests</code></li>
+        </ul>
+        <p class="t" style="margin-top:10px;color:var(--blue)"><strong>Usa cuando:</strong> pocas tareas I/O, codigo existente</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>multiprocessing</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>CPU bound</li>
+          <li>Paralelo real</li>
+          <li>Memoria aislada</li>
+          <li>Overhead de arranque</li>
+          <li>No lambdas</li>
+        </ul>
+        <p class="t" style="margin-top:10px;color:var(--ac)"><strong>Usa cuando:</strong> calculos pesados, ML, imagenes</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card or">
+        <h3>asyncio</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>I/O bound</li>
+          <li>Muy escalable</li>
+          <li>Un solo hilo</li>
+          <li>Requiere <code>async/await</code></li>
+          <li>Libreria: <code>httpx</code>, <code>aiohttp</code></li>
+        </ul>
+        <p class="t" style="margin-top:10px;color:var(--orange)"><strong>Usa cuando:</strong> miles de conexiones, servidores</p>
+      </div>
+    </div>
+  </div>
+  <div class="card dk" style="margin-top:18px">
+    <h3 style="color:#FDE68A">Para el dia a dia</h3>
+    <p class="t" style="color:#CBD5E1"><strong>ThreadPoolExecutor</strong> para APIs y I/O. <strong>ProcessPoolExecutor</strong> para calculos pesados. <strong>asyncio</strong> si construyes una aplicacion que necesita manejar muchas conexiones simultaneas (un servidor, un bot, etc.).</p>
+  </div>
+</div>
+
+<!-- ─── 19. SEC — CUANDO NO USAR ────────────────────────────── -->
+<div class="slide s-sec dk">
+  <div class="tag">Modulo 06</div>
+  <h2>Cuando NO usar paralelismo</h2>
+  <p class="sub">Mas complejidad no siempre significa mas velocidad</p>
+</div>
+
+<!-- ─── 20. COSTO DE ARRANQUE ───────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">El overhead</div>
+  <h2>El costo de crear procesos</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card re">
+        <h3>Crear un proceso no es gratis</h3>
+        <p class="t" style="margin-top:8px">Cada proceso nuevo requiere:</p>
+        <ul class="s" style="margin-top:8px">
+          <li>Inicializar un nuevo interprete Python</li>
+          <li>Copiar la memoria del proceso padre</li>
+          <li>Importar los modulos necesarios</li>
+          <li>Serializar los datos a enviar (pickle)</li>
+        </ul>
+        <p class="t" style="margin-top:10px">Esto toma entre <strong>50ms y 200ms</strong> por proceso. Si tu tarea tarda 10ms, el overhead es mayor que el trabajo.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card dk">
+        <h3 style="color:#FDE68A">Regla practica</h3>
+        <table style="margin-top:8px">
+          <tr><th>Duracion de la tarea</th><th>¿Usar procesos?</th></tr>
+          <tr><td style="color:#E2E8F0">&lt; 100ms por tarea</td><td style="color:#FCA5A5">Probablemente no</td></tr>
+          <tr><td style="color:#E2E8F0">100ms – 1s por tarea</td><td style="color:#FDE68A">Depende — mide</td></tr>
+          <tr><td style="color:#E2E8F0">&gt; 1s por tarea</td><td style="color:#6EE7B7">Si, vale la pena</td></tr>
+        </table>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>Mide siempre antes de optimizar</h3>
+        <p class="t" style="margin-top:6px">La optimizacion prematura es la raiz de muchos problemas. <strong>Primero haz que funcione</strong>, luego mide con <code>time.time()</code>, y solo entonces optimiza si el tiempo importa.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 21. ERRORES COMUNES ──────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Errores comunes</div>
+  <h2>Lo que falla tipicamente</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card re">
+        <h3>1. Olvidar <code>if __name__ == "__main__"</code></h3>
+<pre style="margin-top:8px;font-size:clamp(11px,1.1vw,13px)"><span class="cm"># MAL — crash en Windows/Mac</span>
+p = Process(target=<span class="fn">mi_fn</span>)
+p.<span class="fn">start</span>()
+
+<span class="cm"># BIEN</span>
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    p = Process(target=<span class="fn">mi_fn</span>)
+    p.<span class="fn">start</span>()</pre>
+      </div>
+      <div class="card or" style="margin-top:11px">
+        <h3>2. Pasar objetos no serializables</h3>
+<pre style="margin-top:8px;font-size:clamp(11px,1.1vw,13px)"><span class="cm"># MAL — lambda no es picklable</span>
+<span class="kw">with</span> ProcessPoolExecutor() <span class="kw">as</span> p:
+    p.<span class="fn">map</span>(<span class="kw">lambda</span> x: x*<span class="num">2</span>, datos)
+
+<span class="cm"># BIEN — funcion definida arriba</span>
+<span class="kw">def</span> <span class="fn">duplicar</span>(x): <span class="kw">return</span> x * <span class="num">2</span>
+<span class="kw">with</span> ProcessPoolExecutor() <span class="kw">as</span> p:
+    p.<span class="fn">map</span>(<span class="fn">duplicar</span>, datos)</pre>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>3. Crear demasiados procesos</h3>
+        <p class="t" style="margin-top:8px">No hagas <code>max_workers=100</code> para 100 tareas. Cada proceso usa RAM y compite por nucleos. El optimo suele ser igual a tu numero de nucleos (<code>os.cpu_count()</code>).</p>
+      </div>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#FCA5A5">4. Usar multiprocessing para I/O</h3>
+        <p class="t" style="margin-top:6px;color:#CBD5E1">Multiprocessing para descargar 100 URLs: funciona, pero crea 100 procesos pesados cuando <code>ThreadPoolExecutor</code> con 10 threads es mucho mas eficiente. Herramienta equivocada = resultado peor.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 22. SEC — EJERCICIOS ────────────────────────────────── -->
+<div class="slide s-sec">
+  <div class="tag">Practica</div>
+  <h2>Ejercicios</h2>
+  <p class="sub">Aplicar paralelismo a calculos reales</p>
+</div>
+
+<!-- ─── 23. EJERCICIO 1 ─────────────────────────────────────── -->
+<div class="slide s-e">
+  <div class="tag">Ejercicio 1</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Secuencial vs Paralelo — calculos pesados</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card or">
+        <h3>Instrucciones</h3>
+        <ol class="s" style="margin-top:8px">
+          <li>Crea una funcion <code>contar_primos(limite)</code> que cuente cuantos numeros primos hay hasta <code>limite</code></li>
+          <li>Crea una lista de 4 limites: <code>[500_000, 600_000, 700_000, 800_000]</code></li>
+          <li>Ejecuta la funcion <strong>secuencialmente</strong> con un for y mide el tiempo</li>
+          <li>Ejecuta la misma funcion con <strong>ProcessPoolExecutor</strong> y mide el tiempo</li>
+          <li>Imprime ambos tiempos y el speedup</li>
+        </ol>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Estructura base</h3>
+<pre style="margin-top:8px;font-size:clamp(11px,1.1vw,13px)"><span class="kw">def</span> <span class="fn">es_primo</span>(n):
+    <span class="kw">if</span> n < <span class="num">2</span>: <span class="kw">return</span> <span class="kw">False</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, <span class="fn">int</span>(n**<span class="num">0.5</span>)+<span class="num">1</span>):
+        <span class="kw">if</span> n % i == <span class="num">0</span>: <span class="kw">return</span> <span class="kw">False</span>
+    <span class="kw">return</span> <span class="kw">True</span>
+
+<span class="kw">def</span> <span class="fn">contar_primos</span>(limite):
+    <span class="kw">return</span> <span class="fn">sum</span>(<span class="num">1</span> <span class="kw">for</span> n <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, limite)
+               <span class="kw">if</span> <span class="fn">es_primo</span>(n))</pre>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>Resultado esperado</h3>
+<pre style="margin-top:8px;background:transparent;padding:0;color:var(--text);font-size:clamp(12px,1.2vw,15px)">Secuencial: 8.40s
+Paralelo:   2.30s
+Speedup: 3.7x mas rapido</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 24. SOLUCION 1 ──────────────────────────────────────── -->
+<div class="slide s-sol">
+  <div class="tag">Ejercicio 1</div>
+  <div class="bdg gr">Solucion</div>
+  <h2>Secuencial vs Paralelo</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">ejercicio1.py</div>
+<pre style="font-size:clamp(11px,1.1vw,13px)"><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ProcessPoolExecutor
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">es_primo</span>(n):
+    <span class="kw">if</span> n < <span class="num">2</span>: <span class="kw">return</span> <span class="kw">False</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, <span class="fn">int</span>(n**<span class="num">0.5</span>)+<span class="num">1</span>):
+        <span class="kw">if</span> n % i == <span class="num">0</span>: <span class="kw">return</span> <span class="kw">False</span>
+    <span class="kw">return</span> <span class="kw">True</span>
+
+<span class="kw">def</span> <span class="fn">contar_primos</span>(limite):
+    <span class="kw">return</span> <span class="fn">sum</span>(<span class="num">1</span> <span class="kw">for</span> n <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, limite)
+               <span class="kw">if</span> <span class="fn">es_primo</span>(n))
+
+limites = [<span class="num">500_000</span>, <span class="num">600_000</span>, <span class="num">700_000</span>, <span class="num">800_000</span>]
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    t1 = time.<span class="fn">time</span>()
+    [<span class="fn">contar_primos</span>(n) <span class="kw">for</span> n <span class="kw">in</span> limites]
+    sec = time.<span class="fn">time</span>() - t1
+
+    t2 = time.<span class="fn">time</span>()
+    <span class="kw">with</span> ProcessPoolExecutor() <span class="kw">as</span> pool:
+        <span class="fn">list</span>(pool.<span class="fn">map</span>(<span class="fn">contar_primos</span>, limites))
+    par = time.<span class="fn">time</span>() - t2
+
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"Secuencial: {sec:.2f}s"</span>)
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"Paralelo:   {par:.2f}s"</span>)
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"Speedup: {sec/par:.1f}x"</span>)</pre>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Lo que aprendemos</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>El cambio es minimo: <code>for</code> → <code>pool.map()</code></li>
+          <li>Las funciones auxiliares (<code>es_primo</code>) <strong>deben estar en el nivel top</strong></li>
+          <li>El <code>if __name__</code> es necesario</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>¿Por que no es 4x exacto?</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Overhead de crear los 4 procesos</li>
+          <li>Pickle para serializar los argumentos</li>
+          <li>Coordinacion del pool</li>
+          <li>Competencia en la cache del CPU</li>
+        </ul>
+      </div>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#6EE7B7">Clave</h3>
+        <p class="t" style="margin-top:6px;color:#CBD5E1">El speedup real depende de cuantos nucleos tiene tu maquina. En una maquina con 8 nucleos, el beneficio puede ser mayor si el pool usa todos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 25. EJERCICIO 2 ─────────────────────────────────────── -->
+<div class="slide s-e">
+  <div class="tag">Ejercicio 2</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>Elegir la herramienta correcta</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card or">
+        <h3>El escenario</h3>
+        <p class="t" style="margin-top:8px">Tienes dos tareas independientes que queres hacer "al mismo tiempo":</p>
+        <ol class="s" style="margin-top:10px">
+          <li><strong>Tarea A</strong> — Descargar 10 posts de la API de JSONPlaceholder (I/O bound)</li>
+          <li><strong>Tarea B</strong> — Contar primos hasta 300_000 (CPU bound)</li>
+        </ol>
+        <p class="t" style="margin-top:10px">El objetivo: hacer ambas tareas de forma concurrente/paralela y medir cuanto tiempo ahorramos vs hacerlas en secuencia.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Instrucciones</h3>
+        <ol class="s" style="margin-top:8px">
+          <li>Implementa la Tarea A con <code>ThreadPoolExecutor</code></li>
+          <li>Implementa la Tarea B con <code>ProcessPoolExecutor</code></li>
+          <li>Ejecuta ambas tareas <strong>una por una</strong> y mide el tiempo total</li>
+          <li>Ahora ejecuta ambas tareas usando <code>ThreadPoolExecutor</code> (para ambas) y mide</li>
+          <li>Compara los tiempos y razona: ¿fue la combinacion mejor?</li>
+        </ol>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <h3>Pista</h3>
+        <p class="t" style="margin-top:6px">Para lanzar la Tarea A y la Tarea B al mismo tiempo puedes usar <code>ThreadPoolExecutor</code> para ambas y correr cada una en un hilo separado — la Tarea B aun podria beneficiarse de liberar el GIL durante la espera I/O de A.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 26. SOLUCION 2 ──────────────────────────────────────── -->
+<div class="slide s-sol">
+  <div class="tag">Ejercicio 2</div>
+  <div class="bdg gr">Solucion</div>
+  <h2>Combinando threading y multiprocessing</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">ejercicio2.py</div>
+<pre style="font-size:clamp(10px,1vw,12px)"><span class="kw">import</span> requests, time
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> (
+    ThreadPoolExecutor, ProcessPoolExecutor, as_completed
+)
+
+<span class="kw">def</span> <span class="fn">descargar_post</span>(i):
+    base = <span class="str">"https://jsonplaceholder.typicode.com"</span>
+    <span class="kw">return</span> requests.<span class="fn">get</span>(<span class="kw">f</span><span class="str">"{base}/posts/{i}"</span>).<span class="fn">json</span>()[<span class="str">"title"</span>]
+
+<span class="kw">def</span> <span class="fn">es_primo</span>(n):
+    <span class="kw">if</span> n < <span class="num">2</span>: <span class="kw">return</span> <span class="kw">False</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, <span class="fn">int</span>(n**<span class="num">0.5</span>)+<span class="num">1</span>):
+        <span class="kw">if</span> n % i == <span class="num">0</span>: <span class="kw">return</span> <span class="kw">False</span>
+    <span class="kw">return</span> <span class="kw">True</span>
+
+<span class="kw">def</span> <span class="fn">contar_primos</span>(limite):
+    <span class="kw">return</span> <span class="fn">sum</span>(<span class="num">1</span> <span class="kw">for</span> n <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, limite) <span class="kw">if</span> <span class="fn">es_primo</span>(n))
+
+<span class="kw">def</span> <span class="fn">tarea_io</span>():
+    ids = <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>)
+    <span class="kw">with</span> ThreadPoolExecutor(<span class="num">10</span>) <span class="kw">as</span> p:
+        <span class="kw">return</span> <span class="fn">list</span>(p.<span class="fn">map</span>(<span class="fn">descargar_post</span>, ids))
+
+<span class="kw">def</span> <span class="fn">tarea_cpu</span>():
+    <span class="kw">with</span> ProcessPoolExecutor() <span class="kw">as</span> p:
+        <span class="kw">return</span> <span class="fn">list</span>(p.<span class="fn">map</span>(<span class="fn">contar_primos</span>,
+                         [<span class="num">300_000</span>]*<span class="num">4</span>))
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    t1 = time.<span class="fn">time</span>()
+    <span class="fn">tarea_io</span>()
+    <span class="fn">tarea_cpu</span>()
+    sec = time.<span class="fn">time</span>() - t1
+
+    t2 = time.<span class="fn">time</span>()
+    <span class="kw">with</span> ThreadPoolExecutor(<span class="num">2</span>) <span class="kw">as</span> outer:
+        f1 = outer.<span class="fn">submit</span>(<span class="fn">tarea_io</span>)
+        f2 = outer.<span class="fn">submit</span>(<span class="fn">tarea_cpu</span>)
+        f1.<span class="fn">result</span>(); f2.<span class="fn">result</span>()
+    con = time.<span class="fn">time</span>() - t2
+
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"Secuencial: {sec:.2f}s"</span>)
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"Concurrente: {con:.2f}s"</span>)</pre>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>La idea clave</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Usamos un <code>ThreadPoolExecutor</code> externo solo para lanzar ambas tareas al mismo tiempo</li>
+          <li>Dentro de <code>tarea_io()</code>, el threading real maneja la red</li>
+          <li>Dentro de <code>tarea_cpu()</code>, multiprocessing maneja el CPU</li>
+          <li>Ambas tareas corren <strong>solapadas en el tiempo</strong></li>
+        </ul>
+      </div>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#FDE68A">Lo que esto demuestra</h3>
+        <p class="t" style="margin-top:6px;color:#CBD5E1">Puedes mezclar modelos. Un hilo puede lanzar procesos. Un proceso puede lanzar threads. El limite es no crear demasiados de cada uno y entender que herramienta resuelve que problema.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 27. EJERCICIO 3 ─────────────────────────────────────── -->
+<div class="slide s-e">
+  <div class="tag">Ejercicio 3 — Bonus</div>
+  <div class="bdg or">Enunciado</div>
+  <h2>asyncio — descargar con await</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card or">
+        <h3>Instrucciones</h3>
+        <ol class="s" style="margin-top:8px">
+          <li>Instala <code>httpx</code> en tu venv: <code>pip install httpx</code></li>
+          <li>Crea una funcion <code>async def descargar(url)</code> que use <code>httpx.AsyncClient</code> para hacer un GET</li>
+          <li>En la funcion <code>main</code>, crea 10 URLs de <code>jsonplaceholder.typicode.com/posts/1</code> hasta <code>/posts/10</code></li>
+          <li>Usa <code>asyncio.gather()</code> para descargarlas todas a la vez</li>
+          <li>Imprime el titulo de cada post</li>
+        </ol>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Estructura base</h3>
+<pre style="margin-top:8px;font-size:clamp(11px,1.1vw,13px)"><span class="kw">import</span> asyncio
+<span class="kw">import</span> httpx
+
+<span class="kw">async def</span> <span class="fn">descargar</span>(url):
+    <span class="cm"># tu codigo aqui</span>
+    ...
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    urls = [...]
+    resultados = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(
+        *[<span class="fn">descargar</span>(u) <span class="kw">for</span> u <span class="kw">in</span> urls]
+    )
+    <span class="kw">for</span> r <span class="kw">in</span> resultados:
+        <span class="fn">print</span>(r)
+
+asyncio.<span class="fn">run</span>(<span class="fn">main</span>())</pre>
+      </div>
+      <div class="card bl" style="margin-top:11px">
+        <h3>Nota</h3>
+        <p class="t" style="margin-top:6px">El cliente <code>httpx.AsyncClient</code> debe crearse dentro de un bloque <code>async with</code>. Puede estar dentro de <code>descargar()</code> o pasarse como parametro desde <code>main()</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 28. SOLUCION 3 ──────────────────────────────────────── -->
+<div class="slide s-sol">
+  <div class="tag">Ejercicio 3 — Bonus</div>
+  <div class="bdg gr">Solucion</div>
+  <h2>asyncio con httpx</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">ejercicio3.py</div>
+<pre style="font-size:clamp(11px,1.1vw,13px)"><span class="kw">import</span> asyncio
+<span class="kw">import</span> httpx
+
+BASE = <span class="str">"https://jsonplaceholder.typicode.com"</span>
+
+<span class="kw">async def</span> <span class="fn">descargar</span>(client, url):
+    resp = <span class="kw">await</span> client.<span class="fn">get</span>(url)
+    <span class="kw">return</span> resp.<span class="fn">json</span>()[<span class="str">"title"</span>]
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    urls = [<span class="kw">f</span><span class="str">"{BASE}/posts/{i}"</span>
+            <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>)]
+
+    <span class="cm"># Un solo cliente, multiples requests</span>
+    <span class="kw">async with</span> httpx.<span class="cl">AsyncClient</span>() <span class="kw">as</span> client:
+        tareas = [<span class="fn">descargar</span>(client, u) <span class="kw">for</span> u <span class="kw">in</span> urls]
+        titulos = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*tareas)
+
+    <span class="kw">for</span> titulo <span class="kw">in</span> titulos:
+        <span class="fn">print</span>(titulo)
+
+asyncio.<span class="fn">run</span>(<span class="fn">main</span>())</pre>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>¿Que hace cada parte?</h3>
+        <ul class="s" style="margin-top:8px">
+          <li><code>async with httpx.AsyncClient()</code> — cliente reutilizable que no bloquea</li>
+          <li><code>await client.get(url)</code> — pausa la corrutina, el loop sigue con otra</li>
+          <li><code>asyncio.gather(*tareas)</code> — lanza todas las corrutinas a la vez</li>
+          <li>El cliente se comparte entre todas las tareas — mas eficiente</li>
+        </ul>
+      </div>
+      <div class="card or" style="margin-top:11px">
+        <h3>threading vs asyncio para I/O</h3>
+        <p class="t" style="margin-top:6px">Para 10 requests, ambos son similares en velocidad. Para <strong>miles de conexiones simultaneas</strong>, asyncio gana: un hilo puede manejar miles de corrutinas, mientras que crear miles de threads es costoso en memoria.</p>
+      </div>
+      <div class="card dk" style="margin-top:11px">
+        <h3 style="color:#6EE7B7">Resultado</h3>
+<pre style="background:transparent;padding:0;color:#CBD5E1;font-size:clamp(12px,1.1vw,14px)">sunt aut facere repellat...
+qui est esse
+ea molestias quasi exercitationem...
+<span style="color:#94A3B8">...10 titulos en orden</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 29. RESUMEN FINAL ─────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Resumen</div>
+  <h2>Lo que vimos en esta clase</h2>
+  <div class="g3">
+    <div class="col">
+      <div class="card or">
+        <h3>El GIL</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Solo un hilo ejecuta Python a la vez</li>
+          <li>Threads OK para I/O</li>
+          <li>Threads no ayudan en CPU-bound</li>
+          <li>Procesos lo evitan completamente</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>ProcessPoolExecutor</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Misma API que ThreadPoolExecutor</li>
+          <li>Cada proceso = nucleo real</li>
+          <li>Solo funcs top-level (no lambdas)</li>
+          <li>Obligatorio <code>if __name__</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card bl">
+        <h3>asyncio</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>Un hilo, muchas corrutinas</li>
+          <li><code>async def</code> + <code>await</code></li>
+          <li>Ideal para muchas conexiones</li>
+          <li>Requiere librerias async</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card dk" style="margin-top:18px">
+    <h3 style="color:#FDE68A">La decision — guia definitiva</h3>
+    <table style="margin-top:8px">
+      <tr><th>Situacion</th><th>Herramienta</th><th>Clase</th></tr>
+      <tr><td style="color:#E2E8F0">APIs, descargas, archivos (pocas)</td><td style="color:#93C5FD">ThreadPoolExecutor</td><td style="color:#94A3B8">Clase 05</td></tr>
+      <tr><td style="color:#E2E8F0">APIs, descargas, archivos (miles)</td><td style="color:#FDBA74">asyncio + httpx</td><td style="color:#94A3B8">Clase 06</td></tr>
+      <tr><td style="color:#E2E8F0">Calculos, ML, imagenes</td><td style="color:#6EE7B7">ProcessPoolExecutor</td><td style="color:#94A3B8">Clase 06</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ─── 30. CIERRE ──────────────────────────────────────────── -->
+<div class="slide s-sec dk">
+  <div class="tag">Clase 06</div>
+  <h2>Fin de la clase</h2>
+  <p class="sub">Threading para esperar. Procesos para calcular. asyncio para escalar.<br>Ahora elegis la herramienta correcta para cada problema.</p>
+</div>
+
+</div><!-- /deck -->
+
+<a id="home" href="../">&#8592; Inicio</a>
+<div id="prog"></div>
+<div id="nav">
+  <button class="nb" id="bp">&#8592;</button>
+  <span id="cnt">1 / 30</span>
+  <button class="nb" id="bn">&#8594;</button>
+</div>
+
+<script>
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total  = slides.length;
+let cur = 0;
+const cnt  = document.getElementById('cnt');
+const prog = document.getElementById('prog');
+
+function go(n) {
+  if (n < 0 || n >= total) return;
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exit');
+  const prev = cur;
+  setTimeout(() => slides[prev].classList.remove('exit'), 340);
+  cur = n;
+  slides[cur].classList.add('active');
+  cnt.textContent = `${cur + 1} / ${total}`;
+  prog.style.width = `${((cur + 1) / total) * 100}%`;
+}
+
+document.getElementById('bn').addEventListener('click', () => go(cur + 1));
+document.getElementById('bp').addEventListener('click', () => go(cur - 1));
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') go(cur + 1);
+  if (e.key === 'ArrowLeft')                    go(cur - 1);
+});
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+document.addEventListener('touchend',   e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 40) go(cur + (dx > 0 ? 1 : -1));
+});
+go(0);
+</script>
+</body>
+</html>
