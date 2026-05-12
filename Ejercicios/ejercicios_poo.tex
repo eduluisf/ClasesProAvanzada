@@ -1,0 +1,419 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{parskip}
+
+% ── Colores ──────────────────────────────────────────────
+\definecolor{bg}{HTML}{F8F9FA}
+\definecolor{kw}{HTML}{2563EB}
+\definecolor{cm}{HTML}{6B7280}
+\definecolor{str}{HTML}{059669}
+\definecolor{accent}{HTML}{D97706}
+
+% ── Código Python ────────────────────────────────────────
+\lstset{
+  language=Python,
+  backgroundcolor=\color{bg},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{kw}\bfseries,
+  commentstyle=\color{cm}\itshape,
+  stringstyle=\color{str},
+  showstringspaces=false,
+  frame=single,
+  rulecolor=\color{black!20},
+  breaklines=true,
+  xleftmargin=6pt,
+  xrightmargin=6pt,
+  aboveskip=8pt,
+  belowskip=8pt,
+  literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+}
+
+% ── Encabezado ───────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small Programación Avanzada}
+\lhead{\small POO en Python --- Ejercicios}
+\rfoot{\small Página \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Títulos ──────────────────────────────────────────────
+\titleformat{\section}{\large\bfseries\color{accent}}{Ejercicio \thesection.}{6pt}{}
+\titleformat{\subsection}[runin]{\bfseries}{}{0pt}{}[~~---]
+
+% ════════════════════════════════════════════════════════════
+\begin{document}
+
+\begin{center}
+  {\LARGE\bfseries Ejercicios de POO en Python}\\[6pt]
+  {\large Clase 03 --- Clases, objetos, herencia y composición}\\[4pt]
+  {\color{cm}\small 10 ejercicios $\cdot$ Dificultad: baja $\to$ media $\to$ alta}
+\end{center}
+
+\vspace{.6cm}
+
+% ─────────────────────────────────────────────────────────
+%  BAJA
+% ─────────────────────────────────────────────────────────
+
+\hfill\fbox{\small\bfseries DIFICULTAD BAJA}
+\vspace{2pt}
+
+% ── 1 ────────────────────────────────────────────────────
+\section{Rectángulo}
+\subsection{Objetivo} Crear una clase básica con atributos y métodos simples.
+
+Crea la clase \texttt{Rectangulo} con:
+\begin{itemize}[nosep]
+  \item \textbf{Atributos:} \texttt{base: float}, \texttt{altura: float}
+  \item \textbf{Métodos:}
+  \begin{itemize}[nosep]
+    \item \texttt{area() -> float} --- retorna base $\times$ altura
+    \item \texttt{perimetro() -> float} --- retorna $2 \times (\text{base} + \text{altura})$
+    \item \texttt{\_\_str\_\_} $\to$ \texttt{"Rectángulo 5.0 x 3.0"}
+  \end{itemize}
+\end{itemize}
+
+\textbf{Prueba esperada:}
+\begin{lstlisting}
+r = Rectangulo(5, 3)
+print(r.area())       # 15.0
+print(r.perimetro())  # 16.0
+print(r)              # Rectángulo 5.0 x 3.0
+\end{lstlisting}
+
+% ── 2 ────────────────────────────────────────────────────
+\section{Contador}
+\subsection{Objetivo} Practicar métodos que modifican estado interno.
+
+Crea la clase \texttt{Contador} con:
+\begin{itemize}[nosep]
+  \item \textbf{Atributos:} \texttt{\_valor: int} (inicia en 0)
+  \item \textbf{Métodos:}
+  \begin{itemize}[nosep]
+    \item \texttt{incrementar()} --- suma 1 al valor
+    \item \texttt{decrementar()} --- resta 1, pero nunca baja de 0
+    \item \texttt{get\_valor() -> int}
+    \item \texttt{resetear()} --- vuelve el valor a 0
+  \end{itemize}
+\end{itemize}
+
+\textbf{Prueba esperada:}
+\begin{lstlisting}
+c = Contador()
+c.incrementar()
+c.incrementar()
+c.incrementar()
+print(c.get_valor())  # 3
+c.decrementar()
+print(c.get_valor())  # 2
+c.resetear()
+print(c.get_valor())  # 0
+\end{lstlisting}
+
+% ── 3 ────────────────────────────────────────────────────
+\section{Mascota}
+\subsection{Objetivo} Usar \texttt{\_\_init\_\_} con valores por defecto y \texttt{\_\_str\_\_}.
+
+Crea la clase \texttt{Mascota} con:
+\begin{itemize}[nosep]
+  \item \textbf{Atributos:} \texttt{nombre: str}, \texttt{especie: str}, \texttt{edad: int} (por defecto 0)
+  \item \textbf{Métodos:}
+  \begin{itemize}[nosep]
+    \item \texttt{cumpleanios()} --- suma 1 a la edad
+    \item \texttt{es\_adulta() -> bool} --- \texttt{True} si edad $\geq$ 3
+    \item \texttt{\_\_str\_\_} $\to$ \texttt{"Luna (Gato) - 2 años"}
+  \end{itemize}
+\end{itemize}
+
+\textbf{Prueba esperada:}
+\begin{lstlisting}
+m = Mascota("Luna", "Gato")
+m.cumpleanios()
+m.cumpleanios()
+print(m)              # Luna (Gato) - 2 años
+print(m.es_adulta())  # False
+m.cumpleanios()
+print(m.es_adulta())  # True
+\end{lstlisting}
+
+% ─────────────────────────────────────────────────────────
+%  MEDIA
+% ─────────────────────────────────────────────────────────
+
+\vspace{.5cm}
+\hfill\fbox{\small\bfseries DIFICULTAD MEDIA}
+\vspace{2pt}
+
+% ── 4 ────────────────────────────────────────────────────
+\section{Inventario de Tienda}
+\subsection{Objetivo} Trabajar con listas de objetos dentro de otro objeto.
+
+Crea las clases \texttt{Producto} e \texttt{Inventario}:
+
+\texttt{Producto}:
+\begin{itemize}[nosep]
+  \item \textbf{Atributos:} \texttt{nombre: str}, \texttt{precio: float}, \texttt{cantidad: int}
+  \item \textbf{Método:} \texttt{valor\_total() -> float} --- retorna precio $\times$ cantidad
+\end{itemize}
+
+\texttt{Inventario}:
+\begin{itemize}[nosep]
+  \item \textbf{Atributos:} \texttt{\_productos: list} (vacía al inicio)
+  \item \textbf{Métodos:}
+  \begin{itemize}[nosep]
+    \item \texttt{agregar(producto: Producto)}
+    \item \texttt{valor\_inventario() -> float} --- suma el \texttt{valor\_total()} de todos los productos
+    \item \texttt{producto\_mas\_caro() -> str} --- retorna el nombre del producto con mayor precio unitario
+  \end{itemize}
+\end{itemize}
+
+\textbf{Prueba esperada:}
+\begin{lstlisting}
+inv = Inventario()
+inv.agregar(Producto("Mouse", 25.0, 10))
+inv.agregar(Producto("Teclado", 45.0, 5))
+inv.agregar(Producto("Monitor", 200.0, 3))
+print(inv.valor_inventario())  # 1075.0
+print(inv.producto_mas_caro()) # Monitor
+\end{lstlisting}
+
+% ── 5 ────────────────────────────────────────────────────
+\section{Temperatura con @property}
+\subsection{Objetivo} Usar \texttt{@property} y setter con validación.
+
+Crea la clase \texttt{Temperatura} con:
+\begin{itemize}[nosep]
+  \item \textbf{Atributo privado:} \texttt{\_celsius: float}
+  \item \textbf{Properties:}
+  \begin{itemize}[nosep]
+    \item \texttt{celsius} (getter y setter) --- el setter no permite valores menores a $-273.15$
+    \item \texttt{fahrenheit} (getter, solo lectura) --- retorna $\text{celsius} \times 9/5 + 32$
+  \end{itemize}
+  \item \textbf{Método:} \texttt{\_\_str\_\_} $\to$ \texttt{"25.0°C / 77.0°F"}
+\end{itemize}
+
+\textbf{Prueba esperada:}
+\begin{lstlisting}
+t = Temperatura(25)
+print(t.celsius)     # 25
+print(t.fahrenheit)  # 77.0
+print(t)             # 25.0°C / 77.0°F
+t.celsius = -300     # No cambia (menor al cero absoluto)
+print(t.celsius)     # 25
+\end{lstlisting}
+
+% ── 6 ────────────────────────────────────────────────────
+\section{Figuras con herencia}
+\subsection{Objetivo} Herencia, \texttt{super()} y polimorfismo con override.
+
+Crea una clase base \texttt{Figura} y dos clases hijas:
+
+\texttt{Figura}:
+\begin{itemize}[nosep]
+  \item \textbf{Atributo:} \texttt{color: str}
+  \item \textbf{Método:} \texttt{area() -> float} --- retorna 0 (será sobreescrito)
+  \item \textbf{Método:} \texttt{\_\_str\_\_} $\to$ \texttt{"Figura color rojo, área: 0"}
+\end{itemize}
+
+\texttt{Circulo(Figura)}:
+\begin{itemize}[nosep]
+  \item \textbf{Atributo adicional:} \texttt{radio: float}
+  \item \textbf{Override:} \texttt{area()} $\to$ $\pi \times r^2$
+\end{itemize}
+
+\texttt{Triangulo(Figura)}:
+\begin{itemize}[nosep]
+  \item \textbf{Atributos adicionales:} \texttt{base: float}, \texttt{altura: float}
+  \item \textbf{Override:} \texttt{area()} $\to$ $\text{base} \times \text{altura} / 2$
+\end{itemize}
+
+\textbf{Prueba esperada:}
+\begin{lstlisting}
+figuras = [Circulo("rojo", 5), Triangulo("azul", 10, 4)]
+for f in figuras:
+    print(f)
+# Figura color rojo, área: 78.54
+# Figura color azul, área: 20.0
+\end{lstlisting}
+
+% ── 7 ────────────────────────────────────────────────────
+\section{Concatenación entre objetos}
+\subsection{Objetivo} Usar el resultado de un método como argumento de otro objeto.
+
+Crea las clases \texttt{Conversor} y \texttt{Formateador}:
+
+\texttt{Conversor}:
+\begin{itemize}[nosep]
+  \item \texttt{km\_a\_millas(km: float) -> float} --- retorna $\text{km} \times 0.621371$
+  \item \texttt{kg\_a\_libras(kg: float) -> float} --- retorna $\text{kg} \times 2.20462$
+\end{itemize}
+
+\texttt{Formateador}:
+\begin{itemize}[nosep]
+  \item \texttt{mostrar(valor: float, unidad: str) -> str} --- retorna \texttt{"15.53 mi"} (redondeado a 2 decimales)
+\end{itemize}
+
+\textbf{Prueba esperada (concatenado en una sola línea):}
+\begin{lstlisting}
+conv = Conversor()
+fmt  = Formateador()
+
+# Concatenado:
+print(fmt.mostrar( conv.km_a_millas(25), "mi" ))
+# 15.53 mi
+
+print(fmt.mostrar( conv.kg_a_libras(70), "lb" ))
+# 154.32 lb
+\end{lstlisting}
+
+% ─────────────────────────────────────────────────────────
+%  ALTA
+% ─────────────────────────────────────────────────────────
+
+\vspace{.5cm}
+\hfill\fbox{\small\bfseries DIFICULTAD ALTA}
+\vspace{2pt}
+
+% ── 8 ────────────────────────────────────────────────────
+\section{Sistema de Empleados}
+\subsection{Objetivo} Herencia múltiple con \texttt{super()}, override y composición.
+
+Crea la siguiente jerarquía:
+
+\texttt{Empleado}:
+\begin{itemize}[nosep]
+  \item \textbf{Atributos:} \texttt{nombre: str}, \texttt{\_sueldo\_base: float}
+  \item \textbf{Métodos:}
+  \begin{itemize}[nosep]
+    \item \texttt{calcular\_sueldo() -> float} --- retorna el sueldo base
+    \item \texttt{\_\_str\_\_} $\to$ \texttt{"Ana - Sueldo: \$3000.0"}
+  \end{itemize}
+\end{itemize}
+
+\texttt{Gerente(Empleado)}:
+\begin{itemize}[nosep]
+  \item \textbf{Atributo adicional:} \texttt{bono: float}
+  \item \textbf{Override:} \texttt{calcular\_sueldo()} $\to$ sueldo base + bono
+\end{itemize}
+
+\texttt{Vendedor(Empleado)}:
+\begin{itemize}[nosep]
+  \item \textbf{Atributos adicionales:} \texttt{ventas: float}, \texttt{comision: float} (porcentaje, ej: 0.05)
+  \item \textbf{Override:} \texttt{calcular\_sueldo()} $\to$ sueldo base + (ventas $\times$ comisión)
+\end{itemize}
+
+Crea también la clase \texttt{Nomina}:
+\begin{itemize}[nosep]
+  \item \textbf{Atributos:} \texttt{\_empleados: list}
+  \item \textbf{Métodos:}
+  \begin{itemize}[nosep]
+    \item \texttt{agregar(emp: Empleado)}
+    \item \texttt{total\_nomina() -> float} --- suma \texttt{calcular\_sueldo()} de todos (polimorfismo)
+    \item \texttt{reporte()} --- imprime cada empleado con su sueldo
+  \end{itemize}
+\end{itemize}
+
+\textbf{Prueba esperada:}
+\begin{lstlisting}
+n = Nomina()
+n.agregar(Empleado("Ana", 3000))
+n.agregar(Gerente("Luis", 4000, 1500))
+n.agregar(Vendedor("María", 2500, 50000, 0.05))
+
+n.reporte()
+# Ana - Sueldo: $3000.0
+# Luis - Sueldo: $5500.0
+# María - Sueldo: $5000.0
+
+print(n.total_nomina())  # 13500.0
+\end{lstlisting}
+
+% ── 9 ────────────────────────────────────────────────────
+\section{Banco con transferencias}
+\subsection{Objetivo} Un objeto recibe otro objeto como argumento de un método.
+
+Reutiliza la clase \texttt{CuentaBancaria} del ejercicio de clase (o créala de nuevo) y agrégale el método:
+\begin{itemize}[nosep]
+  \item \texttt{transferir(destino: CuentaBancaria, monto: float) -> bool}
+  \begin{itemize}[nosep]
+    \item Retira \texttt{monto} de la cuenta actual
+    \item Si el retiro fue exitoso, deposita en \texttt{destino}
+    \item Retorna \texttt{True} si se completó, \texttt{False} si no había fondos
+  \end{itemize}
+\end{itemize}
+
+\textbf{Prueba esperada:}
+\begin{lstlisting}
+c1 = CuentaBancaria("Ana", 5000)
+c2 = CuentaBancaria("Luis", 1000)
+
+ok = c1.transferir(c2, 2000)
+print(ok)               # True
+print(c1.get_saldo())   # 3000
+print(c2.get_saldo())   # 3000
+
+fail = c1.transferir(c2, 99999)
+print(fail)             # False
+print(c1.get_saldo())   # 3000  (no cambió)
+\end{lstlisting}
+
+% ── 10 ───────────────────────────────────────────────────
+\section{Cadena de procesamiento}
+\subsection{Objetivo} Concatenar múltiples objetos de distintas clases en una sola expresión.
+
+Crea tres clases que trabajen juntas:
+
+\texttt{Sensor}:
+\begin{itemize}[nosep]
+  \item \textbf{Atributo:} \texttt{nombre: str}
+  \item \textbf{Método:} \texttt{leer() -> float} --- retorna un valor fijo (simula una lectura, ej: 36.7)
+\end{itemize}
+
+\texttt{Procesador}:
+\begin{itemize}[nosep]
+  \item \textbf{Método:} \texttt{normalizar(valor: float, minimo: float, maximo: float) -> float}
+  \begin{itemize}[nosep]
+    \item Retorna $(\text{valor} - \text{mínimo}) / (\text{máximo} - \text{mínimo})$
+  \end{itemize}
+\end{itemize}
+
+\texttt{Alerta}:
+\begin{itemize}[nosep]
+  \item \textbf{Método:} \texttt{evaluar(valor\_normalizado: float) -> str}
+  \begin{itemize}[nosep]
+    \item Si $< 0.3$: retorna \texttt{"BAJO"}
+    \item Si $< 0.7$: retorna \texttt{"NORMAL"}
+    \item Si $\geq 0.7$: retorna \texttt{"ALTO"}
+  \end{itemize}
+\end{itemize}
+
+\textbf{Prueba esperada (todo concatenado):}
+\begin{lstlisting}
+s = Sensor("Temperatura")   # leer() retorna 36.7
+p = Procesador()
+a = Alerta()
+
+# Concatenado en una sola línea:
+estado = a.evaluar( p.normalizar( s.leer(), 35.0, 42.0 ) )
+print(estado)  # NORMAL
+
+# Equivalente paso a paso:
+lectura     = s.leer()                         # 36.7
+normalizado = p.normalizar(lectura, 35.0, 42.0) # 0.2428...
+estado      = a.evaluar(normalizado)            # NORMAL
+\end{lstlisting}
+
+\vspace{1cm}
+\begin{center}
+  \rule{.4\textwidth}{.4pt}\\[6pt]
+  {\small\color{cm} Todos los ejercicios deben incluir \texttt{type hints} en parámetros y retornos.}
+\end{center}
+
+\end{document}

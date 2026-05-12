@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Estudios - Diseño Gráfico</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 1600px; margin: 0 auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 30px rgba(0,0,0,0.1); }
+
+        .header {
+            background: linear-gradient(135deg, #1a5276 0%, #2980b9 50%, #3498db 100%);
+            padding: 30px 40px; position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 15px;
+            background: repeating-linear-gradient(90deg,
+                #e74c3c 0px, #e74c3c 20px, #f39c12 20px, #f39c12 40px,
+                #27ae60 40px, #27ae60 60px, #3498db 60px, #3498db 80px,
+                #9b59b6 80px, #9b59b6 100px);
+        }
+        .header-content { display: flex; align-items: center; gap: 30px; }
+        
+        .logo-placeholder { font-size: 12px; color: #1a5276; text-align: center; font-weight: bold; }
+        .title-section { color: white; }
+        .title-section h1 { font-size: 3rem; font-weight: 300; margin-bottom: 5px; }
+        .title-section h1 span { font-weight: 700; }
+        .title-section h2 { font-size: 1.5rem; font-weight: 400; opacity: 0.9; }
+
+        .plan-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .plan-table th { background: #2c3e50; color: white; padding: 12px 8px; text-align: center; font-weight: 600; border: 1px solid #1a252f; }
+        .plan-table th.sem-header { background: #1a5276; min-width: 120px; }
+        .plan-table td { border: 1px solid #ddd; padding: 0; vertical-align: top; }
+
+        .campo-label {
+            background: #ecf0f1; padding: 15px 10px; font-weight: bold; font-size: 11px;
+            text-align: center; writing-mode: vertical-rl; text-orientation: mixed;
+            transform: rotate(180deg); min-width: 40px;
+        }
+        .nucleo-label { background: #f8f9fa; padding: 10px; font-size: 10px; text-align: center; min-width: 100px; }
+
+        .basico-general  { background: #2980b9; color: white; }
+        .basico-especifico { background: #d35400; color: white; }
+        .investigativo   { background: #27ae60; color: white; }
+        .socio-humanistico { background: #8e44ad; color: white; }
+        .transversal     { background: #16a085; color: white; }
+
+        .materia {
+            padding: 8px; margin: 4px; border-radius: 5px; font-size: 10px;
+            min-height: 60px; display: flex; flex-direction: column;
+            justify-content: center; text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .materia:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .materia-nombre { font-weight: bold; margin-bottom: 4px; line-height: 1.2; }
+        .materia-creditos {
+            font-size: 9px; opacity: 0.95; background: rgba(255,255,255,0.2);
+            padding: 2px 6px; border-radius: 10px; display: inline-block; margin-top: 2px;
+        }
+        .prereq {
+            font-size: 8px; margin-top: 4px; opacity: 0.85;
+            border-top: 1px solid rgba(255,255,255,0.3); padding-top: 3px;
+        }
+        .prereq::before { content: '⤴ '; }
+
+        .creditos-row td { background: #34495e; color: white; text-align: center; font-weight: bold; padding: 10px; font-size: 14px; }
+
+        .empty-cell { background: #f8f9fa; }
+
+        .leyenda { display: flex; justify-content: center; gap: 20px; padding: 20px; background: #ecf0f1; flex-wrap: wrap; }
+        .leyenda-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+        .leyenda-color { width: 20px; height: 20px; border-radius: 4px; }
+
+        .footer { background: #2c3e50; color: white; padding: 15px; text-align: center; font-size: 12px; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-placeholder"> 
+                    <img src="./MenuLogo-1.webp"  alt="Logo de la Universidad de La Guajira">
+                </div>
+            </div>
+            <div class="title-section">
+                <h1>Programa <span>de Diseño Gráfico</span></h1>
+                <h2>Plan de estudios</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div style="overflow-x: auto;">
+    <table class="plan-table">
+        <thead>
+            <tr>
+                <th style="min-width:120px;">Campos de Formación</th>
+                <th style="min-width:100px;">Núcleos / Áreas</th>
+                <th class="sem-header">I</th>
+                <th class="sem-header">II</th>
+                <th class="sem-header">III</th>
+                <th class="sem-header">IV</th>
+                <th class="sem-header">V</th>
+                <th class="sem-header">VI</th>
+                <th class="sem-header">VII</th>
+                <th class="sem-header">VIII</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        <!-- BÁSICO GENERAL -->
+        <tr>
+            <td rowspan="3" class="campo-label" style="background:#2980b9;color:white;">Básico General Científico-Disciplinar<br>(Lo teórico-conceptual)</td>
+            <td class="nucleo-label">Fundamentos del Diseño y Comunicación Visual</td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Fundamentos del Diseño Gráfico</div>
+                    <span class="materia-creditos">CR 4</span>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Comunicación Visual</div>
+                    <span class="materia-creditos">CR 2</span>
+                    <div class="prereq">Fundamentos del Diseño Gráfico</div>
+                </div>
+                <div class="materia basico-general" style="margin-top:5px;">
+                    <div class="materia-nombre">Gráfica Impresa</div>
+                    <span class="materia-creditos">CR 3</span>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Interfaz y Experiencia de Usuario (UX/UI)</div>
+                    <span class="materia-creditos">CR 3</span>
+                    <div class="prereq">Fundamentos de Programación</div>
+                </div>
+            </td>
+            <td class="empty-cell"></td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Proyecto I: Investigación y Concepto</div>
+                    <span class="materia-creditos">CR 5</span>
+                    <div class="prereq">Metodologías de Investigación en Diseño</div>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Proyecto II: Desarrollo Creativo</div>
+                    <span class="materia-creditos">CR 6</span>
+                    <div class="prereq">Proyecto I</div>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Proyecto III: Diseño Integral</div>
+                    <span class="materia-creditos">CR 9</span>
+                    <div class="prereq">Proyecto II</div>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Innovación y Tendencias en Diseño</div>
+                    <span class="materia-creditos">CR 3</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="nucleo-label">Representación Visual y Animación</td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Ilustración Vectorial</div>
+                    <span class="materia-creditos">CR 2</span>
+                </div>
+            </td>
+            <td class="empty-cell"></td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Animación Digital 2D</div>
+                    <span class="materia-creditos">CR 3</span>
+                    <div class="prereq">Ilustración Vectorial</div>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Animación Digital 3D</div>
+                    <span class="materia-creditos">CR 3</span>
+                    <div class="prereq">Animación Digital 2D</div>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Realidad Aumentada y Virtual</div>
+                    <span class="materia-creditos">CR 3</span>
+                    <div class="prereq">Modelado 3D</div>
+                </div>
+            </td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+        </tr>
+        <tr>
+            <td class="nucleo-label">Modelado 3D y Experiencias Interactivas</td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Modelado 3D</div>
+                    <span class="materia-creditos">CR 3</span>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-general">
+                    <div class="materia-nombre">Videojuegos y Diseño Interactivo</div>
+                    <span class="materia-creditos">CR 3</span>
+                    <div class="prereq">Fundamentos de Programación</div>
+                </div>
+                <div class="materia basico-general" style="margin-top:5px;">
+                    <div class="materia-nombre">Motion Graphics</div>
+                    <span class="materia-creditos">CR 2</span>
+                    <div class="prereq">Animación Digital 2D</div>
+                </div>
+            </td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+        </tr>
+
+        <!-- BÁSICO ESPECÍFICO -->
+        <tr>
+            <td rowspan="3" class="campo-label" style="background:#d35400;color:white;">Básico Específico Profesional<br>(Pertinencia de la profesión)</td>
+            <td class="nucleo-label">Fundamentos Técnicos y Tecnológicos</td>
+            <td>
+                <div class="materia basico-especifico">
+                    <div class="materia-nombre">Fundamentos de Programación</div>
+                    <span class="materia-creditos">CR 3</span>
+                </div>
+                <div class="materia basico-especifico" style="margin-top:5px;">
+                    <div class="materia-nombre">Historia del Arte y del Diseño</div>
+                    <span class="materia-creditos">CR 1</span>
+                </div>
+                <div class="materia basico-especifico" style="margin-top:5px;">
+                    <div class="materia-nombre">Matemáticas I</div>
+                    <span class="materia-creditos">CR 3</span>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-especifico">
+                    <div class="materia-nombre">IA Generativa y Nuevas Tendencias</div>
+                    <span class="materia-creditos">CR 2</span>
+                </div>
+                <div class="materia basico-especifico" style="margin-top:5px;">
+                    <div class="materia-nombre">Branding, Estrategia y Creatividad</div>
+                    <span class="materia-creditos">CR 3</span>
+                </div>
+            </td>
+            <td class="empty-cell"></td>
+            <td>
+                <div class="materia basico-especifico">
+                    <div class="materia-nombre">Producción Audiovisual II</div>
+                    <span class="materia-creditos">CR 2</span>
+                    <div class="prereq">Producción Audiovisual I</div>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-especifico">
+                    <div class="materia-nombre">Diseño de Producto y Packaging</div>
+                    <span class="materia-creditos">CR 3</span>
+                </div>
+                <div class="materia basico-especifico" style="margin-top:5px;">
+                    <div class="materia-nombre">Audio y Producción Musical</div>
+                    <span class="materia-creditos">CR 2</span>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-especifico">
+                    <div class="materia-nombre">Estrategias de Comunicación Digital</div>
+                    <span class="materia-creditos">CR 3</span>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-especifico">
+                    <div class="materia-nombre">Gestión de la Propiedad Intelectual</div>
+                    <span class="materia-creditos">CR 2</span>
+                </div>
+                <div class="materia basico-especifico" style="margin-top:5px;">
+                    <div class="materia-nombre">Taller de Portafolio Profesional</div>
+                    <span class="materia-creditos">CR 3</span>
+                    <div class="prereq">Proyecto II</div>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-especifico">
+                    <div class="materia-nombre">Práctica Profesional o Emprendimiento</div>
+                    <span class="materia-creditos">CR 12</span>
+                    <div class="prereq">Proyecto III</div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="nucleo-label">Producción Audiovisual y Multimedia</td>
+            <td class="empty-cell"></td>
+            <td>
+                <div class="materia basico-especifico">
+                    <div class="materia-nombre">Producción Audiovisual I</div>
+                    <span class="materia-creditos">CR 2</span>
+                </div>
+            </td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+            <td>
+                <div class="materia basico-especifico">
+                    <div class="materia-nombre">Postproducción y VFX</div>
+                    <span class="materia-creditos">CR 4</span>
+                    <div class="prereq">Producción Audiovisual II</div>
+                </div>
+            </td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+        </tr>
+        <tr>
+            <td class="nucleo-label">Marketing y Comunicación Digital</td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+            <td>
+                <div class="materia basico-especifico">
+                    <div class="materia-nombre">Publicidad y Marketing Digital I</div>
+                    <span class="materia-creditos">CR 2</span>
+                </div>
+            </td>
+            <td>
+                <div class="materia basico-especifico">
+                    <div class="materia-nombre">Publicidad y Marketing Digital II</div>
+                    <span class="materia-creditos">CR 3</span>
+                    <div class="prereq">Publicidad y Marketing Digital I</div>
+                </div>
+            </td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+        </tr>
+
+        <!-- INVESTIGATIVO -->
+        <tr>
+            <td class="campo-label" style="background:#27ae60;color:white;">Investigativo<br>(Lo instrumental)</td>
+            <td class="nucleo-label">Metodología e Investigación en Diseño</td>
+            <td class="empty-cell"></td>
+            <td>
+                <div class="materia investigativo">
+                    <div class="materia-nombre">Estadística</div>
+                    <span class="materia-creditos">CR 3</span>
+                    <div class="prereq">Matemáticas I</div>
+                </div>
+            </td>
+            <td>
+                <div class="materia investigativo">
+                    <div class="materia-nombre">Metodologías de Investigación en Diseño</div>
+                    <span class="materia-creditos">CR 3</span>
+                    <div class="prereq">Estadística</div>
+                </div>
+            </td>
+            <td>
+                <div class="materia investigativo">
+                    <div class="materia-nombre">Gestión de Proyectos de Diseño</div>
+                    <span class="materia-creditos">CR 3</span>
+                </div>
+            </td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+        </tr>
+
+        <!-- SOCIO-HUMANÍSTICO -->
+        <tr>
+            <td class="campo-label" style="background:#8e44ad;color:white;">Socio-Humanístico<br>(Lo complementario)</td>
+            <td class="nucleo-label">Formación Integral y Electivas</td>
+            <td>
+                <div class="materia socio-humanistico">
+                    <div class="materia-nombre">Cátedra Uniguajira</div>
+                    <span class="materia-creditos">CR 2</span>
+                </div>
+            </td>
+            <td>
+                <div class="materia socio-humanistico">
+                    <div class="materia-nombre">Diseño, Territorio y Sostenibilidad</div>
+                    <span class="materia-creditos">CR 2</span>
+                </div>
+            </td>
+            <td>
+                <div class="materia socio-humanistico">
+                    <div class="materia-nombre">Ética Profesional</div>
+                    <span class="materia-creditos">CR 2</span>
+                </div>
+            </td>
+            <td class="empty-cell"></td>
+            <td>
+                <div class="materia socio-humanistico">
+                    <div class="materia-nombre">Electiva I</div>
+                    <span class="materia-creditos">CR 2</span>
+                </div>
+            </td>
+            <td>
+                <div class="materia socio-humanistico">
+                    <div class="materia-nombre">Electiva II</div>
+                    <span class="materia-creditos">CR 3</span>
+                </div>
+            </td>
+            <td>
+                <div class="materia socio-humanistico">
+                    <div class="materia-nombre">Electiva III</div>
+                    <span class="materia-creditos">CR 2</span>
+                </div>
+            </td>
+            <td class="empty-cell"></td>
+        </tr>
+
+        <!-- TRANSVERSALES -->
+        <tr>
+            <td class="campo-label" style="background:#16a085;color:white;">Competencias Transversales</td>
+            <td class="nucleo-label">Idioma Extranjero</td>
+            <td>
+                <div class="materia transversal">
+                    <div class="materia-nombre">Inglés I</div>
+                    <span class="materia-creditos">CR 2</span>
+                </div>
+            </td>
+            <td>
+                <div class="materia transversal">
+                    <div class="materia-nombre">Inglés II</div>
+                    <span class="materia-creditos">CR 2</span>
+                    <div class="prereq">Inglés I</div>
+                </div>
+            </td>
+            <td>
+                <div class="materia transversal">
+                    <div class="materia-nombre">Inglés III</div>
+                    <span class="materia-creditos">CR 2</span>
+                    <div class="prereq">Inglés II</div>
+                </div>
+            </td>
+            <td>
+                <div class="materia transversal">
+                    <div class="materia-nombre">Inglés IV</div>
+                    <span class="materia-creditos">CR 2</span>
+                    <div class="prereq">Inglés III</div>
+                </div>
+            </td>
+            <td>
+                <div class="materia transversal">
+                    <div class="materia-nombre">Inglés V</div>
+                    <span class="materia-creditos">CR 2</span>
+                    <div class="prereq">Inglés IV</div>
+                </div>
+            </td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+            <td class="empty-cell"></td>
+        </tr>
+
+        <!-- TOTALES -->
+        <tr class="creditos-row">
+            <td colspan="2" style="text-align:right;padding-right:20px;">Créditos por semestre</td>
+            <td>17</td><td>19</td><td>18</td><td>18</td><td>17</td><td>16</td><td>16</td><td>15</td>
+        </tr>
+        <tr class="creditos-row">
+            <td colspan="2" style="text-align:right;padding-right:20px;">Asignaturas por semestre</td>
+            <td>7</td><td>8</td><td>7</td><td>6</td><td>6</td><td>4</td><td>4</td><td>2</td>
+        </tr>
+
+        </tbody>
+    </table>
+    </div>
+
+    <!-- Total -->
+    <div style="background:#1a5276;color:white;padding:20px;text-align:center;font-size:18px;">
+        <strong>Total créditos:</strong> 136 &nbsp;|&nbsp;
+        <strong>Total asignaturas:</strong> 45 &nbsp;|&nbsp;
+        <strong>Duración:</strong> 8 semestres
+    </div>
+
+    <!-- Leyenda -->
+    <div class="leyenda">
+        <div class="leyenda-item"><div class="leyenda-color" style="background:#2980b9;"></div><span>Básico General Científico-Disciplinar (54 CR)</span></div>
+        <div class="leyenda-item"><div class="leyenda-color" style="background:#d35400;"></div><span>Básico Específico Profesional (50 CR)</span></div>
+        <div class="leyenda-item"><div class="leyenda-color" style="background:#27ae60;"></div><span>Investigativo (9 CR)</span></div>
+        <div class="leyenda-item"><div class="leyenda-color" style="background:#8e44ad;"></div><span>Socio-Humanístico (13 CR)</span></div>
+        <div class="leyenda-item"><div class="leyenda-color" style="background:#16a085;"></div><span>Competencias Transversales (10 CR)</span></div>
+        <div class="leyenda-item" style="border-left:2px solid #ccc;padding-left:15px;">
+            <span style="font-size:11px;color:#555;">⤴ Indica prerrequisito</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        Universidad de La Guajira | Facultad de Artes y Diseño | Programa de Diseño Gráfico<br>
+        <small>Riohacha, La Guajira - Colombia</small>
+    </div>
+
+</div>
+</body>
+</html>

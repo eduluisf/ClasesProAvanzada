@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python — APIs REST con requests</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ac:#2563EB;--blue:#2563EB;--purple:#7C3AED;--green:#059669;--orange:#D97706;--red:#DC2626;--text:#0F172A;--muted:#64748B}
+body{font-family:'Inter',sans-serif;background:#fff;color:var(--text);overflow:hidden;height:100vh;width:100vw}
+#deck{position:relative;width:100vw;height:100vh}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:40px 68px;opacity:0;transform:translateX(56px);transition:opacity .3s ease,transform .3s ease;pointer-events:none;overflow:hidden}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-56px)}
+.s-hero{background:#fff;align-items:center;text-align:center}
+.s-sec{background:var(--ac);color:#fff}
+.s-sec.gr{background:var(--green)}
+.s-sec.pu{background:var(--purple)}
+.s-sec.or{background:var(--orange)}
+.s-sec.rd{background:var(--red)}
+.s-sec.dk{background:#0F172A}
+.s-c{background:#fff}
+.tag{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--ac);margin-bottom:10px}
+.s-sec .tag{color:rgba(255,255,255,.7)}
+h1{font-size:clamp(52px,7vw,88px);font-weight:900;letter-spacing:-.03em;line-height:1;color:var(--text)}
+h2{font-size:clamp(30px,3.8vw,50px);font-weight:900;letter-spacing:-.02em;line-height:1.08;margin-bottom:14px}
+.s-sec h2{color:#fff}
+h3{font-size:clamp(14px,1.7vw,19px);font-weight:700;margin-bottom:6px;color:var(--text)}
+.sub{font-size:clamp(17px,2vw,24px);color:var(--muted);line-height:1.45;margin-top:12px}
+.s-sec .sub{color:rgba(255,255,255,.85)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:100%}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%}
+.col{display:flex;flex-direction:column;gap:10px}
+.card{background:#EFF6FF;border-radius:12px;padding:14px 18px}
+.card h3{color:var(--text)}
+.card.bl{background:#EFF6FF}
+.card.pu{background:#F5F3FF}
+.card.gr{background:#ECFDF5}
+.card.or{background:#FFF7ED}
+.card.rd{background:#FEF2F2}
+.card.sl{background:#F1F5F9}
+.card.y{background:#FEFCE8}
+.card.dk{background:#1E293B;color:#E2E8F0}
+.card.dk h3{color:#F1F5F9}
+.card.dk p.t{color:#CBD5E1}
+.card.dk ul.s li{color:#CBD5E1}
+.card.dk ul.s li::before{color:#94A3B8}
+li,p.t{font-size:clamp(13px,1.5vw,17px);line-height:1.55;color:var(--text)}
+.card.dk li,.card.dk p.t{color:#CBD5E1}
+li strong{font-weight:700}
+ul.s,ol.s{list-style:none;display:flex;flex-direction:column;gap:5px}
+ul.s li::before{content:'▸';color:var(--ac);font-weight:700;margin-right:7px}
+ol.s{counter-reset:ci}
+ol.s li{counter-increment:ci}
+ol.s li::before{content:counter(ci)'.';color:var(--ac);font-weight:700;margin-right:7px}
+pre{background:#0F172A;color:#E2E8F0;font-family:'Fira Code',monospace;font-size:clamp(11px,1.1vw,14px);line-height:1.7;border-radius:10px;padding:12px 16px;overflow:hidden;width:100%}
+.lbl{font-size:10px;font-weight:700;letter-spacing:.08em;display:inline-block;padding:2px 9px;border-radius:999px;margin-bottom:4px}
+.lbl.py{background:var(--orange);color:#fff}
+.lbl.sh{background:#0F172A;color:#fff}
+.lbl.out{background:#334155;color:#94A3B8}
+.lbl.url{background:var(--blue);color:#fff}
+.lbl.json{background:var(--green);color:#fff}
+.kw{color:#93C5FD;font-weight:600}
+.fn{color:#6EE7B7}
+.str{color:#FDE68A}
+.num{color:#FCA5A5}
+.cm{color:#475569;font-style:italic}
+.ok{color:#86EFAC}
+.er{color:#FCA5A5}
+.warn{color:#FDE68A}
+.dim{color:#475569}
+.key{color:#7DD3FC}
+table{width:100%;border-collapse:collapse}
+th{background:var(--ac);color:#fff;padding:7px 12px;text-align:left;font-size:13px;font-weight:700}
+td{padding:6px 12px;font-size:13px;border-bottom:1px solid #E2E8F0;color:var(--text)}
+tr:nth-child(even) td{background:rgba(0,0,0,.03)}
+code{font-family:'Fira Code',monospace;background:#DBEAFE;padding:2px 5px;border-radius:4px;font-size:.87em;color:#1E40AF}
+.card.dk code{background:#334155;color:#93C5FD}
+.method{display:inline-block;padding:2px 8px;border-radius:6px;font-family:'Fira Code',monospace;font-size:12px;font-weight:700;margin-right:4px}
+.method.get{background:#059669;color:#fff}
+.method.post{background:#D97706;color:#fff}
+.method.put{background:#7C3AED;color:#fff}
+.method.del{background:#DC2626;color:#fff}
+.ann{display:flex;align-items:baseline;gap:10px;padding:4px 0}
+.ann-line{font-family:'Fira Code',monospace;font-size:clamp(11px,1.05vw,13px);color:#E2E8F0;flex-shrink:0;white-space:nowrap}
+.ann-arrow{color:#60A5FA;font-weight:700;flex-shrink:0}
+.ann-text{font-size:clamp(12px,1.1vw,14px);color:var(--text);line-height:1.4}
+.card.dk .ann-text{color:#CBD5E1}
+.card.dk table td{color:#CBD5E1;border-bottom-color:#334155}
+.card.dk table tr:nth-child(even) td{background:#0F172A}
+/* status colors para tablas en cards claras */
+.s-ok  {color:#166534;font-weight:700}
+.s-warn{color:#854D0E;font-weight:700}
+.s-er  {color:#991B1B;font-weight:700}
+/* en cards oscuras, los colores más claros */
+.card.dk .s-ok  {color:#86EFAC}
+.card.dk .s-warn{color:#FDE68A}
+.card.dk .s-er  {color:#FCA5A5}
+.hero-deco{position:absolute;top:10px;right:44px;font-size:110px;font-weight:900;opacity:.05;color:var(--ac);line-height:1;user-select:none}
+.hero-pill{display:inline-block;background:var(--ac);color:#fff;padding:6px 20px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+#prog{position:fixed;bottom:0;left:0;height:4px;background:var(--ac);transition:width .3s;z-index:100}
+#nav{position:fixed;bottom:18px;right:30px;display:flex;align-items:center;gap:8px;z-index:100}
+.nb{width:38px;height:38px;border-radius:50%;border:2px solid var(--ac);background:#fff;color:var(--ac);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;transition:background .2s,color .2s;box-shadow:0 2px 8px rgba(37,99,235,.15)}
+.nb:hover{background:var(--ac);color:#fff}
+#cnt{font-size:12px;font-weight:700;color:var(--muted);min-width:42px;text-align:center}
+#home{position:fixed;top:16px;left:22px;z-index:100;text-decoration:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#64748B;background:#fff;border:1px solid #e2e8f0;border-radius:999px;padding:5px 13px;box-shadow:0 1px 4px rgba(0,0,0,.07);transition:border-color .2s,color .2s}
+#home:hover{color:#0F172A;border-color:#0F172A}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- ─── 1. HERO ─────────────────────────────────────────────── -->
+<div class="slide s-hero active">
+  <div class="hero-deco">{ }</div>
+  <div class="hero-pill">Clase 08</div>
+  <h1><span style="color:var(--ac)">APIs REST</span><br>con Python</h1>
+  <p class="sub">Cómo funciona HTTP, qué es una API,<br>y cómo consumirla desde cero en Python</p>
+</div>
+
+<!-- ─── 2. AGENDA ───────────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Hoja de ruta de hoy</div>
+  <h2>¿Qué vemos?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3>1 · ¿Qué es una API y cómo funciona HTTP?</h3>
+        <p class="t" style="margin-top:4px">Clientes, servidores, métodos, status codes. Sin esto el resto no tiene sentido.</p>
+      </div>
+      <div class="card gr">
+        <h3>2 · Cómo consumir una API con Python</h3>
+        <p class="t" style="margin-top:4px">La librería <code>requests</code>. El patrón básico. Qué pasa paso a paso.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card or">
+        <h3>3 · Ejercicio en clase — <code>restcountries.com</code></h3>
+        <p class="t" style="margin-top:4px">Funciones simples para traer países, leer la respuesta y ordenar datos reales.</p>
+      </div>
+      <div class="card sl">
+        <h3>4 · Tarea: subir la dificultad con OOP</h3>
+        <p class="t" style="margin-top:4px">Modelar todo con clases (<code>Country</code> + <code>CountryAPI</code>) como extensión del ejercicio.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card y" style="margin-top:14px">
+    <p class="t" style="color:#78350F"><strong>Idea central:</strong> hoy salimos sabiendo que detrás de una URL hay una conversación HTTP con un formato concreto. Nada de magia.</p>
+  </div>
+</div>
+
+<!-- ─── 3. SEC — QUÉ ES UNA API ─────────────────────────────── -->
+<div class="slide s-sec">
+  <div class="tag">Bloque 1</div>
+  <h2>¿Qué es una API<br>y cómo funciona HTTP?</h2>
+  <p class="sub">El protocolo que mueve toda la web</p>
+</div>
+
+<!-- ─── 4. ANALOGÍA DEL RESTAURANTE ─────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Para entender de qué hablamos</div>
+  <h2>La analogía del restaurante</h2>
+  <div class="g3">
+    <div class="card sl">
+      <h3 style="font-size:28px;text-align:center;margin-bottom:10px">🧑‍💻</h3>
+      <h3 style="text-align:center">Vos — el Cliente</h3>
+      <p class="t" style="margin-top:8px;text-align:center">Tu programa en Python. Sabés qué querés pero no sabés cómo se prepara.</p>
+    </div>
+    <div class="card bl">
+      <h3 style="font-size:28px;text-align:center;margin-bottom:10px">📋</h3>
+      <h3 style="text-align:center">El Menú — la API</h3>
+      <p class="t" style="margin-top:8px;text-align:center">Define qué podés pedir y en qué formato. No te metés a la cocina, usás el menú.</p>
+    </div>
+    <div class="card gr">
+      <h3 style="font-size:28px;text-align:center;margin-bottom:10px">🍳</h3>
+      <h3 style="text-align:center">La Cocina — el Servidor</h3>
+      <p class="t" style="margin-top:8px;text-align:center">El servidor remoto. Procesa tu pedido y te manda la respuesta. No necesitás saber cómo funciona por dentro.</p>
+    </div>
+  </div>
+  <div class="card dk" style="margin-top:16px">
+    <p class="t"><strong style="color:#93C5FD">API</strong> = Application Programming Interface — es el <strong style="color:#FDE68A">contrato entre dos programas</strong>. Define qué podés pedir, cómo pedirlo y qué formato te responde. Hoy vemos el tipo más común: las APIs que usan HTTP y responden JSON.</p>
+  </div>
+</div>
+
+<!-- ─── 5. CLIENTE ↔ SERVIDOR ────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">La base de internet</div>
+  <h2>Cómo se hablan cliente y servidor</h2>
+  <div class="col" style="gap:12px">
+    <div class="g2">
+      <div class="card sl">
+        <h3>El cliente</h3>
+        <ul class="s" style="margin-top:6px">
+          <li>Siempre <strong>inicia</strong> la comunicación</li>
+          <li>Manda un <strong>Request</strong> (pedido)</li>
+          <li>Puede ser tu navegador, curl, Postman, o Python</li>
+        </ul>
+      </div>
+      <div class="card gr">
+        <h3>El servidor</h3>
+        <ul class="s" style="margin-top:6px">
+          <li>Escucha y <strong>responde</strong> cuando le piden</li>
+          <li>Manda una <strong>Response</strong> (respuesta)</li>
+          <li>Un archivo, datos JSON, un error — lo que corresponda</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card dk" style="padding:20px 24px">
+      <div style="display:flex;align-items:center;justify-content:center;gap:0;font-family:'Fira Code',monospace;font-size:clamp(13px,1.4vw,16px)">
+        <div style="background:#1E3A2F;padding:10px 20px;border-radius:10px;color:#86EFAC">🧑‍💻 Tu Python</div>
+        <div style="flex:1;text-align:center">
+          <div style="color:#60A5FA;font-size:13px;margin-bottom:4px">──── GET /v3.1/name/argentina ────▶</div>
+          <div style="color:#94A3B8;font-size:13px;margin-top:4px">◀── 200 OK + JSON ─────────────────</div>
+        </div>
+        <div style="background:#1E1B4B;padding:10px 20px;border-radius:10px;color:#A5B4FC">🌐 restcountries.com</div>
+      </div>
+    </div>
+    <div class="card y">
+      <p class="t" style="color:#78350F">Cada vez que usás una API esto es lo que pasa. Vos mandás un mensaje (Request) por HTTP. El servidor te responde (Response). Vamos a diseccionar ambos.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 6. QUÉ ES HTTP ────────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">El protocolo</div>
+  <h2>HTTP — el idioma de la web</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3>¿Qué es HTTP?</h3>
+        <p class="t" style="margin-top:6px"><strong>HyperText Transfer Protocol</strong>. Es el <strong>idioma</strong> que usan cliente y servidor para hablar. Define exactamente cómo es el formato de un pedido y de una respuesta.</p>
+        <p class="t" style="margin-top:8px">Cuando escribís una URL en el navegador, el navegador arma un mensaje HTTP y lo manda. Cuando tu Python usa <code>requests.get()</code>, hace exactamente lo mismo.</p>
+      </div>
+      <div class="card sl">
+        <h3>¿Qué es HTTPS?</h3>
+        <p class="t" style="margin-top:6px">HTTP con el canal <strong>encriptado</strong> (TLS). Mismo protocolo, diferente que nadie intercepte la conversación. Todas las APIs serias usan HTTPS.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card dk">
+        <h3>Un mensaje HTTP tiene dos partes</h3>
+        <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+          <div style="background:#0F172A;padding:12px;border-radius:8px">
+            <div style="color:#60A5FA;font-size:12px;font-weight:700;margin-bottom:6px">REQUEST (lo que vos mandás)</div>
+            <div style="font-family:'Fira Code',monospace;font-size:12px;line-height:1.8;color:#E2E8F0">
+              <span class="warn">GET</span> /v3.1/name/argentina HTTP/1.1<br>
+              <span class="key">Host:</span> restcountries.com<br>
+              <span class="key">Accept:</span> application/json
+            </div>
+          </div>
+          <div style="background:#0F172A;padding:12px;border-radius:8px">
+            <div style="color:#86EFAC;font-size:12px;font-weight:700;margin-bottom:6px">RESPONSE (lo que el servidor te manda)</div>
+            <div style="font-family:'Fira Code',monospace;font-size:12px;line-height:1.8;color:#E2E8F0">
+              HTTP/1.1 <span class="ok">200 OK</span><br>
+              <span class="key">Content-Type:</span> application/json<br>
+              <br>
+              <span class="dim">[{ "name": { "common": "Argentina" }, ... }]</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 7. MÉTODOS HTTP ────────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">El verbo de la request</div>
+  <h2>Los métodos HTTP — qué le estás pidiendo al servidor</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card dk">
+        <h3>Los 4 más usados</h3>
+        <table style="margin-top:10px">
+          <tr>
+            <th>Método</th>
+            <th>¿Qué le decís al servidor?</th>
+            <th>Acción</th>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td>Dame este recurso</td>
+            <td>Leer</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td>Creá esto nuevo</td>
+            <td>Crear</td>
+          </tr>
+          <tr>
+            <td><span class="method put">PUT</span></td>
+            <td>Reemplazá esto</td>
+            <td>Actualizar</td>
+          </tr>
+          <tr>
+            <td><span class="method del">DELETE</span></td>
+            <td>Borrá esto</td>
+            <td>Borrar</td>
+          </tr>
+        </table>
+        <p class="t" style="margin-top:10px;color:#94A3B8">Hoy usamos solo <span class="method get">GET</span>. Las APIs de lectura de datos casi siempre son todo GET.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card bl">
+        <h3><span class="method get">GET</span> — solo lee, nunca modifica</h3>
+        <ul class="s" style="margin-top:8px">
+          <li>No manda cuerpo (body) — el pedido va en la URL</li>
+          <li>Podés repetirlo mil veces, el servidor no cambia</li>
+          <li>Es lo que hace el navegador cuando escribís una URL</li>
+          <li>Tiene <strong>query params</strong>: <code>?lang=es&page=2</code></li>
+        </ul>
+      </div>
+      <div class="card or">
+        <h3>¿Cuándo necesitás POST?</h3>
+        <p class="t" style="margin-top:6px">Cuando <strong>mandás datos</strong> al servidor: crear un usuario, postear un tweet, subir un archivo. Ahí el cuerpo de la request tiene el contenido que mandás.</p>
+        <p class="t" style="margin-top:6px;color:var(--muted)">Hoy no llegamos a esto — queda para cuando trabajemos con APIs que requieren autenticación.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 8. ANATOMÍA DE LA RESPONSE ──────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Lo que te devuelve el servidor</div>
+  <h2>Anatomía de una respuesta HTTP</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card dk" style="height:100%">
+        <h3>Tres partes siempre</h3>
+        <div style="margin-top:12px;background:#0F172A;border-radius:8px;padding:14px;font-family:'Fira Code',monospace;font-size:12px;line-height:2">
+          <div><span style="color:#94A3B8">① Status line:</span></div>
+          <div style="padding-left:12px">HTTP/1.1 <span class="ok">200 OK</span></div>
+          <div style="height:6px"></div>
+          <div><span style="color:#94A3B8">② Headers:</span></div>
+          <div style="padding-left:12px"><span class="key">Content-Type:</span> application/json</div>
+          <div style="padding-left:12px"><span class="key">Content-Length:</span> 3842</div>
+          <div style="height:6px"></div>
+          <div><span style="color:#94A3B8">③ Body (el contenido real):</span></div>
+          <div style="padding-left:12px">[{ <span class="str">"name"</span>: { ... }, ... }]</div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card bl">
+        <h3>① El status code</h3>
+        <p class="t" style="margin-top:6px">Un número de 3 dígitos que dice si salió bien o mal. El primer dígito es la categoría:</p>
+        <table style="margin-top:8px">
+          <tr><td><span class="s-ok">2xx</span></td><td>Éxito — todo bien</td></tr>
+          <tr><td><span class="s-warn">3xx</span></td><td>Redirección — fijate allá</td></tr>
+          <tr><td><span class="s-er">4xx</span></td><td>Error tuyo — pediste mal</td></tr>
+          <tr><td><span class="s-er">5xx</span></td><td>Error del servidor — falló él</td></tr>
+        </table>
+      </div>
+      <div class="card sl">
+        <h3>② Headers y ③ Body</h3>
+        <ul class="s" style="margin-top:6px">
+          <li><strong>Headers</strong>: metadatos — qué tipo de contenido viene, cuánto pesa, cookies, etc.</li>
+          <li><strong>Body</strong>: el contenido real — el JSON que tu Python va a leer</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 9. STATUS CODES CONCRETOS ─────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Los más importantes</div>
+  <h2>Status codes que vas a ver siempre</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card gr">
+        <h3>Los buenos — 2xx</h3>
+        <table style="margin-top:8px">
+          <tr><th>Código</th><th>Significado</th></tr>
+          <tr><td><span class="s-ok">200 OK</span></td><td>Funcionó perfecto, acá está el recurso</td></tr>
+          <tr><td><span class="s-ok">201 Created</span></td><td>Se creó el recurso (respuesta a POST)</td></tr>
+          <tr><td><span class="s-ok">204 No Content</span></td><td>Funcionó pero no hay cuerpo para devolver</td></tr>
+        </table>
+      </div>
+      <div class="card y">
+        <h3 style="color:#92400E">Los de redirección — 3xx</h3>
+        <table style="margin-top:8px">
+          <tr><th>Código</th><th>Significado</th></tr>
+          <tr><td><span class="s-warn">301 Moved</span></td><td>El recurso se mudó de URL</td></tr>
+          <tr><td><span class="s-warn">304 Not Modified</span></td><td>Igual que lo que tenés en caché</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card rd">
+        <h3>Los de error — 4xx y 5xx</h3>
+        <table style="margin-top:8px">
+          <tr><th>Código</th><th>Significado</th></tr>
+          <tr><td><span class="s-er">400 Bad Request</span></td><td>Tu pedido está mal armado</td></tr>
+          <tr><td><span class="s-er">401 Unauthorized</span></td><td>Necesitás autenticarte</td></tr>
+          <tr><td><span class="s-er">403 Forbidden</span></td><td>Sin permiso, aunque estés logueado</td></tr>
+          <tr><td><span class="s-er">404 Not Found</span></td><td>No existe ese recurso</td></tr>
+          <tr><td><span class="s-er">429 Too Many Requests</span></td><td>Rate limit — pediste demasiado</td></tr>
+          <tr><td><span class="s-er">500 Internal Server Error</span></td><td>El servidor explotó</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 10. QUÉ ES REST ───────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">El estilo de diseño</div>
+  <h2>¿Qué hace que una API sea "REST"?</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3>REST no es un protocolo — es una convención</h3>
+        <p class="t" style="margin-top:6px">REST = <strong>Representational State Transfer</strong>. Es un conjunto de reglas de diseño para que las APIs sean predecibles.</p>
+        <ul class="s" style="margin-top:10px">
+          <li>Los recursos son <strong>sustantivos</strong> en la URL: <code>/countries</code>, <code>/users</code></li>
+          <li>Las acciones son los <strong>métodos HTTP</strong>: GET, POST, PUT, DELETE</li>
+          <li>Cada request es <strong>independiente</strong> — el servidor no recuerda la anterior</li>
+          <li>Responde con <strong>JSON</strong> (el estándar moderno)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card dk">
+        <h3>URLs REST vs URLs no-REST</h3>
+        <div style="margin-top:10px">
+          <div class="ann">
+            <span class="ann-line" style="color:#FCA5A5">/getCountry?name=arg</span>
+            <span class="ann-arrow">✗</span>
+            <span class="ann-text">Acción en la URL — no REST</span>
+          </div>
+          <div class="ann">
+            <span class="ann-line" style="color:#86EFAC">/name/argentina</span>
+            <span class="ann-arrow">✓</span>
+            <span class="ann-text">Recurso en la URL, método GET implícito</span>
+          </div>
+          <div style="height:6px"></div>
+          <div class="ann">
+            <span class="ann-line" style="color:#FCA5A5">/deleteUser?id=5</span>
+            <span class="ann-arrow">✗</span>
+            <span class="ann-text">Acción en la URL — no REST</span>
+          </div>
+          <div class="ann">
+            <span class="ann-line" style="color:#86EFAC">DELETE /users/5</span>
+            <span class="ann-arrow">✓</span>
+            <span class="ann-text">Recurso en URL, DELETE como método</span>
+          </div>
+        </div>
+      </div>
+      <div class="card sl">
+        <p class="t"><strong>Para consumidores de API</strong> (que es lo que hacemos hoy) lo que importa es esto: cada endpoint es una URL a la que le hacés un GET y te devuelve JSON.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 11. JSON ──────────────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">El formato de respuesta</div>
+  <h2>JSON — lo que la API te manda</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card dk">
+        <h3>JSON tiene exactamente 6 tipos de datos</h3>
+        <table style="margin-top:8px">
+          <tr><th>Tipo</th><th>Ejemplo</th></tr>
+          <tr><td>String</td><td><code>"Argentina"</code></td></tr>
+          <tr><td>Number</td><td><code>45376763</code> o <code>16.32</code></td></tr>
+          <tr><td>Boolean</td><td><code>true</code> / <code>false</code></td></tr>
+          <tr><td>Null</td><td><code>null</code></td></tr>
+          <tr><td>Array</td><td><code>["Buenos Aires", "Córdoba"]</code></td></tr>
+          <tr><td>Object</td><td><code>{ "clave": "valor" }</code></td></tr>
+        </table>
+        <p class="t" style="margin-top:8px;color:#94A3B8">Nada más que eso. Anidados entre sí cuantas veces haga falta.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card bl">
+        <h3>JSON ↔ Python — traducción directa</h3>
+        <table style="margin-top:8px">
+          <tr><th>JSON</th><th>Python</th></tr>
+          <tr><td><code>{ "a": 1 }</code></td><td><code>dict</code></td></tr>
+          <tr><td><code>[1, 2, 3]</code></td><td><code>list</code></td></tr>
+          <tr><td><code>"texto"</code></td><td><code>str</code></td></tr>
+          <tr><td><code>42</code> / <code>3.14</code></td><td><code>int</code> / <code>float</code></td></tr>
+          <tr><td><code>true</code> / <code>false</code></td><td><code>True</code> / <code>False</code></td></tr>
+          <tr><td><code>null</code></td><td><code>None</code></td></tr>
+        </table>
+      </div>
+      <div class="card gr">
+        <h3><code>r.json()</code> hace la magia</h3>
+        <p class="t" style="margin-top:6px">La librería <code>requests</code> tiene un método <code>.json()</code> que convierte el texto JSON de la respuesta a tipos nativos de Python automáticamente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 12. SEC — CONSUMIR LA API ────────────────────────────── -->
+<div class="slide s-sec gr">
+  <div class="tag">Bloque 2</div>
+  <h2>Cómo consumir<br>una API con Python</h2>
+  <p class="sub">Del navegador al código — el mismo pedido, tres formas</p>
+</div>
+
+<!-- ─── 13. TRES FORMAS DE HACER UN GET ─────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Mismo pedido, tres herramientas</div>
+  <h2>La misma request desde el navegador, curl y Python</h2>
+  <div class="g3">
+    <div class="card sl">
+      <h3>Navegador</h3>
+      <p class="t" style="margin-top:6px">Escribís la URL y Enter. El navegador arma el GET, te muestra la respuesta.</p>
+<pre style="margin-top:8px;background:#F1F5F9;color:#0F172A;padding:10px;font-size:12px">restcountries.com/v3.1/name/argentina</pre>
+      <p class="t" style="margin-top:8px;color:var(--muted)">Ves el JSON crudo. Probalo ahora.</p>
+    </div>
+    <div class="card or">
+      <h3><code>curl</code> — terminal</h3>
+      <p class="t" style="margin-top:6px">Herramienta de línea de comando. Más control, misma idea.</p>
+<pre style="margin-top:8px;font-size:11px">curl -s \
+ restcountries.com/v3.1/\
+ name/argentina</pre>
+      <p class="t" style="margin-top:8px;color:var(--muted)">El <code>-s</code> es "silent" — sin barra de progreso.</p>
+    </div>
+    <div class="card bl">
+      <h3>Python + requests</h3>
+      <p class="t" style="margin-top:6px">Desde código. El resultado ya es un <code>dict</code>.</p>
+<pre style="margin-top:8px;font-size:11px"><span class="kw">import</span> requests
+
+r = requests.<span class="fn">get</span>(
+  <span class="str">"...name/argentina"</span>
+)
+data = r.<span class="fn">json</span>()</pre>
+    </div>
+  </div>
+  <div class="card dk" style="margin-top:14px">
+    <p class="t"><strong style="color:#93C5FD">Las tres hacen exactamente lo mismo</strong>: arman un HTTP GET con esa URL y procesan la respuesta. La diferencia es solo qué tan fácil es trabajar con el resultado en código.</p>
+  </div>
+</div>
+
+<!-- ─── 14. INSTALAR Y USAR REQUESTS ─────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">La librería</div>
+  <h2><code>requests</code> — HTTP para humanos</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card sl">
+        <h3>Instalación (una sola vez)</h3>
+<pre style="margin-top:8px;background:#F1F5F9;color:#0F172A;padding:10px">pip install requests</pre>
+        <p class="t" style="margin-top:8px;color:var(--muted)">No viene en la librería estándar de Python. Es la primera dependencia "real" del curso. Activá tu <code>venv</code> antes.</p>
+      </div>
+      <div class="card bl">
+        <h3>Los métodos principales</h3>
+        <table style="margin-top:8px">
+          <tr><th>Función</th><th>¿Para qué?</th></tr>
+          <tr><td><code>requests.get(url)</code></td><td>HTTP GET</td></tr>
+          <tr><td><code>requests.post(url, json=data)</code></td><td>HTTP POST con cuerpo JSON</td></tr>
+          <tr><td><code>requests.put(url, json=data)</code></td><td>HTTP PUT</td></tr>
+          <tr><td><code>requests.delete(url)</code></td><td>HTTP DELETE</td></tr>
+        </table>
+        <p class="t" style="margin-top:8px;color:var(--muted)">Todos devuelven un objeto <code>Response</code>.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card dk">
+        <h3>El objeto <code>Response</code> — qué tiene</h3>
+        <table style="margin-top:10px">
+          <tr><th>Atributo / Método</th><th>¿Qué contiene?</th></tr>
+          <tr><td><code>r.status_code</code></td><td>Número: 200, 404, 500…</td></tr>
+          <tr><td><code>r.ok</code></td><td><code>True</code> si status &lt; 400</td></tr>
+          <tr><td><code>r.text</code></td><td>Cuerpo como string crudo</td></tr>
+          <tr><td><code>r.json()</code></td><td>Cuerpo parseado a dict/list</td></tr>
+          <tr><td><code>r.headers</code></td><td>Headers de la respuesta</td></tr>
+          <tr><td><code>r.raise_for_status()</code></td><td>Lanza excepción si 4xx/5xx</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 15. EL PATRÓN COMPLETO ───────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">El patrón que vas a usar siempre</div>
+  <h2>get → raise_for_status → json</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">el patrón base</div>
+<pre><span class="kw">import</span> requests
+
+url = <span class="str">"https://restcountries.com/v3.1/name/argentina"</span>
+
+r = requests.<span class="fn">get</span>(url, timeout=<span class="num">5</span>)   <span class="cm"># 1</span>
+r.<span class="fn">raise_for_status</span>()                 <span class="cm"># 2</span>
+data = r.<span class="fn">json</span>()                       <span class="cm"># 3</span>
+
+<span class="fn">print</span>(<span class="fn">type</span>(data))  <span class="cm"># &lt;class 'list'&gt;</span>
+<span class="fn">print</span>(data[<span class="num">0</span>].keys())</pre>
+    </div>
+    <div class="col">
+      <div class="card dk">
+        <h3>Por qué esas 3 líneas en ese orden</h3>
+        <div style="margin-top:12px">
+          <div class="ann">
+            <span class="ann-line" style="color:#FDE68A">1 · .get(timeout=5)</span>
+            <span class="ann-arrow">←</span>
+            <span class="ann-text">Manda el pedido. <strong>timeout obligatorio</strong>: sin él, si el servidor no responde tu programa se congela para siempre</span>
+          </div>
+          <div style="height:8px"></div>
+          <div class="ann">
+            <span class="ann-line" style="color:#FDE68A">2 · raise_for_status()</span>
+            <span class="ann-arrow">←</span>
+            <span class="ann-text">Si el status es 4xx o 5xx, lanza una excepción. Sin esto tu código sigue aunque el servidor haya fallado</span>
+          </div>
+          <div style="height:8px"></div>
+          <div class="ann">
+            <span class="ann-line" style="color:#FDE68A">3 · .json()</span>
+            <span class="ann-arrow">←</span>
+            <span class="ann-text">Convierte el texto JSON del cuerpo a un <code>dict</code> o <code>list</code> de Python</span>
+          </div>
+        </div>
+      </div>
+      <div class="card y">
+        <p class="t" style="color:#78350F">Si no ponés <code>raise_for_status()</code> y el server responde 404, <code>r.json()</code> va a intentar parsear el cuerpo del error. Podés llevarte sorpresas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 16. SEC — EJERCICIO ──────────────────────────────────── -->
+<div class="slide s-sec or">
+  <div class="tag">Bloque 3 — live coding</div>
+  <h2>Ejercicio: países del mundo</h2>
+  <p class="sub">Funciones simples — sin clases todavía</p>
+</div>
+
+<!-- ─── 17. LA API QUE USAMOS ────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">La API de hoy</div>
+  <h2>restcountries.com — gratis y sin registro</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card bl">
+        <h3>Tres endpoints que usamos</h3>
+        <table style="margin-top:8px">
+          <tr><th>Qué buscás</th><th>URL</th></tr>
+          <tr><td>Por nombre</td><td><code>/v3.1/name/{nombre}</code></td></tr>
+          <tr><td>Por región</td><td><code>/v3.1/region/{región}</code></td></tr>
+          <tr><td>Por código ISO</td><td><code>/v3.1/alpha/{co}</code></td></tr>
+        </table>
+        <p class="t" style="margin-top:10px;color:var(--muted)">Sin token. Sin límite de pedidos razonable. Ideal para aprender.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card dk">
+        <h3>Probemos primero en el navegador</h3>
+        <p class="t" style="margin-top:6px">Pegá estas URLs y mirá el JSON crudo:</p>
+        <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;font-family:'Fira Code',monospace;font-size:12px">
+          <div style="background:#0F172A;padding:8px 12px;border-radius:6px;color:#7DD3FC">restcountries.com/v3.1/name/argentina</div>
+          <div style="background:#0F172A;padding:8px 12px;border-radius:6px;color:#7DD3FC">restcountries.com/v3.1/region/europe</div>
+          <div style="background:#0F172A;padding:8px 12px;border-radius:6px;color:#7DD3FC">restcountries.com/v3.1/alpha/BRA</div>
+        </div>
+        <p class="t" style="margin-top:10px;color:#94A3B8">Observá: ¿qué tipo devuelve cada uno? ¿lista o dict?</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 18. LEER EL JSON CRUDO ───────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Antes de escribir código</div>
+  <h2>Leer el JSON que devuelve la API — explorar el dict</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl json">respuesta de /name/argentina (recortada)</div>
+<pre style="font-size:11px"><span class="dim">[</span>                             <span class="cm">&lt;-- lista</span>
+  <span class="dim">{</span>                           <span class="cm">&lt;-- dict del país</span>
+    <span class="key">"name"</span>: <span class="dim">{</span>
+      <span class="key">"common"</span>:   <span class="str">"Argentina"</span>,
+      <span class="key">"official"</span>: <span class="str">"Argentine Republic"</span>
+    <span class="dim">}</span>,
+    <span class="key">"capital"</span>:    <span class="dim">[</span><span class="str">"Buenos Aires"</span><span class="dim">]</span>,
+    <span class="key">"region"</span>:     <span class="str">"Americas"</span>,
+    <span class="key">"subregion"</span>:  <span class="str">"South America"</span>,
+    <span class="key">"population"</span>: <span class="num">45376763</span>,
+    <span class="key">"area"</span>:       <span class="num">2780400.0</span>,
+    <span class="key">"languages"</span>: <span class="dim">{</span><span class="key">"spa"</span>: <span class="str">"Spanish"</span><span class="dim">}</span>,
+    <span class="key">"flag"</span>:       <span class="str">"🇦🇷"</span>
+  <span class="dim">}</span>
+<span class="dim">]</span></pre>
+    </div>
+    <div class="col">
+      <div class="card dk">
+        <h3>Cómo acceder a cada campo en Python</h3>
+        <div style="margin-top:10px">
+          <div class="ann">
+            <span class="ann-line">data[0]["name"]["common"]</span>
+            <span class="ann-arrow">→</span>
+            <span class="ann-text"><code>"Argentina"</code></span>
+          </div>
+          <div class="ann">
+            <span class="ann-line">data[0]["capital"][0]</span>
+            <span class="ann-arrow">→</span>
+            <span class="ann-text"><code>"Buenos Aires"</code> — es una lista, agarramos el primero</span>
+          </div>
+          <div class="ann">
+            <span class="ann-line">data[0]["population"]</span>
+            <span class="ann-arrow">→</span>
+            <span class="ann-text"><code>45376763</code></span>
+          </div>
+          <div class="ann">
+            <span class="ann-line">data[0]["area"]</span>
+            <span class="ann-arrow">→</span>
+            <span class="ann-text"><code>2780400.0</code></span>
+          </div>
+        </div>
+        <div style="background:#0F172A;border-radius:8px;padding:10px;margin-top:12px">
+          <p style="color:#94A3B8;font-size:12px;margin-bottom:6px">La densidad la calculamos nosotros:</p>
+          <div style="font-family:'Fira Code',monospace;font-size:12px;color:#86EFAC">population / area  →  16.32 hab/km²</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 19. FUNCIÓN get_country ───────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Live coding — paso 1</div>
+  <h2>Función <code>get_country(name)</code></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">paises.py</div>
+<pre><span class="kw">import</span> requests
+
+BASE = <span class="str">"https://restcountries.com/v3.1"</span>
+
+<span class="kw">def</span> <span class="fn">get_country</span>(name: <span class="fn">str</span>) -> <span class="fn">dict</span>:
+    url = <span class="str">f"</span><span class="str">{BASE}</span><span class="str">/name/</span><span class="str">{name}</span><span class="str">"</span>
+    r = requests.<span class="fn">get</span>(url, timeout=<span class="num">5</span>)
+    r.<span class="fn">raise_for_status</span>()
+    <span class="kw">return</span> r.<span class="fn">json</span>()[<span class="num">0</span>]     <span class="cm"># primer resultado</span>
+
+
+<span class="cm"># probamos</span>
+arg = <span class="fn">get_country</span>(<span class="str">"argentina"</span>)
+<span class="fn">print</span>(arg[<span class="str">"name"</span>][<span class="str">"common"</span>])
+<span class="fn">print</span>(arg[<span class="str">"capital"</span>][<span class="num">0</span>])
+<span class="fn">print</span>(arg[<span class="str">"population"</span>])</pre>
+      <div class="lbl out" style="margin-top:8px">salida</div>
+<pre><span class="ok">Argentina
+Buenos Aires
+45376763</span></pre>
+    </div>
+    <div class="col">
+      <div class="card or">
+        <h3>Por qué <code>[0]</code> al final</h3>
+        <p class="t" style="margin-top:6px">El endpoint <code>/name/</code> devuelve <strong>una lista</strong>, aunque busques un solo país. Puede haber varios resultados si el nombre coincide parcialmente. Con <code>[0]</code> agarramos el primero.</p>
+      </div>
+      <div class="card dk">
+        <h3>Ahora agregamos una función para mostrarlo</h3>
+<pre style="background:#0F172A;padding:10px;font-size:12px"><span class="kw">def</span> <span class="fn">mostrar</span>(p: <span class="fn">dict</span>):
+    nombre    = p[<span class="str">"name"</span>][<span class="str">"common"</span>]
+    capital   = p.<span class="fn">get</span>(<span class="str">"capital"</span>, [<span class="str">"—"</span>])[<span class="num">0</span>]
+    region    = p.<span class="fn">get</span>(<span class="str">"region"</span>, <span class="str">"—"</span>)
+    poblacion = p.<span class="fn">get</span>(<span class="str">"population"</span>, <span class="num">0</span>)
+    area      = p.<span class="fn">get</span>(<span class="str">"area"</span>, <span class="num">0</span>)
+    densidad  = poblacion / area <span class="kw">if</span> area <span class="kw">else</span> <span class="num">0</span>
+
+    <span class="fn">print</span>(<span class="str">f"</span><span class="str">{nombre}</span><span class="str"> (</span><span class="str">{region}</span><span class="str">)"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Capital:  </span><span class="str">{capital}</span><span class="str">"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Población: </span><span class="str">{poblacion:,}</span><span class="str">"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Densidad:  </span><span class="str">{densidad:.2f}</span><span class="str"> hab/km²"</span>)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 20. FUNCIÓN get_region ────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Live coding — paso 2</div>
+  <h2>Traer varios países — <code>get_region(region)</code></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">paises.py — continuación</div>
+<pre><span class="kw">def</span> <span class="fn">get_region</span>(region: <span class="fn">str</span>) -> <span class="fn">list</span>:
+    url = <span class="str">f"</span><span class="str">{BASE}</span><span class="str">/region/</span><span class="str">{region}</span><span class="str">"</span>
+    r = requests.<span class="fn">get</span>(url, timeout=<span class="num">5</span>)
+    r.<span class="fn">raise_for_status</span>()
+    <span class="kw">return</span> r.<span class="fn">json</span>()           <span class="cm"># lista de dicts</span>
+
+
+<span class="cm"># traer sudamérica</span>
+paises = <span class="fn">get_region</span>(<span class="str">"south america"</span>)
+<span class="fn">print</span>(<span class="str">f"Países encontrados: </span><span class="str">{</span><span class="fn">len</span>(paises)<span class="str">}</span><span class="str">"</span>)
+
+<span class="cm"># mostrar todos</span>
+<span class="kw">for</span> p <span class="kw">in</span> paises:
+    <span class="fn">mostrar</span>(p)</pre>
+      <div class="lbl out" style="margin-top:8px">salida (primeras líneas)</div>
+<pre><span class="ok">Países encontrados: 14
+Argentina (Americas)
+  Capital:  Buenos Aires
+  Población: 45,376,763
+  Densidad:  16.32 hab/km²
+Brazil (Americas)
+...</span></pre>
+    </div>
+    <div class="col">
+      <div class="card or">
+        <h3>La diferencia con <code>get_country</code></h3>
+        <ul class="s" style="margin-top:8px">
+          <li>No hace <code>[0]</code> al final — devuelve <strong>toda la lista</strong></li>
+          <li>La API ya devuelve todos los países de esa región</li>
+        </ul>
+      </div>
+      <div class="card bl">
+        <h3>Regiones disponibles</h3>
+        <ul class="s" style="margin-top:8px">
+          <li><code>"africa"</code></li>
+          <li><code>"americas"</code></li>
+          <li><code>"asia"</code></li>
+          <li><code>"europe"</code></li>
+          <li><code>"oceania"</code></li>
+          <li><code>"south america"</code></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 21. ORDENAR POR POBLACIÓN ───────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Live coding — paso 3</div>
+  <h2>Ordenar países por población</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="lbl py">paises.py — ordenar</div>
+<pre>paises = <span class="fn">get_region</span>(<span class="str">"south america"</span>)
+
+ordenados = <span class="fn">sorted</span>(
+    paises,
+    key=<span class="kw">lambda</span> p: p.<span class="fn">get</span>(<span class="str">"population"</span>, <span class="num">0</span>),
+    reverse=<span class="kw">True</span>,
+)
+
+<span class="fn">print</span>(<span class="str">"Ranking por población:\n"</span>)
+<span class="kw">for</span> i, p <span class="kw">in</span> <span class="fn">enumerate</span>(ordenados, <span class="num">1</span>):
+    nombre    = p[<span class="str">"name"</span>][<span class="str">"common"</span>]
+    poblacion = p.<span class="fn">get</span>(<span class="str">"population"</span>, <span class="num">0</span>)
+    <span class="fn">print</span>(<span class="str">f"</span><span class="str">{i:2}</span><span class="str">. </span><span class="str">{nombre:20}</span><span class="str"> </span><span class="str">{poblacion:>12,}</span><span class="str">"</span>)</pre>
+      <div class="lbl out" style="margin-top:8px">salida</div>
+<pre><span class="ok"> 1. Brazil                 214,300,000
+ 2. Colombia                51,512,762
+ 3. Argentina               45,376,763
+ 4. Peru                    32,971,854
+ 5. Venezuela               28,435,943</span>
+<span class="dim">...</span></pre>
+    </div>
+    <div class="col">
+      <div class="card bl">
+        <h3>¿Qué hace <code>sorted</code> con <code>key=lambda</code>?</h3>
+        <p class="t" style="margin-top:6px">Le decís <strong>por qué campo ordenar</strong>. La lambda recibe cada elemento (un dict) y devuelve el valor a comparar.</p>
+<pre style="margin-top:8px;font-size:12px"><span class="cm"># esto:</span>
+key=<span class="kw">lambda</span> p: p.<span class="fn">get</span>(<span class="str">"population"</span>, <span class="num">0</span>)
+
+<span class="cm"># equivale a una función:</span>
+<span class="kw">def</span> <span class="fn">key_fn</span>(p):
+    <span class="kw">return</span> p.<span class="fn">get</span>(<span class="str">"population"</span>, <span class="num">0</span>)</pre>
+      </div>
+      <div class="card gr">
+        <h3>Dato importante: <code>.get("campo", 0)</code></h3>
+        <p class="t" style="margin-top:6px">Algunos países no tienen todos los campos. <code>.get()</code> con un default evita el <code>KeyError</code> sin que rompas nada.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 22. ERRORES ──────────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Qué puede salir mal — y cómo manejarlo</div>
+  <h2>try / except con <code>requests</code></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card rd">
+        <h3>Tres casos reales</h3>
+        <table style="margin-top:8px">
+          <tr><th>Situación</th><th>Excepción</th></tr>
+          <tr><td>Sin internet / DNS falla</td><td><code>ConnectionError</code></td></tr>
+          <tr><td>País no encontrado (404)</td><td><code>HTTPError</code></td></tr>
+          <tr><td>Servidor no responde</td><td><code>Timeout</code></td></tr>
+        </table>
+        <p class="t" style="margin-top:10px;color:var(--muted)">Las tres viven en <code>requests.exceptions</code>.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="lbl py">versión con manejo de errores</div>
+<pre style="font-size:12px"><span class="kw">from</span> requests.exceptions <span class="kw">import</span> (
+    HTTPError, ConnectionError, Timeout
+)
+
+<span class="kw">def</span> <span class="fn">get_country</span>(name):
+    url = <span class="str">f"</span><span class="str">{BASE}</span><span class="str">/name/</span><span class="str">{name}</span><span class="str">"</span>
+    <span class="kw">try</span>:
+        r = requests.<span class="fn">get</span>(url, timeout=<span class="num">5</span>)
+        r.<span class="fn">raise_for_status</span>()
+        <span class="kw">return</span> r.<span class="fn">json</span>()[<span class="num">0</span>]
+    <span class="kw">except</span> Timeout:
+        <span class="fn">print</span>(<span class="str">"⏱ La API tardó demasiado"</span>)
+    <span class="kw">except</span> ConnectionError:
+        <span class="fn">print</span>(<span class="str">"📡 Sin conexión a internet"</span>)
+    <span class="kw">except</span> HTTPError <span class="kw">as</span> e:
+        <span class="fn">print</span>(<span class="str">f"❌ Error </span><span class="str">{e.response.status_code}</span><span class="str">: no encontrado"</span>)
+    <span class="kw">return</span> <span class="kw">None</span></pre>
+    </div>
+  </div>
+  <div class="card sl" style="margin-top:12px">
+    <p class="t"><strong>El orden importa:</strong> poné primero las excepciones más específicas (<code>Timeout</code>, <code>HTTPError</code>) antes de las más generales. Si atrapás <code>Exception</code> primero, las demás nunca se alcanzan.</p>
+  </div>
+</div>
+
+<!-- ─── 23. SEC — TAREA ──────────────────────────────────────── -->
+<div class="slide s-sec pu">
+  <div class="tag">Para la próxima clase</div>
+  <h2>Tarea: subir<br>la dificultad con OOP</h2>
+  <p class="sub">El mismo código — pero encapsulado en clases</p>
+</div>
+
+<!-- ─── 24. LA TAREA ─────────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Consigna</div>
+  <h2>Reescribí el ejercicio usando clases</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card pu">
+        <h3>Clase <code>Country</code></h3>
+        <p class="t" style="margin-top:6px">En vez de pasar dicts por todos lados, modelar un país como objeto:</p>
+        <ul class="s" style="margin-top:8px">
+          <li><code>__init__(self, data: dict)</code> — recibe el dict crudo y arma los atributos</li>
+          <li><code>__str__(self)</code> — imprime el país legible (reemplazá la función <code>mostrar</code>)</li>
+          <li><code>density(self)</code> — calcula habitantes por km²</li>
+        </ul>
+      </div>
+      <div class="card sl">
+        <h3>Clase <code>CountryAPI</code></h3>
+        <p class="t" style="margin-top:6px">Encapsular las requests:</p>
+        <ul class="s" style="margin-top:8px">
+          <li><code>by_name(name)</code> → devuelve un <code>Country</code></li>
+          <li><code>by_region(region)</code> → devuelve <code>list[Country]</code></li>
+          <li>El manejo de errores adentro de la clase, no en el <code>main</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card dk">
+        <h3>Cómo debería quedar el main</h3>
+<pre style="background:#0F172A;padding:12px;font-size:12px"><span class="cm"># Sin clases (hoy):</span>
+paises = <span class="fn">get_region</span>(<span class="str">"south america"</span>)
+<span class="kw">for</span> p <span class="kw">in</span> paises:
+    <span class="fn">mostrar</span>(p)
+
+<span class="cm"># Con clases (tarea):</span>
+api = <span class="fn">CountryAPI</span>()
+paises = api.<span class="fn">by_region</span>(<span class="str">"south america"</span>)
+<span class="kw">for</span> p <span class="kw">in</span> paises:
+    <span class="fn">print</span>(p)</pre>
+        <p class="t" style="margin-top:10px;color:#94A3B8">El <code>main</code> queda limpio. La lógica de "cómo se pide" y "cómo se muestra" vive en las clases.</p>
+      </div>
+      <div class="card y">
+        <h3 style="color:#92400E">Entrega</h3>
+        <p class="t" style="margin-top:6px;color:#78350F">Subí el repo a GitHub con dos archivos separados: <code>country.py</code> (la clase) y <code>main.py</code> (el script).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 25. CHEATSHEET ──────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Referencia rápida</div>
+  <h2>Todo lo de hoy en un slide</h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card sl">
+        <h3>Flujo HTTP</h3>
+        <table style="margin-top:8px">
+          <tr><th>Qué</th><th>Cómo</th></tr>
+          <tr><td>Hacer un GET</td><td><code>requests.get(url, timeout=5)</code></td></tr>
+          <tr><td>Verificar status</td><td><code>r.raise_for_status()</code></td></tr>
+          <tr><td>Leer JSON</td><td><code>r.json()</code></td></tr>
+          <tr><td>Ver status</td><td><code>r.status_code</code></td></tr>
+        </table>
+      </div>
+      <div class="card rd">
+        <h3>Excepciones de requests</h3>
+        <table style="margin-top:8px">
+          <tr><td><code>Timeout</code></td><td>No respondió a tiempo</td></tr>
+          <tr><td><code>ConnectionError</code></td><td>Sin red o DNS falló</td></tr>
+          <tr><td><code>HTTPError</code></td><td>Status 4xx o 5xx</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card dk">
+        <h3>Métodos HTTP</h3>
+        <table style="margin-top:8px">
+          <tr><td><span class="method get">GET</span></td><td>Leer un recurso</td></tr>
+          <tr><td><span class="method post">POST</span></td><td>Crear algo nuevo</td></tr>
+          <tr><td><span class="method put">PUT</span></td><td>Actualizar</td></tr>
+          <tr><td><span class="method del">DELETE</span></td><td>Borrar</td></tr>
+        </table>
+        <h3 style="margin-top:14px">Status codes</h3>
+        <table style="margin-top:8px">
+          <tr><td><span class="s-ok">2xx</span></td><td>Éxito</td></tr>
+          <tr><td><span class="s-warn">3xx</span></td><td>Redirección</td></tr>
+          <tr><td><span class="s-er">4xx</span></td><td>Error tuyo</td></tr>
+          <tr><td><span class="s-er">5xx</span></td><td>Error del servidor</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 26. CIERRE ──────────────────────────────────────────── -->
+<div class="slide s-sec dk">
+  <div class="tag">Clase 08</div>
+  <h2>Fin de la clase</h2>
+  <p class="sub">HTTP Request → HTTP Response → JSON → dict → datos<br>Tarea: misma lógica, encapsulada en clases</p>
+</div>
+
+</div><!-- /deck -->
+
+<a id="home" href="../">&#8592; Inicio</a>
+<div id="prog"></div>
+<div id="nav">
+  <button class="nb" id="bp">&#8592;</button>
+  <span id="cnt">1 / 26</span>
+  <button class="nb" id="bn">&#8594;</button>
+</div>
+
+<script>
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total  = slides.length;
+let cur = 0;
+const cnt  = document.getElementById('cnt');
+const prog = document.getElementById('prog');
+function go(n) {
+  if (n < 0 || n >= total) return;
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exit');
+  const prev = cur;
+  setTimeout(() => slides[prev].classList.remove('exit'), 340);
+  cur = n;
+  slides[cur].classList.add('active');
+  cnt.textContent = `${cur + 1} / ${total}`;
+  prog.style.width = `${((cur + 1) / total) * 100}%`;
+}
+document.getElementById('bn').addEventListener('click', () => go(cur + 1));
+document.getElementById('bp').addEventListener('click', () => go(cur - 1));
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') go(cur + 1);
+  if (e.key === 'ArrowLeft') go(cur - 1);
+});
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 40) go(cur + (dx > 0 ? 1 : -1));
+});
+go(0);
+</script>
+</body>
+</html>
