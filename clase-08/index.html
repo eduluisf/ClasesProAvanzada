@@ -929,109 +929,177 @@ ordenados = <span class="fn">sorted</span>(
 <!-- ─── 23. SEC — TAREA ──────────────────────────────────────── -->
 <div class="slide s-sec pu">
   <div class="tag">Para la próxima clase</div>
-  <h2>Tarea: subir<br>la dificultad con OOP</h2>
-  <p class="sub">El mismo código — pero encapsulado en clases</p>
+  <h2>Tarea: OOP +<br>Concurrencia</h2>
+  <p class="sub">Consumir la API · Modelar con clases · Hacer las requests en paralelo</p>
 </div>
 
-<!-- ─── 24. LA TAREA ─────────────────────────────────────────── -->
+<!-- ─── 24. CLASE Country ─────────────────────────────────────── -->
 <div class="slide s-c">
-  <div class="tag">Consigna</div>
-  <h2>Reescribe el ejercicio usando clases</h2>
+  <div class="tag">Tarea — Clase 1 de 2</div>
+  <h2>La clase <code>Country</code></h2>
   <div class="g2">
     <div class="col">
-      <div class="card pu">
-        <h3>Clase <code>Country</code></h3>
-        <p class="t" style="margin-top:6px">En vez de pasar dicts por todos lados, modela un país como objeto:</p>
-        <ul class="s" style="margin-top:8px">
-          <li><code>__init__(self, data: dict)</code> — recibe el dict crudo de la API y extrae los atributos (<code>nombre</code>, <code>capital</code>, <code>poblacion</code>, <code>area</code>, <code>region</code>)</li>
-          <li><code>__str__(self)</code> — devuelve una cadena legible con todos los datos del país</li>
-          <li><code>density(self)</code> — calcula y devuelve habitantes por km²</li>
-          <li><code>comparar(self, otros: list)</code> — imprime una tabla comparativa e indica el ganador en cada categoría</li>
-        </ul>
-      </div>
-      <div class="card sl">
-        <h3>Clase <code>CountryAPI</code></h3>
-        <p class="t" style="margin-top:6px">Encapsula todas las requests a la API:</p>
-        <ul class="s" style="margin-top:8px">
-          <li><code>by_name(name)</code> → devuelve un objeto <code>Country</code></li>
-          <li><code>by_region(region)</code> → devuelve <code>list[Country]</code></li>
-          <li>El manejo de errores va dentro de la clase — el <code>main</code> no sabe nada de <code>requests</code></li>
-        </ul>
+      <div class="card dk">
+        <h3>Esqueleto — qué métodos tiene</h3>
+<pre style="background:#0F172A;padding:14px;font-size:13px;margin-top:12px"><span class="kw">class</span> <span class="fn">Country</span>:
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, data: <span class="fn">dict</span>):
+        self.nombre    = ...
+        self.capital   = ...
+        self.poblacion = ...
+        self.area      = ...
+        self.region    = ...
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self) -> <span class="fn">str</span>:
+        ...
+
+    <span class="kw">def</span> <span class="fn">density</span>(self) -> <span class="fn">float</span>:
+        ...
+
+    <span class="kw">def</span> <span class="fn">comparar</span>(self, otros: <span class="fn">list</span>):
+        ...</pre>
       </div>
     </div>
     <div class="col">
-      <div class="card dk">
-        <h3>Cómo debe quedar el main</h3>
-<pre style="background:#0F172A;padding:12px;font-size:12px"><span class="cm"># Sin clases (hoy):</span>
-paises = <span class="fn">get_region</span>(<span class="str">"south america"</span>)
-<span class="kw">for</span> p <span class="kw">in</span> paises:
-    <span class="fn">mostrar</span>(p)
-
-<span class="cm"># Con clases (parcial):</span>
-api = <span class="fn">CountryAPI</span>()
-paises = api.<span class="fn">by_region</span>(<span class="str">"south america"</span>)
-<span class="kw">for</span> p <span class="kw">in</span> paises:
-    <span class="fn">print</span>(p)</pre>
-        <p class="t" style="margin-top:10px;color:#94A3B8">El <code>main</code> queda limpio. La lógica de cómo se pide y cómo se muestra vive en las clases.</p>
-      </div>
+      <div class="card sl">
+        <h3>Qué debe hacer cada método</h3>
+        <ul class="s" style="margin-top:14px;gap:16px">
+          <li>
+            <strong><code>__init__(self, data)</code></strong>
+            <p class="t" style="margin-top:4px;color:var(--muted)">Recibe el dict crudo de la API y extrae los atributos. El resto del código nunca toca el dict directamente.</p>
+          </li>
+          <li>
+            <strong><code>__str__(self)</code></strong>
+            <p class="t" style="margin-top:4px;color:var(--muted)">Devuelve una cadena legible con nombre, capital, población y área. Permite hacer <code>print(pais)</code>.</p>
+          </li>
+          <li>
+            <strong><code>density(self)</code></strong>
+            <p class="t" style="margin-top:4px;color:var(--muted)">Calcula y devuelve <code>poblacion / area</code>. Manejá el caso donde <code>area == 0</code>.</p>
+          </li>
+          <li>
+            <strong><code>comparar(self, otros)</code></strong>
+            <p class="t" style="margin-top:4px;color:var(--muted)">Recibe una lista de objetos <code>Country</code> e imprime una tabla. Al final indica el ganador en población, área y densidad.</p>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 25. PARCIAL ─────────────────────────────────────────── -->
+<!-- ─── 25. CLASE CountryAPI ──────────────────────────────────── -->
 <div class="slide s-c">
-  <div class="tag">Parcial — POO + APIs</div>
+  <div class="tag">Tarea — Clase 2 de 2</div>
+  <h2>La clase <code>CountryAPI</code></h2>
+  <div class="g2">
+    <div class="col">
+      <div class="card dk">
+        <h3>Esqueleto + cómo queda el main</h3>
+<pre style="background:#0F172A;padding:14px;font-size:13px;margin-top:12px"><span class="kw">class</span> <span class="fn">CountryAPI</span>:
+    BASE = <span class="str">"https://restcountries.com/v3.1"</span>
+
+    <span class="kw">def</span> <span class="fn">by_name</span>(self, name: <span class="fn">str</span>) -> <span class="fn">Country</span>:
+        ...
+
+    <span class="kw">def</span> <span class="fn">by_region</span>(self, region: <span class="fn">str</span>) -> <span class="fn">list</span>:
+        ...
+
+    <span class="kw">def</span> <span class="fn">by_names</span>(self, names: <span class="fn">list</span>) -> <span class="fn">list</span>:
+        ...</pre>
+        <div style="margin-top:16px;border-top:1px solid #334155;padding-top:14px">
+          <p style="color:#94A3B8;font-size:12px;font-weight:700;letter-spacing:.08em;margin-bottom:8px">ASÍ QUEDA EL MAIN</p>
+<pre style="background:#0F172A;padding:10px;font-size:12px">api    = <span class="fn">CountryAPI</span>()
+names  = [<span class="str">"spain"</span>, <span class="str">"denmark"</span>, <span class="str">"uzbekistan"</span>]
+paises = api.<span class="fn">by_names</span>(names)  <span class="cm"># paralelo</span>
+paises[<span class="num">0</span>].<span class="fn">comparar</span>(paises[<span class="num">1</span>:])</pre>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card sl">
+        <h3>Qué debe hacer cada método</h3>
+        <ul class="s" style="margin-top:14px;gap:14px">
+          <li>
+            <strong><code>by_name(name)</code> → <code>Country</code></strong>
+            <p class="t" style="margin-top:4px;color:var(--muted)">Hace la request a <code>/name/{name}</code>. Devuelve un objeto <code>Country</code>, no un dict.</p>
+          </li>
+          <li>
+            <strong><code>by_region(region)</code> → <code>list[Country]</code></strong>
+            <p class="t" style="margin-top:4px;color:var(--muted)">Hace la request a <code>/region/{region}</code>. Devuelve una lista de objetos <code>Country</code>.</p>
+          </li>
+          <li>
+            <strong><code>by_names(names)</code> → <code>list[Country]</code></strong>
+            <p class="t" style="margin-top:4px;color:var(--muted)">Llama a <code>by_name()</code> para cada nombre <strong>en paralelo</strong> con <code>ThreadPoolExecutor</code>. Es el método concurrente.</p>
+          </li>
+        </ul>
+      </div>
+      <div class="card y">
+        <h3 style="color:#92400E">Regla clave</h3>
+        <p class="t" style="margin-top:6px;color:#78350F">Todo lo relacionado con HTTP y JSON queda dentro de <code>CountryAPI</code>. El <code>main</code> nunca importa <code>requests</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 26. PARCIAL ──────────────────────────────────────────── -->
+<div class="slide s-c">
+  <div class="tag">Parcial — POO + APIs + Concurrencia</div>
   <h2>Tu nombre como punto de partida</h2>
   <div class="g2">
     <div class="col">
       <div class="card pu">
-        <h3>Consigna</h3>
-        <p class="t" style="margin-top:6px">Tomá las <strong>iniciales de tu nombre</strong> y buscá un país por cada letra usando la API. Luego comparalos entre sí con clases.</p>
-        <ul class="s" style="margin-top:10px">
-          <li>Una clase <code>Country</code> que encapsule los datos del dict</li>
-          <li>Una clase <code>CountryAPI</code> que haga las requests</li>
-          <li>Un método <code>comparar(otros)</code> que imprima la tabla</li>
-          <li>El <code>main</code> solo crea objetos — sin lógica suelta</li>
+        <h3>Tres requisitos</h3>
+        <ul class="s" style="margin-top:14px;gap:14px">
+          <li>
+            <strong>Consumir la API de <code>restcountries.com</code></strong>
+            <p class="t" style="margin-top:4px;color:var(--muted)">Buscar un país por cada letra de tu nombre usando los endpoints de la API.</p>
+          </li>
+          <li>
+            <strong>Modelar con OOP — clases <code>Country</code> y <code>CountryAPI</code></strong>
+            <p class="t" style="margin-top:4px;color:var(--muted)">El <code>main</code> solo crea objetos y llama métodos — sin lógica suelta ni dicts volando.</p>
+          </li>
+          <li>
+            <strong>Traer los países en paralelo con concurrencia</strong>
+            <p class="t" style="margin-top:4px;color:var(--muted)">Usar <code>by_names()</code> con <code>ThreadPoolExecutor</code> para hacer todas las requests al mismo tiempo.</p>
+          </li>
         </ul>
-      </div>
-      <div class="card y">
-        <h3 style="color:#92400E">Ejemplo — pareja "Eduardo" + "Juan"</h3>
-        <p class="t" style="margin-top:6px;color:#78350F"><strong>Eduardo:</strong> E·D·U·A·R·D·O → España, Dinamarca, Uganda, Argelia, Rumania, Omán</p>
-        <p class="t" style="margin-top:6px;color:#78350F"><strong>Juan:</strong> J·U·A·N → Japón, Uganda, Austria, Nepal</p>
-        <p class="t" style="margin-top:8px;color:#92400E">Una letra = un país (sin repetir). Si se repite una letra entre los dos nombres, se elige un país diferente para cada una.</p>
+        <div class="card y" style="margin-top:14px">
+          <p class="t" style="color:#78350F"><strong>Regla:</strong> una letra del nombre = un país. Si se repite una letra entre los dos integrantes, elegí un país diferente para la segunda.</p>
+        </div>
       </div>
     </div>
     <div class="col">
       <div class="card dk">
-        <h3>Salida esperada</h3>
+        <h3>Así debe quedar el main</h3>
 <pre style="background:#0F172A;padding:12px;font-size:11px;margin-top:10px"><span class="cm"># main.py</span>
-api     = <span class="fn">CountryAPI</span>()
-espana  = api.<span class="fn">by_name</span>(<span class="str">"spain"</span>)
-din     = api.<span class="fn">by_name</span>(<span class="str">"denmark"</span>)
-uzb     = api.<span class="fn">by_name</span>(<span class="str">"uzbekistan"</span>)
+api    = <span class="fn">CountryAPI</span>()
 
-espana.<span class="fn">comparar</span>([din, uzb])
-</pre>
+<span class="cm"># iniciales: E·D·U·A·R·D·O + J·U·A·N</span>
+names  = [<span class="str">"spain"</span>, <span class="str">"denmark"</span>, <span class="str">"uganda"</span>,
+          <span class="str">"algeria"</span>, <span class="str">"romania"</span>, <span class="str">"oman"</span>,
+          <span class="str">"japan"</span>, <span class="str">"austria"</span>, <span class="str">"nepal"</span>]
+
+paises = api.<span class="fn">by_names</span>(names)  <span class="cm"># concurrencia aquí</span>
+paises[<span class="num">0</span>].<span class="fn">comparar</span>(paises[<span class="num">1</span>:])</pre>
 <pre style="background:#0F172A;padding:12px;font-size:11px;margin-top:6px"><span class="dim">País           Población       Área       Densidad</span>
 <span class="ok">España         47,351,567    505,990    93.58 hab/km²</span>
 <span class="ok">Dinamarca       5,910,577     43,094   137.16 hab/km²</span>
-<span class="ok">Uzbekistán     35,300,000    448,978    78.63 hab/km²</span>
+<span class="ok">Uganda         47,123,531    241,550   195.08 hab/km²</span>
+<span class="dim">...</span>
 <span class="dim">─────────────────────────────────────────────────</span>
 <span class="warn">Mayor población : España</span>
 <span class="warn">Mayor área      : España</span>
-<span class="warn">Mayor densidad  : Dinamarca</span></pre>
+<span class="warn">Mayor densidad  : Uganda</span></pre>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ─── 26. ENTREGA ──────────────────────────────────────────── -->
+<!-- ─── 27. ENTREGA ───────────────────────────────────────────── -->
 <div class="slide s-c">
   <div class="tag">Parcial — Entrega</div>
   <h2>¿Qué entregan y cómo?</h2>
   <div class="g2">
-    <div class="col" style="gap:14px">
+    <div class="col">
       <div class="card rd">
         <h3>Fecha límite — 19 de mayo</h3>
         <p class="t" style="margin-top:6px">Tienen hasta el <strong>19 de mayo</strong> para entregar. Pasada esa fecha no se reciben entregas.</p>
@@ -1040,39 +1108,32 @@ espana.<span class="fn">comparar</span>([din, uzb])
         <h3>Trabajo en parejas</h3>
         <ul class="s" style="margin-top:8px">
           <li>Una sola entrega por pareja — un repo, un video</li>
-          <li>Cada integrante debe tener <strong>al menos un commit</strong> visible en el historial del repo</li>
+          <li>Cada integrante debe tener <strong>al menos un commit</strong> visible</li>
           <li>Si no hay commit tuyo, no hay nota tuya</li>
-        </ul>
-      </div>
-      <div class="card or">
-        <h3>Los países — una letra, un país</h3>
-        <ul class="s" style="margin-top:8px">
-          <li>Cada letra del nombre de cada integrante = un país</li>
-          <li>Si una letra se repite entre los dos nombres, se elige un país diferente para la segunda vez</li>
-          <li>Pareja de dos → aprox. 10 países en total</li>
+          <li>Una letra por nombre = un país (sin repetir entre los dos)</li>
         </ul>
       </div>
     </div>
-    <div class="col" style="gap:14px">
+    <div class="col">
       <div class="card dk">
         <h3>Repositorio en GitHub</h3>
         <ul class="s" style="margin-top:8px">
-          <li>Repo público con al menos estos archivos: <code>country.py</code> y <code>main.py</code></li>
-          <li>El <code>README</code> debe decir quiénes son y qué países eligieron</li>
-          <li>Se ve el historial de commits — <strong>uno por integrante mínimo</strong></li>
+          <li>Repo público con <code>country.py</code> y <code>main.py</code></li>
+          <li>El <code>README</code> dice quiénes son y qué países eligieron</li>
+          <li>Historial visible — un commit por integrante mínimo</li>
         </ul>
       </div>
       <div class="card gr">
-        <h3>Video — máximo 5 minutos</h3>
+        <h3>Video — máx. 5 minutos</h3>
         <ul class="s" style="margin-top:8px">
-          <li>Mostrar el código corriendo con los países de la pareja</li>
-          <li>Explicar qué hace la clase <code>Country</code> y qué hace <code>CountryAPI</code></li>
-          <li>Ambos integrantes deben aparecer o hablar en el video</li>
+          <li>Mostrar el código corriendo con sus países</li>
+          <li>Explicar qué hace <code>Country</code> y qué hace <code>CountryAPI</code></li>
+          <li>Ambos integrantes deben aparecer o hablar</li>
         </ul>
       </div>
       <div class="card y">
         <h3 style="color:#92400E">¿Dónde entregan?</h3>
-        <p class="t" style="margin-top:6px;color:#78350F">Manden el <strong>link del repo</strong> y el <strong>link del video</strong> al correo del profesor antes del 19 de mayo.</p>
+        <p class="t" style="margin-top:4px;color:#78350F">Link del repo + link del video al correo del profesor antes del 19 de mayo.</p>
       </div>
     </div>
   </div>
@@ -1137,7 +1198,7 @@ espana.<span class="fn">comparar</span>([din, uzb])
 <div id="prog"></div>
 <div id="nav">
   <button class="nb" id="bp">&#8592;</button>
-  <span id="cnt">1 / 28</span>
+  <span id="cnt">1 / 29</span>
   <button class="nb" id="bn">&#8594;</button>
 </div>
 
